@@ -1,0 +1,49 @@
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.nav-tabs .nav-link {
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: #1a936f;
+    border-bottom: 3px solid #1a936f;
+    background-color: rgba(26, 147, 111, 0.1);
+}
+
+.currency-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.currency-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.currency-flag {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.currency-name {
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.rate-buy {
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.rate-sell {
+    font-weight: 600;
+}

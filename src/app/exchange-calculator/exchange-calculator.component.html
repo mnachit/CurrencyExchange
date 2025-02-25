@@ -1,0 +1,256 @@
+<!-- exchange-calculator.component.html -->
+<div class="exchange-calculator-container fade-in">
+    <h2 class="section-title fade-in fade-in-1">Currency Exchange</h2>
+
+    <div class="exchange-card fade-in fade-in-2">
+        <div class="card-body">
+            <form [formGroup]="exchangeForm">
+                <div class="row calculator-grid">
+                    <!-- From Currency Section -->
+                    <div class="col-md-5 fade-in fade-in-2">
+                        <div class="form-group mb-4">
+                            <label class="form-label">Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">{{fromCurrency.code}}</span>
+                                <input type="number" class="form-control" formControlName="fromAmount"
+                                    (input)="onFromAmountChange()">
+                            </div>
+                            <div *ngIf="exchangeForm.get('fromAmount')?.touched && exchangeForm.get('fromAmount')?.errors?.['required']"
+                                class="text-danger small mt-1">
+                                <i class="fas fa-exclamation-circle me-1"></i> Amount is required
+                            </div>
+                            <div *ngIf="exchangeForm.get('fromAmount')?.touched && exchangeForm.get('fromAmount')?.errors?.['min']"
+                                class="text-danger small mt-1">
+                                <i class="fas fa-exclamation-circle me-1"></i> Amount must be greater than 0
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label">From Currency</label>
+                            <div class="currency-select-wrapper">
+                                <div class="dropdown">
+                                    <button class="currency-select dropdown-toggle w-100" type="button"
+                                        id="fromCurrencyDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <div class="currency-flag-container">
+                                            <img [src]="fromCurrency.flagUrl" alt="{{ fromCurrency.code }}">
+                                        </div>
+                                        <div class="currency-select-info">
+                                            <div class="currency-select-code">{{ fromCurrency.code }}</div>
+                                            <div class="currency-select-name">{{ fromCurrency.name }}</div>
+                                        </div>
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="fromCurrencyDropdown">
+                                        <li *ngFor="let currency of currencies">
+                                            <a class="dropdown-item currency-item"
+                                                (click)="selectFromCurrency(currency)">
+                                                <img [src]="currency.flagUrl" alt="{{ currency.code }}">
+                                                <div class="currency-select-info">
+                                                    <div class="currency-select-code">{{ currency.code }}</div>
+                                                    <div class="currency-select-name">{{ currency.name }}</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exchange Icon -->
+                    <div class="col-md-2 d-flex justify-content-center align-items-center fade-in fade-in-3">
+                        <div class="exchange-icon-container">
+                            <div class="exchange-icon" (click)="swapCurrencies()">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- To Currency Section -->
+                    <div class="col-md-5 fade-in fade-in-4">
+                        <div class="form-group mb-4">
+                            <label class="form-label">Converted Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">{{toCurrency.code}}</span>
+                                <input type="number" class="form-control" formControlName="toAmount" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label">To Currency</label>
+                            <div class="currency-select-wrapper">
+                                <div class="dropdown">
+                                    <button class="currency-select dropdown-toggle w-100" type="button"
+                                        id="toCurrencyDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <div class="currency-flag-container">
+                                            <img [src]="toCurrency.flagUrl" alt="{{ toCurrency.code }}">
+                                        </div>
+                                        <div class="currency-select-info">
+                                            <div class="currency-select-code">{{ toCurrency.code }}</div>
+                                            <div class="currency-select-name">{{ toCurrency.name }}</div>
+                                        </div>
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="toCurrencyDropdown">
+                                        <li *ngFor="let currency of currencies">
+                                            <a class="dropdown-item currency-item" (click)="selectToCurrency(currency)">
+                                                <img [src]="currency.flagUrl" alt="{{ currency.code }}">
+                                                <div class="currency-select-info">
+                                                    <div class="currency-select-code">{{ currency.code }}</div>
+                                                    <div class="currency-select-name">{{ currency.name }}</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="exchange-rate-info text-center my-4 fade-in fade-in-3">
+                <i class="fas fa-sync-alt me-2"></i>
+                Exchange Rate: 1 {{ fromCurrency.code }} = <span>{{ exchangeRate | number:'1.4-4' }} {{ toCurrency.code
+                    }}</span>
+            </div>
+
+            <form [formGroup]="customerForm">
+                <div class="form-group mb-4 fade-in fade-in-4">
+                    <h3 class="form-section-title">Customer Information</h3>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" placeholder="Full Name"
+                                    formControlName="customerName">
+                            </div>
+                            <div *ngIf="customerForm.get('customerName')?.touched && customerForm.get('customerName')?.errors?.['required']"
+                                class="text-danger small mt-1">
+                                <i class="fas fa-exclamation-circle me-1"></i> Name is required
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                <input type="text" class="form-control" placeholder="ID Number"
+                                    formControlName="idNumber">
+                            </div>
+                            <div *ngIf="customerForm.get('idNumber')?.touched && customerForm.get('idNumber')?.errors?.['required']"
+                                class="text-danger small mt-1">
+                                <i class="fas fa-exclamation-circle me-1"></i> ID Number is required
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input type="text" class="form-control" placeholder="Phone Number"
+                                    formControlName="phone">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="d-flex justify-content-center mt-5 mb-3 fade-in fade-in-4">
+                <button class="btn btn-success me-3" (click)="generateReceipt()">
+                    <i class="fas fa-print"></i> Print Receipt
+                </button>
+                <button class="btn btn-primary" (click)="completeExchange()">
+                    <i class="fas fa-check-circle"></i> Complete Exchange
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div class="modal fade" [ngClass]="{'show d-block': showReceipt}" id="receiptModal" tabindex="-1" role="dialog"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-receipt me-2"></i>Transaction Receipt</h5>
+                    <button type="button" class="btn-close" (click)="closeReceipt()" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="receipt" *ngIf="receiptData">
+                        <div class="receipt-header text-center mb-4 pb-3 border-bottom border-dashed">
+                            <div class="receipt-logo fs-4 fw-bold">Bureau de Change Al Jazira</div>
+                            <div class="receipt-address text-muted small">King Fahd Road, Riyadh, Saudi Arabia</div>
+                            <div class="receipt-contact text-muted small">+966 11 123 4567 |
+                                info&#64;aljazira-exchange.com
+                            </div>
+                        </div>
+
+                        <div class="receipt-info mb-4">
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Receipt No:</div>
+                                <div class="col-7 text-end fw-bold">{{ receiptData.receiptId }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Date & Time:</div>
+                                <div class="col-7 text-end">{{ receiptData.date | date:'medium' }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">Customer:</div>
+                                <div class="col-7 text-end">{{ receiptData.customerName }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5 text-muted">ID Number:</div>
+                                <div class="col-7 text-end">{{ receiptData.idNumber }}</div>
+                            </div>
+                        </div>
+
+                        <div class="receipt-calculation p-3 rounded mb-4">
+                            <div class="row mb-2">
+                                <div class="col-6 text-muted">From Currency:</div>
+                                <div class="col-6 text-end fw-bold">{{ receiptData.fromCurrency }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-6 text-muted">To Currency:</div>
+                                <div class="col-6 text-end fw-bold">{{ receiptData.toCurrency }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-6 text-muted">Exchange Rate:</div>
+                                <div class="col-6 text-end">1 {{ receiptData.fromCurrency }} = {{
+                                    receiptData.exchangeRate | number:'1.4-4' }} {{ receiptData.toCurrency }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-6 text-muted">Amount:</div>
+                                <div class="col-6 text-end">{{ receiptData.fromAmount |
+                                    currency:receiptData.fromCurrency:'symbol':'1.2-2' }}</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-6 text-muted">Commission:</div>
+                                <div class="col-6 text-end">{{ receiptData.commission |
+                                    currency:receiptData.fromCurrency:'symbol':'1.2-2' }} ({{
+                                    receiptData.commissionPercentage }}%)</div>
+                            </div>
+                            <div class="row mt-3 pt-3 border-top">
+                                <div class="col-6 fw-bold">Total Amount:</div>
+                                <div class="col-6 text-end fw-bold fs-5">{{ receiptData.toAmount |
+                                    currency:receiptData.toCurrency:'symbol':'1.2-2' }}</div>
+                            </div>
+                        </div>
+
+                        <div class="receipt-footer text-center mt-4 pt-3 border-top border-dashed">
+                            <div class="receipt-qr mx-auto mb-3 d-flex align-items-center justify-content-center"
+                                style="width: 80px; height: 80px;">
+                                <i class="fas fa-qrcode fa-3x text-secondary"></i>
+                            </div>
+                            <div class="receipt-thanks fw-bold mb-2">Thank you for your business!</div>
+                            <div class="receipt-terms text-muted small">This receipt is your proof of transaction. Keep
+                                it safe for future reference.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeReceipt()">
+                        <i class="fas fa-times me-2"></i>Close
+                    </button>
+                    <button type="button" class="btn btn-primary" (click)="printReceipt()">
+                        <i class="fas fa-print me-2"></i>Print
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

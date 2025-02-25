@@ -1,0 +1,114 @@
+<!-- header.component.html -->
+<div class="topbar">
+    <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search..." (keyup.enter)="onSearch()">
+    </div>
+    <div class="actions">
+        <!-- Notifications Dropdown -->
+        <div class="action-item" (click)="toggleNotifications($event)">
+            <i class="fas fa-bell"></i>
+            <div class="notification-badge" *ngIf="notifications > 0">{{ notifications }}</div>
+
+            <!-- Notifications Dropdown Menu -->
+            <div class="dropdown-menu" [ngClass]="{'show': showNotifications}">
+                <div class="dropdown-header">
+                    <div class="dropdown-title">Notifications</div>
+                    <div class="dropdown-badge">{{ notifications }} New</div>
+                </div>
+                <div class="dropdown-content">
+                    <div class="dropdown-item" *ngFor="let notification of notificationList">
+                        <div class="dropdown-icon">
+                            <i [class]="notification.icon"></i>
+                        </div>
+                        <div class="dropdown-details">
+                            <div class="dropdown-message">{{ notification.message }}</div>
+                            <div class="dropdown-time">{{ notification.time | date:'short' }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown-footer">
+                    <a href="javascript:void(0)" class="dropdown-link">View All Notifications</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Dropdown -->
+        <div class="action-item" (click)="toggleMessages($event)">
+            <i class="fas fa-envelope"></i>
+            <div class="notification-badge" *ngIf="messages > 0">{{ messages }}</div>
+
+            <!-- Messages Dropdown Menu -->
+            <div class="dropdown-menu" [ngClass]="{'show': showMessages}">
+                <div class="dropdown-header">
+                    <div class="dropdown-title">Messages</div>
+                    <div class="dropdown-badge">{{ messages }} New</div>
+                </div>
+                <div class="dropdown-content">
+                    <div class="dropdown-item" *ngFor="let message of messageList">
+                        <div class="dropdown-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="dropdown-details">
+                            <div class="dropdown-message">{{ message.sender }}: {{ message.content }}</div>
+                            <div class="dropdown-time">{{ message.time | date:'short' }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown-footer">
+                    <a href="javascript:void(0)" class="dropdown-link">View All Messages</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Profile Dropdown -->
+        <div class="user-dropdown" (click)="toggleUserMenu($event)">
+            <div class="user-avatar">AM</div>
+            <div class="user-info">
+                <div class="user-name">Admin</div>
+                <div class="user-role">Manager</div>
+            </div>
+            <i class="fas fa-chevron-down" style="font-size: 0.75rem; color: #64748b;"></i>
+
+            <!-- User Dropdown Menu -->
+            <div class="dropdown-menu" [ngClass]="{'show': showUserMenu}">
+                <div class="dropdown-content">
+                    <div class="dropdown-item">
+                        <div class="dropdown-icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="dropdown-details">
+                            <div class="dropdown-message">My Profile</div>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="dropdown-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="dropdown-details">
+                            <div class="dropdown-message">Account Settings</div>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="dropdown-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="dropdown-details">
+                            <div class="dropdown-message">Change Password</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown-footer">
+                    <a href="javascript:void(0)" class="dropdown-link" (click)="logout()">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Button (Mobile) -->
+        <div class="action-item d-md-none" (click)="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+        </div>
+    </div>
+</div>

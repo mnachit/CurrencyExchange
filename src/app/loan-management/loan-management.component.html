@@ -1,0 +1,188 @@
+<div class="container-fluid p-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title">Loan Management</h2>
+        <button class="btn btn-success" (click)="openNewLoanForm()">
+            <i class="fas fa-plus me-2"></i> New Loan
+        </button>
+    </div>
+
+    <div class="card mb-4" *ngIf="showNewLoanForm">
+        <div class="card-body">
+            <h5 class="card-title mb-4">{{ formMode === 'add' ? 'New Loan' : 'Edit Loan' }}</h5>
+
+            <form [formGroup]="loanForm" (ngSubmit)="saveLoan()">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Customer Name</label>
+                            <input type="text" class="form-control" formControlName="customerName">
+                            <div *ngIf="loanForm.get('customerName')?.touched && loanForm.get('customerName')?.errors?.['required']"
+                                class="text-danger small mt-1">
+                                Customer name is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">Amount</label>
+                            <input type="number" class="form-control" formControlName="amount">
+                            <div *ngIf="loanForm.get('amount')?.touched && loanForm.get('amount')?.errors?.['required']"
+                                class="text-danger small mt-1">
+                                Amount is required
+                            </div>
+                            <div *ngIf="loanForm.get('amount')?.touched && loanForm.get('amount')?.errors?.['min']"
+                                class="text-danger small mt-1">
+                                Amount must be greater than 0
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">Currency</label>
+                            <select class="form-select" formControlName="currency">
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="GBP">GBP</option>
+                                <option value="SAR">SAR</option>
+                                <option value="AED">AED</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Issue Date</label>
+                            <input type="date" class="form-control" formControlName="issueDate">
+                            <div *ngIf="loanForm.get('issueDate')?.touched && loanForm.get('issueDate')?.errors?.['required']"
+                                class="text-danger small mt-1">
+                                Issue date is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" class="form-control" formControlName="dueDate">
+                            <div *ngIf="loanForm.get('dueDate')?.touched && loanForm.get('dueDate')?.errors?.['required']"
+                                class="text-danger small mt-1">
+                                Due date is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" rows="3" formControlName="notes"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="button" class="btn btn-outline-secondary me-2" (click)="cancelForm()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Loan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchTerm"
+                            (keyup.enter)="onSearch()">
+                        <button class="btn btn-primary" type="button" (click)="onSearch()">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" [(ngModel)]="statusFilter" (change)="onStatusChange(statusFilter)">
+                        <option value="all">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="repaid">Repaid</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Loan ID</th>
+                            <th>Customer</th>
+                            <th>Amount</th>
+                            <th>Currency</th>
+                            <th>Issue Date</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let loan of filteredLoans">
+                            <td>{{ loan.id }}</td>
+                            <td>{{ loan.customerName }}</td>
+                            <td>{{ loan.amount | number:'1.2-2' }}</td>
+                            <td>{{ loan.currency }}</td>
+                            <td>{{ loan.issueDate | date:'mediumDate' }}</td>
+                            <td>{{ loan.dueDate | date:'mediumDate' }}</td>
+                            <td><span [ngClass]="getStatusClass(loan.status)">{{ loan.status | titlecase }}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-link p-0 me-2" (click)="viewLoan(loan)" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-link p-0 me-2 text-info" (click)="editLoan(loan)"
+                                    title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-link p-0 me-2 text-success"
+                                    *ngIf="loan.status === 'active' || loan.status === 'overdue'"
+                                    (click)="markAsRepaid(loan)" title="Mark as Repaid">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-link p-0 text-danger" (click)="deleteLoan(loan)"
+                                    title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="filteredLoans.length === 0">
+                            <td colspan="8" class="text-center py-4">No loans found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <nav *ngIf="totalPages > 1" aria-label="Loan pagination">
+                <ul class="pagination justify-content-center mt-4">
+                    <li class="page-item" [ngClass]="{'disabled': currentPage === 1}">
+                        <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage - 1)">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+                        [ngClass]="{'active': currentPage === i + 1}">
+                        <a class="page-link" href="javascript:void(0)" (click)="goToPage(i + 1)">{{ i + 1 }}</a>
+                    </li>
+                    <li class="page-item" [ngClass]="{'disabled': currentPage === totalPages}">
+                        <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage + 1)">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

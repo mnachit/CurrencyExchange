@@ -1,0 +1,105 @@
+<div class="transaction-container">
+    <div class="transaction-header">
+        <h2 class="transaction-title">Transaction History</h2>
+        <button class="export-btn" (click)="exportTransactions()">
+            <i class="fas fa-download"></i> Export
+        </button>
+    </div>
+
+    <div class="filter-card">
+        <div class="filter-row">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search..." [(ngModel)]="searchTerm"
+                    (keyup.enter)="onSearch()">
+                <button class="search-btn" type="button" (click)="onSearch()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="status-filter">
+                <select class="filter-select" [(ngModel)]="statusFilter" (change)="onStatusChange(statusFilter)">
+                    <option value="all">All Statuses</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="canceled">Canceled</option>
+                </select>
+            </div>
+            <div class="date-filter">
+                <input type="date" class="date-input" [(ngModel)]="dateFilter" (change)="onDateChange()">
+            </div>
+            <div class="reset-btn-container">
+                <button class="reset-btn" (click)="searchTerm=''; statusFilter='all'; dateFilter=''; onSearch()">
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="transaction-table">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Date & Time</th>
+                        <th>Customer</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let transaction of filteredTransactions">
+                        <td>{{ transaction.id }}</td>
+                        <td>{{ transaction.date | date:'medium' }}</td>
+                        <td>{{ transaction.customerName }}</td>
+                        <td>{{ transaction.fromCurrency }} {{ transaction.fromAmount | number:'1.2-2' }}</td>
+                        <td>{{ transaction.toCurrency }} {{ transaction.toAmount | number:'1.2-2' }}</td>
+                        <td>{{ formatAmount(transaction.fromAmount, transaction.fromCurrency) }}</td>
+                        <td>
+                            <span class="status-badge" [ngClass]="getStatusClass(transaction.status)">
+                                {{ transaction.status | titlecase }}
+                            </span>
+                        </td>
+                        <td class="action-buttons">
+                            <button class="action-btn view-btn" (click)="viewTransaction(transaction)" title="View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn edit-btn" (click)="editTransaction(transaction)" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete-btn" (click)="deleteTransaction(transaction)"
+                                title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="filteredTransactions.length === 0">
+                        <td colspan="8" class="no-data">No transactions found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <nav *ngIf="totalPages > 1" class="pagination-container">
+            <ul class="pagination">
+                <li class="page-item" [ngClass]="{'disabled': currentPage === 1}">
+                    <a class="page-link prev" href="javascript:void(0)" (click)="goToPage(currentPage - 1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+                    [ngClass]="{'active': currentPage === i + 1}">
+                    <a class="page-link" href="javascript:void(0)" (click)="goToPage(i + 1)">{{ i + 1 }}</a>
+                </li>
+                <li class="page-item" [ngClass]="{'disabled': currentPage === totalPages}">
+                    <a class="page-link next" href="javascript:void(0)" (click)="goToPage(currentPage + 1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>

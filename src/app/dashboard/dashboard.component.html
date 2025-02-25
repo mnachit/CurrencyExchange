@@ -1,0 +1,346 @@
+<!-- dashboard.component.html -->
+<div class="dashboard-container">
+    <!-- Loading overlay -->
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <p>Loading dashboard data...</p>
+        </div>
+    </div>
+
+    <!-- Welcome Section -->
+    <div class="welcome-section fade-in">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="welcome-title">{{ greeting }}, Admin</h1>
+                <p class="welcome-subtitle">Here's what's happening with your exchange bureau today</p>
+            </div>
+            <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
+                <div class="date-display">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    <span>{{ today | date:'EEEE, MMMM d, y' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Stats Cards -->
+    <div class="stats-grid fade-in">
+        <!-- Available Funds -->
+        <div class="stats-card available-funds">
+            <div class="card-content">
+                <div class="card-header">
+                    <h3 class="card-title">Available Funds</h3>
+                    <div class="card-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                </div>
+                <div class="card-value-wrapper">
+                    <div class="card-value">${{ stats.availableFunds | number }}</div>
+                    <div class="card-trend"
+                        [ngClass]="{'positive': stats.fundsTrend > 0, 'negative': stats.fundsTrend < 0}">
+                        <i class="fas" [ngClass]="stats.fundsTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+                        {{ stats.fundsTrend }}% from last month
+                    </div>
+                </div>
+            </div>
+            <div class="card-chart">
+                <div class="mini-sparkline">
+                    <div class="sparkline-bar" *ngFor="let value of availableFundsHistory"
+                        [style.height]="(value / getMaxValue(availableFundsHistory) * 100) + '%'"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Exchanges -->
+        <div class="stats-card total-exchanges">
+            <div class="card-content">
+                <div class="card-header">
+                    <h3 class="card-title">Total Exchanges</h3>
+                    <div class="card-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                </div>
+                <div class="card-value-wrapper">
+                    <div class="card-value">{{ stats.totalExchanges | number }}</div>
+                    <div class="card-trend"
+                        [ngClass]="{'positive': stats.exchangesTrend > 0, 'negative': stats.exchangesTrend < 0}">
+                        <i class="fas" [ngClass]="stats.exchangesTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+                        {{ stats.exchangesTrend }}% from last month
+                    </div>
+                </div>
+            </div>
+            <div class="card-chart">
+                <div class="mini-sparkline">
+                    <div class="sparkline-bar" *ngFor="let value of exchangesHistory"
+                        [style.height]="(value / getMaxValue(exchangesHistory) * 100) + '%'"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Loans -->
+        <div class="stats-card active-loans">
+            <div class="card-content">
+                <div class="card-header">
+                    <h3 class="card-title">Active Loans</h3>
+                    <div class="card-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                </div>
+                <div class="card-value-wrapper">
+                    <div class="card-value">${{ stats.activeLoans | number }}</div>
+                    <div class="card-trend"
+                        [ngClass]="{'positive': stats.loansTrend > 0, 'negative': stats.loansTrend < 0}">
+                        <i class="fas" [ngClass]="stats.loansTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+                        {{ stats.loansTrend * -1 }}% from last month
+                    </div>
+                </div>
+            </div>
+            <div class="card-chart">
+                <div class="mini-sparkline">
+                    <div class="sparkline-bar" *ngFor="let value of loansHistory"
+                        [style.height]="(value / getMaxValue(loansHistory) * 100) + '%'"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Profit -->
+        <div class="stats-card today-profit">
+            <div class="card-content">
+                <div class="card-header">
+                    <h3 class="card-title">Today's Profit</h3>
+                    <div class="card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="card-value-wrapper">
+                    <div class="card-value">${{ stats.todayProfit | number }}</div>
+                    <div class="card-trend"
+                        [ngClass]="{'positive': stats.profitTrend > 0, 'negative': stats.profitTrend < 0}">
+                        <i class="fas" [ngClass]="stats.profitTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+                        {{ stats.profitTrend }}% from yesterday
+                    </div>
+                </div>
+            </div>
+            <div class="card-chart">
+                <div class="mini-sparkline">
+                    <div class="sparkline-bar" *ngFor="let value of profitHistory"
+                        [style.height]="(value / getMaxValue(profitHistory) * 100) + '%'"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics & Transactions Section -->
+    <div class="row">
+        <!-- Chart Section -->
+        <div class="col-lg-8 mb-4">
+            <div class="chart-card fade-in">
+                <div class="chart-header">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <h3 class="chart-title">Transaction Statistics</h3>
+                            <p class="chart-subtitle">Performance overview for {{ getTimeFilterLabel() }}</p>
+                        </div>
+                        <div class="d-flex gap-2 mt-2 mt-md-0">
+                            <div class="btn-group chart-type-selector">
+                                <button *ngFor="let type of chartTypes"
+                                    [class]="'btn btn-sm ' + (selectedChartType === type.id ? 'btn-primary' : 'btn-outline-secondary')"
+                                    (click)="changeChartType(type.id)">
+                                    <i [class]="'fas fa-chart-' + type.id"></i>
+                                </button>
+                            </div>
+                            <select class="form-select form-select-sm chart-filter" [(ngModel)]="timeFilter"
+                                (change)="onTimeFilterChange(timeFilter)">
+                                <option value="last7Days">Last 7 Days</option>
+                                <option value="last30Days">Last 30 Days</option>
+                                <option value="last90Days">Last 90 Days</option>
+                                <option value="thisYear">This Year</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-content">
+                    <div class="chart-container">
+                        <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType">
+                        </canvas>
+                    </div>
+                    <div class="chart-metrics">
+                        <div class="metric-item">
+                            <div class="metric-value">{{ totalTransactions | number }}</div>
+                            <div class="metric-label">Total Transactions</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value">{{ averageTransactionValue | currency }}</div>
+                            <div class="metric-label">Average Value</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value">{{ peakDay }}</div>
+                            <div class="metric-label">Peak Day</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="col-lg-4 mb-4">
+            <div class="transactions-card fade-in">
+                <div class="transactions-header">
+                    <h3 class="transactions-title">Recent Transactions</h3>
+                    <a routerLink="/transactions" class="view-all-link">
+                        View All <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="transactions-content">
+                    <div class="transactions-list">
+                        <div class="transaction-item" *ngFor="let transaction of recentTransactions">
+                            <div class="transaction-icon" [ngClass]="getTransactionIconClass(transaction)">
+                                <i [class]="getTransactionIcon(transaction)"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-currency">
+                                    {{ transaction.fromCurrency }} <i class="fas fa-arrow-right mx-1"></i> {{
+                                    transaction.toCurrency }}
+                                </div>
+                                <div class="transaction-info">
+                                    <span class="transaction-customer">{{ transaction.customerName }}</span>
+                                    <span class="transaction-time">{{ transaction.date | date:'shortTime' }}</span>
+                                </div>
+                            </div>
+                            <div class="transaction-amount"
+                                [ngClass]="{'amount-positive': transaction.toCurrency === 'USD', 'amount-negative': transaction.fromCurrency === 'USD'}">
+                                {{ formatAmount(transaction.toAmount, transaction.toCurrency) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="new-transaction-btn">
+                        <a routerLink="/exchange" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i> New Exchange
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exchange Rate & System Status Section -->
+    <div class="row">
+        <!-- Exchange Rates -->
+        <div class="col-lg-8 mb-4">
+            <div class="rates-card fade-in">
+                <div class="rates-header">
+                    <h3 class="rates-title">Current Exchange Rates</h3>
+                    <div class="rates-update">
+                        <span class="update-time">
+                            <i class="fas fa-clock me-1"></i>
+                            Last update: {{ lastRateUpdate | date:'medium' }}
+                        </span>
+                        <button class="btn btn-sm btn-outline-primary ms-2" (click)="refreshRates()"
+                            [disabled]="loading">
+                            <i class="fas fa-sync-alt me-1"></i> Update
+                        </button>
+                    </div>
+                </div>
+                <div class="rates-content">
+                    <div class="rates-slider">
+                        <div class="rate-item" *ngFor="let currency of popularCurrencies">
+                            <div class="rate-flag">
+                                <img [src]="currency.flagUrl" alt="{{ currency.code }}">
+                            </div>
+                            <div class="rate-info">
+                                <div class="rate-code">{{ currency.code }}</div>
+                                <div class="rate-name">{{ currency.name }}</div>
+                            </div>
+                            <div class="rate-values">
+                                <div class="buy-rate">
+                                    <span class="rate-label">Buy:</span>
+                                    <span class="rate-value">{{ currency.buyRate | number:'1.4-4' }}</span>
+                                </div>
+                                <div class="sell-rate">
+                                    <span class="rate-label">Sell:</span>
+                                    <span class="rate-value">{{ currency.sellRate | number:'1.4-4' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Status & Alerts -->
+        <div class="col-lg-4 mb-4">
+            <div class="status-card fade-in">
+                <div class="status-header">
+                    <h3 class="status-title">System Status</h3>
+                    <button class="btn btn-sm btn-outline-primary export-btn" (click)="exportSummary()">
+                        <i class="fas fa-file-export me-1"></i> Export Summary
+                    </button>
+                </div>
+                <div class="status-content">
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <div class="status-item-title">Server Status</div>
+                            <div class="status-item-value" [ngClass]="getStatusClass(systemStatus.server)">
+                                <i class="fas fa-circle me-1"></i> {{ systemStatus.server | titlecase }}
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-item-title">Database</div>
+                            <div class="status-item-value" [ngClass]="getStatusClass(systemStatus.database)">
+                                <i class="fas fa-circle me-1"></i> {{ systemStatus.database | titlecase }}
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-item-title">API</div>
+                            <div class="status-item-value" [ngClass]="getStatusClass(systemStatus.api)">
+                                <i class="fas fa-circle me-1"></i> {{ systemStatus.api | titlecase }}
+                            </div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-item-title">Last Check</div>
+                            <div class="status-item-value">{{ systemStatus.lastCheck | date:'short' }}</div>
+                        </div>
+                    </div>
+
+                    <div class="alerts-section">
+                        <h4 class="alerts-title">Recent Alerts</h4>
+                        <div class="alerts-list">
+                            <div class="alert-item" *ngFor="let alert of recentAlerts">
+                                <div class="alert-icon">
+                                    <i [class]="getAlertIcon(alert.type)"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-message">{{ alert.message }}</div>
+                                    <div class="alert-time">{{ alert.time | date:'short' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="currency-performance">
+                        <h4 class="performance-title">Currency Performance</h4>
+                        <div class="performance-stats">
+                            <div class="performance-item">
+                                <div class="performance-label">Best Performing</div>
+                                <div class="performance-value text-success">
+                                    {{ currencyPerformance.bestPerforming.code }}
+                                    <i class="fas fa-arrow-up ms-1"></i>
+                                    {{ currencyPerformance.bestPerforming.change }}%
+                                </div>
+                            </div>
+                            <div class="performance-item">
+                                <div class="performance-label">Worst Performing</div>
+                                <div class="performance-value text-danger">
+                                    {{ currencyPerformance.worstPerforming.code }}
+                                    <i class="fas fa-arrow-down ms-1"></i>
+                                    {{ currencyPerformance.worstPerforming.change * -1 }}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

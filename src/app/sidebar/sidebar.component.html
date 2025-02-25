@@ -1,0 +1,68 @@
+<!-- sidebar.component.html -->
+<div class="sidebar-toggle" (click)="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</div>
+
+<div class="sidebar-overlay" [ngClass]="{'show': isSidebarVisible}" (click)="closeSidebar()"></div>
+
+<div class="sidebar" [ngClass]="{'show': isSidebarVisible}">
+    <div class="sidebar-header">
+        <h2>Al Jazira</h2>
+        <p>Currency Exchange</p>
+    </div>
+    <div class="sidebar-menu">
+        <div class="menu-category">
+            <div class="menu-category-title">Main</div>
+            <a routerLink="/dashboard" class="menu-item" [ngClass]="{'active': isActive('/dashboard')}"
+                (click)="onMenuItemClick()">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+            <a routerLink="/exchange" class="menu-item" [ngClass]="{'active': isActive('/exchange')}"
+                (click)="onMenuItemClick()">
+                <i class="fas fa-exchange-alt"></i>
+                <span>New Exchange</span>
+            </a>
+            <a routerLink="/transactions" class="menu-item" [ngClass]="{'active': isActive('/transactions')}"
+                (click)="onMenuItemClick()">
+                <i class="fas fa-history"></i>
+                <span>Transactions</span>
+            </a>
+            <a routerLink="/currencies" class="menu-item" [ngClass]="{'active': isActive('/currencies')}"
+                (click)="onMenuItemClick()">
+                <i class="fas fa-coins"></i>
+                <span>Currencies</span>
+            </a>
+        </div>
+        <div class="menu-category">
+            <div class="menu-category-title">Management</div>
+            <a routerLink="/customers" class="menu-item" [ngClass]="{'active': isActive('/customers')}"
+                (click)="onMenuItemClick()">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a routerLink="/loans" class="menu-item" [ngClass]="{'active': isActive('/loans')}"
+                (click)="onMenuItemClick()">
+                <i class="fas fa-hand-holding-usd"></i>
+                <span>Loans</span>
+            </a>
+            <a routerLink="/reports" class="menu-item" [ngClass]="{'active': isActive('/reports')}"
+                (click)="onMenuItemClick()">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Reports</span>
+            </a>
+            <a routerLink="/settings" class="menu-item" [ngClass]="{'active': isActive('/settings')}"
+                (click)="onMenuItemClick()">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+    </div>
+    <div class="user-profile">
+        <div class="profile-image">AM</div>
+        <div class="profile-details">
+            <div class="profile-name">Admin Manager</div>
+            <div class="profile-role">Administrator</div>
+        </div>
+    </div>
+</div>
