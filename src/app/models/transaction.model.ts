@@ -11,4 +11,6 @@ export interface Transaction {
     exchangeRate?: number;
     fee?: number;
     notes?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
   }

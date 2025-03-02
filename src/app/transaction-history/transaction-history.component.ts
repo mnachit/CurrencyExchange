@@ -1,166 +1,170 @@
 import { Component, OnInit } from '@angular/core';
 import { Transaction } from '../models/transaction.model';
+import { TransactionService } from '../services/transaction.service';
+import { DashboardService } from '../services/dashboard.service';
+import { CurrencyService } from '../services/currency.service';
+import { Router } from '@angular/router';
+import { Currency } from '../models/currency.model';
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-transaction-history',
   standalone: false,
   templateUrl: './transaction-history.component.html',
-  styleUrl: './transaction-history.component.css'
+  styleUrls: ['./transaction-history.component.css']
 })
 export class TransactionHistoryComponent implements OnInit {
-  // Sidebar state
-  sidebarVisible: boolean = true;
-  
-  // Live rate data
-  liveRates: any[] = [
-    { pair: 'USD/EUR', value: 0.92, change: -0.02 },
-    { pair: 'USD/GBP', value: 0.78, change: 0.01 },
-    { pair: 'USD/SAR', value: 3.75, change: 0 },
-    { pair: 'USD/AED', value: 3.67, change: -0.01 }
-  ];
-
-  // Transaction data
-  transactions: Transaction[] = [
-    {
-      id: 'TX123456',
-      date: new Date(2025, 1, 24, 11, 42),
-      customerName: 'Ahmed Mohammed',
-      fromCurrency: 'USD',
-      fromAmount: 2000,
-      toCurrency: 'EUR',
-      toAmount: 1842.5,
-      status: 'completed',
-      customerID: 'CUS001',
-      exchangeRate: 0.9212,
-      fee: 15.00,
-      notes: 'Business travel purposes'
-    },
-    {
-      id: 'TX123455',
-      date: new Date(2025, 1, 24, 10, 28),
-      customerName: 'Sara Abdullah',
-      fromCurrency: 'EUR',
-      fromAmount: 1150,
-      toCurrency: 'GBP',
-      toAmount: 985.2,
-      status: 'completed',
-      customerID: 'CUS002',
-      exchangeRate: 0.8567,
-      fee: 10.50,
-      notes: 'Personal transfer'
-    },
-    {
-      id: 'TX123454',
-      date: new Date(2025, 1, 24, 9, 15),
-      customerName: 'Khalid Omar',
-      fromCurrency: 'SAR',
-      fromAmount: 8812.5,
-      toCurrency: 'USD',
-      toAmount: 2350,
-      status: 'completed',
-      customerID: 'CUS003',
-      exchangeRate: 0.2667,
-      fee: 20.25,
-      notes: 'Investment'
-    },
-    {
-      id: 'TX123453',
-      date: new Date(2025, 1, 23, 16, 32),
-      customerName: 'Fatima Al-Saud',
-      fromCurrency: 'AED',
-      fromAmount: 1835,
-      toCurrency: 'USD',
-      toAmount: 500,
-      status: 'completed',
-      customerID: 'CUS004',
-      exchangeRate: 0.2724,
-      fee: 5.75,
-      notes: 'Tuition payment'
-    },
-    {
-      id: 'TX123452',
-      date: new Date(2025, 1, 23, 15, 17),
-      customerName: 'Mohammed Al-Harbi',
-      fromCurrency: 'USD',
-      fromAmount: 5000,
-      toCurrency: 'SAR',
-      toAmount: 18750,
-      status: 'pending',
-      customerID: 'CUS005',
-      exchangeRate: 3.75,
-      fee: 25.00,
-      notes: 'Requires compliance review'
-    },
-    {
-      id: 'TX123451',
-      date: new Date(2025, 1, 23, 12, 17),
-      customerName: 'Layla Mahmoud',
-      fromCurrency: 'GBP',
-      fromAmount: 3000,
-      toCurrency: 'USD',
-      toAmount: 3840,
-      status: 'canceled',
-      customerID: 'CUS006',
-      exchangeRate: 1.28,
-      fee: 18.50,
-      notes: 'Customer canceled - high amount'
-    }
-  ];
-
-  // Filtered transactions
+  // Transactions data
+  transactions: Transaction[] = [];
   filteredTransactions: Transaction[] = [];
-  
+  selectedTransaction: Transaction | null = null;
+  selectedTransactions: Transaction[] = [];
+
   // Pagination
   currentPage: number = 1;
   itemsPerPage: number = 10;
   totalPages: number = 1;
-  
+  paginationInfo = {
+    from: 0,
+    to: 0,
+    total: 0
+  };
+
   // Filters
   searchTerm: string = '';
   statusFilter: string = 'all';
   dateFilter: string = '';
-  
+  currencyFilter: string = 'all';
+
   // Statistics
   totalTransactions: number = 0;
   completedTransactions: number = 0;
   pendingTransactions: number = 0;
   canceledTransactions: number = 0;
   todayVolume: number = 0;
-  
-  // Notifications
-  notifications: any[] = [
-    { type: 'rate', message: 'USD to EUR rate has dropped by 0.5%', time: '10 minutes ago', icon: 'chart-line', bgClass: 'bg-primary' },
-    { type: 'transaction', message: 'Transaction TX123457 completed', time: '35 minutes ago', icon: 'check-circle', bgClass: 'bg-success' },
-    { type: 'compliance', message: 'Compliance review required for TX123452', time: '1 hour ago', icon: 'exclamation-triangle', bgClass: 'bg-warning' }
+
+  // Currencies
+  currencies: Currency[] = [];
+
+  // Recent activities log
+  recentActivities: any[] = [
+    {
+      action: 'Transaction Completed',
+      description: 'Ahmed Mohammed exchanged USD to EUR',
+      time: new Date(),
+      type: 'success',
+      icon: 'fa-check-circle'
+    },
+    {
+      action: 'New Transaction',
+      description: 'Sara Abdullah created a new transaction',
+      time: new Date(new Date().getTime() - 30 * 60000),
+      type: 'primary',
+      icon: 'fa-plus-circle'
+    },
+    {
+      action: 'Rate Updated',
+      description: 'USD to EUR rate changed from 0.92 to 0.91',
+      time: new Date(new Date().getTime() - 60 * 60000),
+      type: 'info',
+      icon: 'fa-sync-alt'
+    },
+    {
+      action: 'Transaction Canceled',
+      description: 'Khalid Omar canceled transaction #TX123451',
+      time: new Date(new Date().getTime() - 2 * 60 * 60000),
+      type: 'danger',
+      icon: 'fa-times-circle'
+    }
   ];
 
-  constructor() { }
+  constructor(
+    private transactionService: TransactionService,
+    private dashboardService: DashboardService,
+    private currencyService: CurrencyService,
+    private router: Router,
+  ) { }
 
   ngOnInit(): void {
-    this.calculateStatistics();
-    this.applyFilters();
+    this.loadTransactions();
+    this.loadCurrencies();
+
+    // For opening modals when viewing transaction details
+    document.addEventListener('DOMContentLoaded', () => {
+      const modalEl = document.getElementById('transactionDetailModal');
+      if (modalEl) {
+        new bootstrap.Modal(modalEl);
+      }
+    });
+  }
+
+  loadTransactions(): void {
+    this.transactionService.getTransactions().subscribe
+    ({
+      next: (data: any) => {
+        this.transactions = data.result;
+        console.log("transactions",this.transactions);
+        
+        this.calculateStatistics();
+        this.applyFilters();
+      },
+      error: (e) => 
+      {
+        
+      }
+    });
+  }
+
+  loadCurrencies(): void {
+    this.currencyService.getCurrencies().subscribe(data => {
+      this.currencies = data;
+    });
+  }
+
+  refreshTransactions(): void {
+    // Show loading state
+    this.filteredTransactions = [];
+
+    // Refresh transactions data
+    setTimeout(() => {
+      this.loadTransactions();
+
+      // Add activity log
+      this.recentActivities.unshift({
+        action: 'Data Refreshed',
+        description: 'Transaction list was refreshed',
+        time: new Date(),
+        type: 'primary',
+        icon: 'fa-sync-alt'
+      });
+
+      // Keep only the most recent 10 activities
+      if (this.recentActivities.length > 10) {
+        this.recentActivities.pop();
+      }
+    }, 800);
   }
 
   calculateStatistics(): void {
     this.totalTransactions = this.transactions.length;
-    this.completedTransactions = this.transactions.filter(t => t.status === 'completed').length;
-    this.pendingTransactions = this.transactions.filter(t => t.status === 'pending').length;
-    this.canceledTransactions = this.transactions.filter(t => t.status === 'canceled').length;
-    
+    this.completedTransactions = this.transactions.filter(t => t.status === 'COMPLETED').length;
+    this.pendingTransactions = this.transactions.filter(t => t.status === 'PENDING').length;
+    this.canceledTransactions = this.transactions.filter(t => t.status === 'CANCELED').length;
+
     // Calculate today's volume (all transactions from today in USD equivalent)
     const today = new Date();
     const todayTransactions = this.transactions.filter(t => {
       const transactionDate = new Date(t.date);
       return transactionDate.getDate() === today.getDate() &&
-             transactionDate.getMonth() === today.getMonth() &&
-             transactionDate.getFullYear() === today.getFullYear();
+        transactionDate.getMonth() === today.getMonth() &&
+        transactionDate.getFullYear() === today.getFullYear();
     });
-    
+
     // Simple conversion to USD for demo purposes
     this.todayVolume = todayTransactions.reduce((total, transaction) => {
       // Convert everything to USD equivalent for simplicity
       let amountInUSD = transaction.fromAmount;
-      
+
       if (transaction.fromCurrency === 'EUR') {
         amountInUSD = transaction.fromAmount * 1.09;
       } else if (transaction.fromCurrency === 'GBP') {
@@ -170,7 +174,7 @@ export class TransactionHistoryComponent implements OnInit {
       } else if (transaction.fromCurrency === 'AED') {
         amountInUSD = transaction.fromAmount * 0.27;
       }
-      
+
       return total + amountInUSD;
     }, 0);
   }
@@ -196,7 +200,7 @@ export class TransactionHistoryComponent implements OnInit {
       filtered = filtered.filter(t => t.status === this.statusFilter);
     }
 
-    // Apply date filter (simple implementation)
+    // Apply date filter
     if (this.dateFilter) {
       const filterDate = new Date(this.dateFilter);
       filtered = filtered.filter(t => {
@@ -207,13 +211,29 @@ export class TransactionHistoryComponent implements OnInit {
       });
     }
 
-    // Pagination
+    // Apply currency filter
+    if (this.currencyFilter !== 'all') {
+      filtered = filtered.filter(t =>
+        t.fromCurrency === this.currencyFilter ||
+        t.toCurrency === this.currencyFilter
+      );
+    }
+
+    // Update pagination info
+    this.paginationInfo.total = filtered.length;
     this.totalPages = Math.ceil(filtered.length / this.itemsPerPage);
 
     // Get items for current page
     const startItem = (this.currentPage - 1) * this.itemsPerPage;
-    const endItem = startItem + this.itemsPerPage;
+    const endItem = Math.min(startItem + this.itemsPerPage, filtered.length);
+
+    this.paginationInfo.from = filtered.length > 0 ? startItem + 1 : 0;
+    this.paginationInfo.to = endItem;
+
     this.filteredTransactions = filtered.slice(startItem, endItem);
+
+    // Clear selection when filters change
+    this.selectedTransactions = [];
   }
 
   onSearch(): void {
@@ -232,11 +252,62 @@ export class TransactionHistoryComponent implements OnInit {
     this.applyFilters();
   }
 
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
+  onCurrencyChange(): void {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  resetFilters(): void {
+    this.searchTerm = '';
+    this.statusFilter = 'all';
+    this.dateFilter = '';
+    this.currencyFilter = 'all';
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  goToPage(page: number | string): void {
+    // Convert page to number if it's a numeric string
+    const pageNum = typeof page === 'string' ? parseInt(page, 10) : page;
+    
+    // Only proceed if pageNum is a valid number
+    if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= this.totalPages) {
+      this.currentPage = pageNum;
       this.applyFilters();
     }
+  }
+
+  // Creates smart pagination array with ellipsis
+  getPaginationArray(): (number | string)[] {
+    if (this.totalPages <= 7) {
+      return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    }
+
+    const pages: (number | string)[] = [];
+
+    // Always show first page
+    pages.push(1);
+
+    if (this.currentPage > 3) {
+      pages.push('...');
+    }
+
+    // Show pages around current page
+    const startPage = Math.max(2, this.currentPage - 1);
+    const endPage = Math.min(this.totalPages - 1, this.currentPage + 1);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (this.currentPage < this.totalPages - 2) {
+      pages.push('...');
+    }
+
+    // Always show last page
+    pages.push(this.totalPages);
+
+    return pages;
   }
 
   formatAmount(amount: number | undefined, currency: string): string {
@@ -248,23 +319,117 @@ export class TransactionHistoryComponent implements OnInit {
     }).format(safeAmount);
   }
 
-  getStatusClass(status: string): string {
+  getStatusBadgeClass(status: string): string {
     switch (status) {
-      case 'completed': return 'badge bg-success';
-      case 'pending': return 'badge bg-warning text-dark';
-      case 'canceled': return 'badge bg-danger';
-      default: return 'badge bg-secondary';
+      case 'COMPLETED': return 'badge-completed';
+      case 'PENDING': return 'badge-pending';
+      case 'CANCELED': return 'badge-canceled';
+      default: return '';
     }
   }
 
+  getStatusIconClass(status: string): string {
+    switch (status) {
+      case 'COMPLETED': return 'fa-check-circle';
+      case 'PENDING': return 'fa-clock';
+      case 'CANCELED': return 'fa-times-circle';
+      default: return 'fa-circle';
+    }
+  }
+
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'COMPLETED': return 'bg-success';
+      case 'PENDING': return 'bg-warning';
+      case 'CANCELED': return 'bg-danger';
+      default: return 'bg-secondary';
+    }
+  }
+
+  // Handle bulk actions on selected transactions
+  bulkAction(action: string): void {
+    if (this.selectedTransactions.length === 0) {
+      return;
+    }
+
+    switch (action) {
+      case 'print':
+        alert(`Printing ${this.selectedTransactions.length} transaction receipts`);
+        break;
+      case 'export':
+        alert(`Exporting ${this.selectedTransactions.length} transactions as CSV`);
+        break;
+      case 'delete':
+        if (confirm(`Are you sure you want to delete ${this.selectedTransactions.length} transactions?`)) {
+          // In a real app, call service to delete transactions
+          this.transactions = this.transactions.filter(
+            t => !this.selectedTransactions.includes(t)
+          );
+          this.calculateStatistics();
+          this.applyFilters();
+
+          // Add to activity log
+          this.recentActivities.unshift({
+            action: 'Bulk Delete',
+            description: `${this.selectedTransactions.length} transactions were deleted`,
+            time: new Date(),
+            type: 'danger',
+            icon: 'fa-trash'
+          });
+
+          this.selectedTransactions = [];
+        }
+        break;
+    }
+  }
+
+  // Selection methods
+  toggleSelect(transaction: Transaction): void {
+    if (this.isSelected(transaction)) {
+      this.selectedTransactions = this.selectedTransactions.filter(t => t.id !== transaction.id);
+    } else {
+      this.selectedTransactions.push(transaction);
+    }
+  }
+
+  isSelected(transaction: Transaction): boolean {
+    return this.selectedTransactions.some(t => t.id === transaction.id);
+  }
+
+  toggleSelectAll(): void {
+    if (this.areAllSelected()) {
+      this.selectedTransactions = [];
+    } else {
+      this.selectedTransactions = [...this.filteredTransactions];
+    }
+  }
+
+  areAllSelected(): boolean {
+    return this.filteredTransactions.length > 0 &&
+      this.selectedTransactions.length === this.filteredTransactions.length;
+  }
+
+  // Get customer initials for avatar
+  getInitials(name: string): string {
+    return name
+      .split(' ')
+      .map(part => part.charAt(0))
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  }
+
   viewTransaction(transaction: Transaction): void {
-    // In a real application, this would show a modal with transaction details
-    console.log('View transaction', transaction);
+    this.selectedTransaction = transaction;
+
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('transactionDetailModal'));
+    modal.show();
   }
 
   editTransaction(transaction: Transaction): void {
     // In a real application, this would navigate to edit page or show edit modal
-    console.log('Edit transaction', transaction);
+    alert(`Editing transaction: ${transaction.id}`);
   }
 
   deleteTransaction(transaction: Transaction): void {
@@ -274,74 +439,30 @@ export class TransactionHistoryComponent implements OnInit {
       this.transactions = this.transactions.filter(t => t.id !== transaction.id);
       this.calculateStatistics();
       this.applyFilters();
+
+      // Add to activity log
+      this.recentActivities.unshift({
+        action: 'Transaction Deleted',
+        description: `Transaction ${transaction.id} was deleted`,
+        time: new Date(),
+        type: 'danger',
+        icon: 'fa-trash'
+      });
     }
   }
 
   exportTransactions(format: string = 'csv'): void {
-    // In a real application, this would generate a file for download based on format
+    // In a real application, this would generate a file for download
     alert(`Exporting transactions in ${format.toUpperCase()} format...`);
-  }
 
-  toggleSidebar(): void {
-    this.sidebarVisible = !this.sidebarVisible;
-  }
-
-  showRateCalculator(): void {
-    // In a real application, this would open a rate calculator modal
-    alert('Opening rate calculator...');
-  }
-
-  newTransaction(): void {
-    // In a real application, this would navigate to new transaction page or show a modal
-    alert('Creating new transaction...');
-  }
-
-  getExchangeRate(fromCurrency: string, toCurrency: string): number {
-    // This would typically be a call to an API or service in a real application
-    const rates: {[key: string]: {[key: string]: number}} = {
-      'USD': { 'EUR': 0.92, 'GBP': 0.78, 'SAR': 3.75, 'AED': 3.67 },
-      'EUR': { 'USD': 1.09, 'GBP': 0.85, 'SAR': 4.08, 'AED': 4.00 },
-      'GBP': { 'USD': 1.28, 'EUR': 1.18, 'SAR': 4.80, 'AED': 4.70 },
-      'SAR': { 'USD': 0.27, 'EUR': 0.25, 'GBP': 0.21, 'AED': 0.98 },
-      'AED': { 'USD': 0.27, 'EUR': 0.25, 'GBP': 0.21, 'SAR': 1.02 }
-    };
-    
-    return rates[fromCurrency]?.[toCurrency] || 1;
-  }
-
-  calculateConvertedAmount(amount: number, fromCurrency: string, toCurrency: string): number {
-    const rate = this.getExchangeRate(fromCurrency, toCurrency);
-    return amount * rate;
-  }
-
-  getTransactionFee(amount: number, fromCurrency: string, toCurrency: string): number {
-    // Simple fee calculation (in a real app would be more complex)
-    const basePercentage = 0.5; // 0.5% base fee
-    let fee = amount * (basePercentage / 100);
-    
-    // Minimum fee
-    const minFee = 5;
-    if (fee < minFee) {
-      fee = minFee;
-    }
-    
-    return Math.round(fee * 100) / 100;
-  }
-
-  getTotalCost(amount: number, fee: number): number {
-    return amount + fee;
-  }
-
-  getRateChange(currency1: string, currency2: string): number {
-    // In a real app, this would calculate the change from historical data
-    const pair = `${currency1}/${currency2}`;
-    const rateInfo = this.liveRates.find(r => r.pair === pair);
-    return rateInfo ? rateInfo.change : 0;
-  }
-
-  markAsFavorite(transaction: Transaction): void {
-    // In a real app, would mark a transaction as favorite for quick access
-    alert(`Transaction ${transaction.id} marked as favorite`);
+    // Add to activity log
+    this.recentActivities.unshift({
+      action: 'Report Exported',
+      description: `Transactions exported in ${format.toUpperCase()} format`,
+      time: new Date(),
+      type: 'info',
+      icon: 'fa-file-export'
+    });
   }
 
   printReceipt(transaction: Transaction): void {
@@ -349,8 +470,44 @@ export class TransactionHistoryComponent implements OnInit {
     alert(`Printing receipt for transaction ${transaction.id}`);
   }
 
+  markAsFavorite(transaction: Transaction): void {
+    // In a real app, would mark a transaction as favorite for quick access
+    alert(`Transaction ${transaction.id} marked as favorite`);
+  }
+
   sendNotification(transaction: Transaction): void {
     // In a real app, would send email/SMS notification to customer
     alert(`Sending notification to ${transaction.customerName} for transaction ${transaction.id}`);
+  }
+
+  changeStatus(transaction: Transaction, newStatus: string): void {
+    // In a real app, would call a service to update the transaction status
+
+    const index = this.transactions.findIndex(t => t.id === transaction.id);
+    if (index !== -1) {
+      this.transactions[index] = {
+        ...this.transactions[index],
+        status: newStatus as 'COMPLETED' | 'PENDING' | 'CANCELED'
+      };
+
+      // Update the selected transaction as well
+      if (this.selectedTransaction && this.selectedTransaction.id === transaction.id) {
+        this.selectedTransaction = this.transactions[index];
+      }
+
+      this.calculateStatistics();
+      this.applyFilters();
+
+      // Add to activity log
+      this.recentActivities.unshift({
+        action: 'Status Changed',
+        description: `Transaction ${transaction.id} marked as ${newStatus}`,
+        time: new Date(),
+        type: newStatus === 'COMPLETED' ? 'success' : (newStatus === 'CANCELED' ? 'danger' : 'warning'),
+        icon: newStatus === 'COMPLETED' ? 'fa-check-circle' : (newStatus === 'CANCELED' ? 'fa-times-circle' : 'fa-clock')
+      });
+
+      alert(`Transaction ${transaction.id} has been marked as ${newStatus}`);
+    }
   }
 }

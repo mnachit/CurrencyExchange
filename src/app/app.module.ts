@@ -9,11 +9,13 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ExchangeCalculatorComponent } from './exchange-calculator/exchange-calculator.component';
 import { TransactionHistoryComponent } from './transaction-history/transaction-history.component';
 import { CurrencyRatesComponent } from './currency-rates/currency-rates.component';
-import { LoanManagementComponent } from './loan-management/loan-management.component';
+// import { LoanManagementComponent } from './loan-management/loan-management.component';
 import { ReceiptTemplateComponent } from './receipt-template/receipt-template.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgChartsModule } from 'ng2-charts';
+import { CommonModule } from '@angular/common';
+import { LoanManagementComponent } from './loan-management/loan-management.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,7 @@ import { NgChartsModule } from 'ng2-charts';
     // SidebarComponent,
     HeaderComponent,
     DashboardComponent,
-    ExchangeCalculatorComponent,
+    // ExchangeCalculatorComponent,
     TransactionHistoryComponent,
     CurrencyRatesComponent,
     LoanManagementComponent,
@@ -30,11 +32,16 @@ import { NgChartsModule } from 'ng2-charts';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
     NgChartsModule,
-    SidebarComponent
+    SidebarComponent,
+    ExchangeCalculatorComponent,
+    // BrowserModule,
+    CommonModule,
+    FormsModule,           // Add this for ngModel
+    CommonModule,
+    // LoanManagementComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

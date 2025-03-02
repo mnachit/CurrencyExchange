@@ -4,5 +4,11 @@ export interface Currency {
     flagUrl: string;
     buyRate: number;
     sellRate: number;
+    previousBuyRate?: number;
+    previousSellRate?: number;
+    historicalRates?: {
+        date: Date;
+        rate: number;
+    }[];
 }
   
