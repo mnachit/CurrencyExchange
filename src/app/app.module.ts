@@ -16,6 +16,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgChartsModule } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
 import { LoanManagementComponent } from './loan-management/loan-management.component';
+import { FundsManagementComponent } from './funds-management/funds-management.component';
+import { LoginComponent } from './login/login.component';
+import { CalculatorComponent } from './calculator/calculator.component';
+
 
 @NgModule({
   declarations: [
@@ -27,7 +31,8 @@ import { LoanManagementComponent } from './loan-management/loan-management.compo
     TransactionHistoryComponent,
     CurrencyRatesComponent,
     LoanManagementComponent,
-    ReceiptTemplateComponent
+    ReceiptTemplateComponent,
+    // CalculatorComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,11 +42,12 @@ import { LoanManagementComponent } from './loan-management/loan-management.compo
     NgChartsModule,
     SidebarComponent,
     ExchangeCalculatorComponent,
-    // BrowserModule,
     CommonModule,
-    FormsModule,           // Add this for ngModel
+    FormsModule,
     CommonModule,
-    // LoanManagementComponent
+    FundsManagementComponent,
+    LoginComponent,
+    CalculatorComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

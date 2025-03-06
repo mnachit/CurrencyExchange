@@ -1,4 +1,17 @@
 <!-- Modern Exchange Calculator Component -->
+<div class="global-error-banner float-end" *ngIf="showError">
+    <div class="error-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{errorMessage}}</span>
+    </div>
+    <button class="close-error-btn" (click)="showError = false">×</button>
+</div>
+<div class="loading-overlay" *ngIf="saveSuccess">
+    <div class="spinner-container">
+        <div class="spinner"></div>
+        <p>{{messageResponse}}...</p>
+    </div>
+</div>
 <div class="exchange-calculator-container fade-in">
     <div class="row mb-4">
         <div class="col-md-8">
@@ -47,7 +60,8 @@
                                     <div class="currency-select-wrapper">
                                         <div class="dropdown">
                                             <button class="currency-select dropdown-toggle w-100" type="button"
-                                                id="fromCurrencyDropdown" data-bs-toggle="dropdown" aria-expanded="false" (click)="toggleDropdown('from')">
+                                                id="fromCurrencyDropdown" data-bs-toggle="dropdown"
+                                                aria-expanded="false" (click)="toggleDropdown('from')">
                                                 <div class="currency-flag-container">
                                                     <img [src]="fromCurrency.flagUrl" alt="{{ fromCurrency.code }}">
                                                 </div>
@@ -56,9 +70,12 @@
                                                     <div class="currency-select-name">{{ fromCurrency.name }}</div>
                                                 </div>
                                             </button>
-                                            <ul class="dropdown-menu w-100 scrollable" aria-labelledby="fromCurrencyDropdown" [ngClass]="{'show': showDropdownFrom}">
+                                            <ul class="dropdown-menu w-100 scrollable"
+                                                aria-labelledby="fromCurrencyDropdown"
+                                                [ngClass]="{'show': showDropdownFrom}">
                                                 <li *ngFor="let currency of currencies">
-                                                    <a class="dropdown-item currency-item" (click)="selectFromCurrency(currency)">
+                                                    <a class="dropdown-item currency-item"
+                                                        (click)="selectFromCurrency(currency)">
                                                         <img [src]="currency.flagUrl" alt="{{ currency.code }}">
                                                         <div class="currency-select-info">
                                                             <div class="currency-select-code">{{ currency.code }}</div>
@@ -97,7 +114,8 @@
                                     <div class="currency-select-wrapper">
                                         <div class="dropdown">
                                             <button class="currency-select dropdown-toggle w-100" type="button"
-                                                id="toCurrencyDropdown" data-bs-toggle="dropdown" aria-expanded="false" (click)="toggleDropdown('to')">
+                                                id="toCurrencyDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                                                (click)="toggleDropdown('to')">
                                                 <div class="currency-flag-container">
                                                     <img [src]="toCurrency.flagUrl" alt="{{ toCurrency.code }}">
                                                 </div>
@@ -106,7 +124,9 @@
                                                     <div class="currency-select-name">{{ toCurrency.name }}</div>
                                                 </div>
                                             </button>
-                                            <ul class="dropdown-menu w-100 scrollable" aria-labelledby="toCurrencyDropdown" [ngClass]="{'show': showDropdownTo}">
+                                            <ul class="dropdown-menu w-100 scrollable"
+                                                aria-labelledby="toCurrencyDropdown"
+                                                [ngClass]="{'show': showDropdownTo}">
                                                 <li *ngFor="let currency of currencies">
                                                     <a class="dropdown-item currency-item"
                                                         (click)="selectToCurrency(currency)">
@@ -201,7 +221,8 @@
                                 <div class="col-md-4">
                                     <div class="fee-item">
                                         <div class="fee-label text-muted fw-bold">Total to Pay:</div>
-                                        <div class="fee-value fw-bold">{{ calculateTotalPayment() | currency:toCurrency.code:'symbol':'1.2-2' }}</div>
+                                        <div class="fee-value fw-bold">{{ calculateTotalPayment() |
+                                            currency:toCurrency.code:'symbol':'1.2-2' }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -318,7 +339,7 @@
 
     <!-- Confirmation Modal -->
     <div class="modal fade" [ngClass]="{'show d-block': showConfirmation}" id="confirmationModal" tabindex="-1"
-        role="dialog" aria-hidden="true" >
+        role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-success">

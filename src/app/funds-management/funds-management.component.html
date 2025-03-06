@@ -1,0 +1,328 @@
+<div class="container-fluid">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <p>Processing your request...</p>
+        </div>
+    </div>
+
+    <!-- Page Header -->
+    <div class="funds-management-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="section-title">
+                        <i class="fas fa-wallet"></i> Funds Management
+                    </h2>
+                    <p class="text-muted">Manage and track your bureau's available funds</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <!-- Currency Display Selector -->
+                    <div ngbDropdown class="me-2">
+                        <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button"
+                            id="currencyDisplayDropdown" ngbDropdownToggle>
+                            <i class="fas fa-globe"></i> {{ selectedCurrency }}
+                        </button>
+                        <ul ngbDropdownMenu aria-labelledby="currencyDisplayDropdown">
+                            <li *ngFor="let currency of currencyDisplayOptions">
+                                <a ngbDropdownItem href="javascript:void(0)" (click)="updateDisplayCurrency(currency)">
+                                    {{ currency }}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div ngbDropdown>
+                        <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button"
+                            id="exportDropdown" ngbDropdownToggle>
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <ul ngbDropdownMenu aria-labelledby="exportDropdown">
+                            <li><a ngbDropdownItem href="javascript:void(0)" (click)="exportOperations('csv')"><i
+                                        class="fas fa-file-csv"></i> CSV</a></li>
+                            <li><a ngbDropdownItem href="javascript:void(0)" (click)="exportOperations('excel')"><i
+                                        class="fas fa-file-excel"></i> Excel</a></li>
+                            <li><a ngbDropdownItem href="javascript:void(0)" (click)="exportOperations('pdf')"><i
+                                        class="fas fa-file-pdf"></i> PDF</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Main content grid -->
+        <div class="row g-4">
+            <!-- Available funds card and operations form -->
+            <div class="col-lg-8">
+                <div class="row g-4">
+                    <!-- Available funds card -->
+                    <div class="col-12">
+                        <div class="card funds-overview-card">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <h5 class="funds-title">Available Funds</h5>
+                                        <div class="funds-amount"
+                                            [ngClass]="'currency-text-' + selectedCurrency.toLowerCase()">
+                                            {{ formatCurrency(currencyBalances[selectedCurrency], selectedCurrency) }}
+                                        </div>
+                                        <div class="funds-stats">
+                                            <div class="stat-item text-success">
+                                                <i class="fas fa-arrow-up"></i> {{
+                                                formatCurrency(fundsStats.totalAdded, selectedCurrency) }} added
+                                            </div>
+                                            <div class="stat-item text-warning">
+                                                <i class="fas fa-arrow-down"></i> {{
+                                                formatCurrency(fundsStats.totalWithdrawn, selectedCurrency) }} withdrawn
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="fund-chart-container">
+                                            <!-- Sparkline bars chart - using pre-calculated heights -->
+                                            <div class="fund-sparkline">
+                                                <div class="sparkline-bar"
+                                                    *ngFor="let height of sparklineHeights; let i = index"
+                                                    [style.height]="height"
+                                                    [attr.data-value]="formatCurrency(fundHistory[i], selectedCurrency)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Funds operation form -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title"><i class="fas fa-coins"></i> Fund Operation</h5>
+                            </div>
+                            <div class="card-body">
+                                <form [formGroup]="fundsForm" (ngSubmit)="processFundOperation()">
+                                    <div class="row g-4">
+                                        <div class="col-md-12">
+                                            <label class="form-label">Operation Type</label>
+                                            <div class="operation-type-selector">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio"
+                                                        formControlName="operationFunds" id="typeAdd" value="add">
+                                                    <label class="form-check-label" for="typeAdd">
+                                                        <i class="fas fa-plus-circle text-success"></i> Add Funds
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio"
+                                                        formControlName="operationFunds" id="typeWithdraw"
+                                                        value="withdraw">
+                                                    <label class="form-check-label" for="typeWithdraw">
+                                                        <i class="fas fa-minus-circle text-warning"></i> Withdraw Funds
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-lg-4">
+                                            <label class="form-label">Currency</label>
+                                            <select class="form-select" formControlName="currency"
+                                                (change)="updateSelectedCurrency()">
+                                                <option value="USD">USD - US Dollar</option>
+                                                <option value="EUR">EUR - Euro</option>
+                                                <option value="GBP">GBP - British Pound</option>
+                                                <option value="MAD">MAD - Moroccan Dirham</option>
+                                                <option value="SAR">SAR - Saudi Riyal</option>
+                                                <option value="AED">AED - UAE Dirham</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6 col-lg-4">
+                                            <label class="form-label">Amount</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">{{ getCurrencySymbol(selectedCurrency)
+                                                    }}</span>
+                                                <input type="number" class="form-control" formControlName="amount"
+                                                    step="0.01" min="0.01" placeholder="Enter amount">
+                                            </div>
+                                            <div *ngIf="fundsForm.get('amount')?.touched && fundsForm.get('amount')?.errors?.['required']"
+                                                class="text-danger">
+                                                Amount is required
+                                            </div>
+                                            <div *ngIf="fundsForm.get('amount')?.touched && fundsForm.get('amount')?.errors?.['min']"
+                                                class="text-danger">
+                                                Amount must be greater than zero
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-lg-4">
+                                            <label class="form-label">Date</label>
+                                            <input type="date" class="form-control" formControlName="date">
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label">Notes</label>
+                                            <textarea class="form-control" formControlName="notes"
+                                                placeholder="Add notes about this operation..."></textarea>
+                                        </div>
+
+                                        <div class="col-12 text-end">
+                                            <button type="submit" class="btn btn-primary"
+                                                [disabled]="fundsForm.invalid">
+                                                <i class="fas fa-save"></i> Process Operation
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operations history and stats -->
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title"><i class="fas fa-history"></i> Recent Fund Operations</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="date-filter">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <select class="form-select form-select-sm" [(ngModel)]="dateFilter"
+                                        (change)="applyDateFilter()">
+                                        <option value="all">All Time</option>
+                                        <option value="today">Today</option>
+                                        <option value="week">This Week</option>
+                                        <option value="month">This Month</option>
+                                        <option value="custom">Custom Range</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6" *ngIf="dateFilter === 'custom'">
+                                    <div class="d-flex gap-1">
+                                        <input type="date" class="form-control form-control-sm"
+                                            [(ngModel)]="customStartDate">
+                                        <span class="align-self-center">-</span>
+                                        <input type="date" class="form-control form-control-sm"
+                                            [(ngModel)]="customEndDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fund-operations-list">
+                            <div class="fund-operation-item" *ngFor="let operation of fundOperations">
+                                <div class="operation-icon" [ngClass]="getOperationClass(operation.operationFunds)">
+                                    <i class="fas" [ngClass]="getOperationIcon(operation.operationFunds)"></i>
+                                </div>
+                                <div class="operation-details">
+                                    <div class="operation-amount">
+                                        <span
+                                            [ngClass]="{'text-success': operation.operationFunds === 'add', 'text-warning': operation.operationFunds === 'withdraw'}">
+                                            {{ operation.operationFunds === 'add' ? '+' : '-' }} {{
+                                            formatCurrency(operation.amount,
+                                            operation.currency) }}
+                                        </span>
+                                    </div>
+                                    <div class="operation-id">
+                                        ID: {{ operation.id }}
+                                    </div>
+                                    <div class="operation-note" *ngIf="operation.notes">
+                                        {{ operation.notes }}
+                                    </div>
+                                    <div class="operation-meta">
+                                        <span class="operation-date">{{ operation.createdAt | date:'MMM d, y, h:mm a'
+                                            }}</span>
+                                        <!-- <span class="operation-user">{{ operation.updateBy }}</span> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center py-4" *ngIf="fundOperations.length === 0">
+                                <p class="text-muted mb-0">No fund operations found</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" [ngClass]="{'show d-block': showConfirmation}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" *ngIf="confirmationData">
+                <div class="modal-header"
+                    [ngClass]="confirmationData.operationFunds === 'add' ? 'bg-success' : 'bg-warning'">
+                    <h5 class="modal-title">
+                        <i class="fas"
+                            [ngClass]="confirmationData.operationFunds === 'add' ? 'fa-plus-circle' : 'fa-minus-circle'"></i>
+                        Confirm {{ confirmationData.operationFunds === 'add' ? 'Addition' : 'Withdrawal' }}
+                    </h5>
+                    <button type="button" class="btn-close" (click)="cancelConfirmation()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="confirmation-details">
+                        <h5 class="text-center mb-4">Are you sure you want to {{ confirmationData.operationFunds ===
+                            'add' ? 'add' : 'withdraw' }} funds?</h5>
+
+                        <div class="operation-summary">
+                            <div class="row mb-3">
+                                <div class="col-5 text-muted">Operation:</div>
+                                <div class="col-7 fw-bold">
+                                    {{ confirmationData.operationFunds === 'add' ? 'Add Funds' : 'Withdraw Funds' }}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-5 text-muted">Currency:</div>
+                                <div class="col-7 fw-bold">
+                                    {{ confirmationData.currency }}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-5 text-muted">Amount:</div>
+                                <div class="col-7 fw-bold">
+                                    {{ formatCurrency(confirmationData.amount, confirmationData.currency) }}
+                                </div>
+                            </div>
+                            <!-- <div class="row mb-3">
+                                <div class="col-5 text-muted">Date:</div>
+                                <div class="col-7">
+                                    {{ confirmationData.date | date:'mediumDate' }}
+                                </div>
+                            </div> -->
+                            <div class="row mb-3" *ngIf="confirmationData.notes">
+                                <div class="col-5 text-muted">Notes:</div>
+                                <div class="col-7">
+                                    {{ confirmationData.notes }}
+                                </div>
+                            </div>
+                            <div class="row pt-3 border-top mt-2">
+                                <div class="col-5 text-muted fw-bold">New Balance:</div>
+                                <div class="col-7 fw-bold fs-5">
+                                    {{ formatCurrency(currencyBalances[confirmationData.currency] +
+                                    (confirmationData.operationFunds === 'add' ?
+                                    confirmationData.amount : -confirmationData.amount), confirmationData.currency) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" (click)="cancelConfirmation()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="button"
+                        [ngClass]="confirmationData.operationFunds === 'add' ? 'btn-success' : 'btn-warning'"
+                        class="btn" (click)="confirmOperation()">
+                        <i class="fas"
+                            [ngClass]="confirmationData.operationFunds === 'add' ? 'fa-plus' : 'fa-minus'"></i>
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

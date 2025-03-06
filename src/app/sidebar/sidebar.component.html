@@ -41,6 +41,11 @@
                 <i class="fas fa-users"></i>
                 <span>Customers</span>
             </a>
+            <a routerLink="/funds-management" class="menu-item" [ngClass]="{'active': isActive('/funds-management')}"
+                (click)="onMenuItemClick()">
+                <i class="fa-regular fa-money-bill-transfer"></i>
+                <span>Funds Management</span>
+            </a>
             <a routerLink="/loans" class="menu-item" [ngClass]="{'active': isActive('/loans')}"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-hand-holding-usd"></i>

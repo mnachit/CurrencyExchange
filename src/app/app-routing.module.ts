@@ -5,14 +5,18 @@ import { ExchangeCalculatorComponent } from './exchange-calculator/exchange-calc
 import { TransactionHistoryComponent } from './transaction-history/transaction-history.component';
 import { CurrencyRatesComponent } from './currency-rates/currency-rates.component';
 import { LoanManagementComponent } from './loan-management/loan-management.component';
+import { FundsManagementComponent } from './funds-management/funds-management.component';
+import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'exchange', component: ExchangeCalculatorComponent },
   { path: 'transactions', component: TransactionHistoryComponent },
   { path: 'currencies', component: CurrencyRatesComponent },
   { path: 'loans', component: LoanManagementComponent },
+  { path: 'funds-management', component: FundsManagementComponent },
   { path: '**', redirectTo: 'dashboard' }
 ];
 

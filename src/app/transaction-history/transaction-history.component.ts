@@ -5,6 +5,7 @@ import { DashboardService } from '../services/dashboard.service';
 import { CurrencyService } from '../services/currency.service';
 import { Router } from '@angular/router';
 import { Currency } from '../models/currency.model';
+import { HttpParams } from '@angular/common/http';
 declare var bootstrap: any;
 
 @Component({
@@ -86,6 +87,7 @@ export class TransactionHistoryComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.loading = true;
     this.loadTransactions();
     this.loadCurrencies();
 
@@ -97,23 +99,36 @@ export class TransactionHistoryComponent implements OnInit {
       }
     });
   }
+  loading: boolean = true;
 
-  loadTransactions(): void {
-    this.transactionService.getTransactions().subscribe
-    ({
-      next: (data: any) => {
-        this.transactions = data.result;
-        console.log("transactions",this.transactions);
+  // Modified loadTransactions method
+loadTransactions(): void {
+  this.loading = true;
+  
+  this.transactionService.getTransactions().subscribe({
+    next: (data: any) => {
+      if (data && data.result) {
+        // Set the transactions from the content array
+        this.transactions = data.result.content || [];
+        
+        // Ensure totalPages is set correctly
+        this.totalPages = data.result.totalPages || 1;
         
         this.calculateStatistics();
         this.applyFilters();
-      },
-      error: (e) => 
-      {
-        
+
+    this.loadFilteredTransactions();
       }
-    });
-  }
+      
+      // Always set loading to false regardless of condition
+      this.loading = false;
+    },
+    error: (e) => {
+      console.error("Error loading transactions:", e);
+      this.loading = false;
+    }
+  });
+}
 
   loadCurrencies(): void {
     this.currencyService.getCurrencies().subscribe(data => {
@@ -238,23 +253,23 @@ export class TransactionHistoryComponent implements OnInit {
 
   onSearch(): void {
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadFilteredTransactions();
   }
 
   onStatusChange(status: string): void {
     this.statusFilter = status;
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadFilteredTransactions();
   }
 
   onDateChange(): void {
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadFilteredTransactions();
   }
 
   onCurrencyChange(): void {
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadFilteredTransactions();
   }
 
   resetFilters(): void {
@@ -263,17 +278,83 @@ export class TransactionHistoryComponent implements OnInit {
     this.dateFilter = '';
     this.currencyFilter = 'all';
     this.currentPage = 1;
-    this.applyFilters();
+    this.loadTransactions();
   }
 
+  loadFilteredTransactions(): void {
+    this.loading = true;
+
+    // Build query parameters for the API
+    const params = new HttpParams()
+      .set('page', (this.currentPage - 1).toString()) // Convert to 0-based for backend
+      .set('size', this.itemsPerPage.toString());
+
+    // Add filters if they exist
+    const filters: any = {};
+    let hasFilters = false;
+
+    if (this.searchTerm && this.searchTerm.trim() !== '') {
+      filters.searchTerm = this.searchTerm;
+      hasFilters = true;
+    }
+
+    if (this.statusFilter && this.statusFilter !== 'all') {
+      filters.status = this.statusFilter;
+      hasFilters = true;
+    }
+
+    if (this.dateFilter) {
+      filters.date = this.dateFilter;
+      hasFilters = true;
+    }
+
+    if (this.currencyFilter && this.currencyFilter !== 'all') {
+      filters.currency = this.currencyFilter;
+      hasFilters = true;
+    }
+
+    // Call transaction service with filters
+    this.transactionService.getFilteredTransactionss(this.currentPage - 1, this.itemsPerPage, filters)
+      .subscribe({
+        next: (response) => {
+          // Update component with paginated data
+          const pageData = response.result;
+
+          this.transactions = pageData.content || [];
+          this.filteredTransactions = pageData.content || [];
+
+          // Update pagination info
+          this.totalPages = pageData.totalPages || 1;
+          this.paginationInfo = {
+            from: pageData.numberOfElements > 0 ? pageData.number * pageData.size + 1 : 0,
+            to: Math.min((pageData.number + 1) * pageData.size, pageData.totalElements),
+            total: pageData.totalElements || 0
+          };
+
+          this.loading = false;
+          this.calculateStatistics();
+        },
+        error: (error) => {
+          console.error('Error loading filtered transactions:', error);
+          this.loading = false;
+          // Optionally show error message to user
+        }
+      });
+  }
+
+  // Update your goToPage method
   goToPage(page: number | string): void {
-    // Convert page to number if it's a numeric string
     const pageNum = typeof page === 'string' ? parseInt(page, 10) : page;
-    
-    // Only proceed if pageNum is a valid number
+
     if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= this.totalPages) {
       this.currentPage = pageNum;
-      this.applyFilters();
+
+      // Check if filters are applied
+      if (this.searchTerm || this.statusFilter !== 'all' || this.dateFilter || this.currencyFilter !== 'all') {
+        this.loadFilteredTransactions();
+      } else {
+        this.loadTransactions();
+      }
     }
   }
 

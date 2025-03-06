@@ -6,6 +6,7 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { interval } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
+import { DashboardService } from '../services/dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -34,6 +35,16 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     loansTrend: -3.2,
     profitTrend: 15.7
   };
+
+  stats1: DashboardStats[] = []
+
+  getDashboardStats(){
+    this.dashbordService.getDashboardStats().subscribe((response) => {
+      this.stats1 = response.result
+      console.log(this.stats1);
+    }
+    );
+  }
 
   // Historical data for mini charts in stat cards
   availableFundsHistory: number[] = [105000, 109000, 113500, 118000, 120500, 122000, 124750];
@@ -230,10 +241,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     lastCheck: new Date()
   };
 
-  constructor() { }
+  constructor(private dashbordService : DashboardService) { }
 
   ngOnInit(): void {
     this.loading = true;
+    this.getDashboardStats()
     this.setGreeting();
 
     // Simulate loading data

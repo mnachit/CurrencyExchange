@@ -1,0 +1,77 @@
+<!-- Floating Calculator Button -->
+<button class="calculator-toggle-btn" (click)="toggleCalculator()">
+    <i class="fas fa-calculator"></i>
+</button>
+
+<!-- Calculator Modal -->
+<div class="calculator-modal" [ngClass]="{'show': isShown}" #calculatorModal>
+    <div class="calculator-header">
+        <h2>Al Jazira Calculator</h2>
+        <button class="close-btn" (click)="toggleCalculator()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="calculator-history">
+        <div class="history-title">History</div>
+        <div class="history-list">
+            <div class="history-item" *ngFor="let item of history">{{ item }}</div>
+            <div *ngIf="history.length === 0" class="no-history">No calculations yet</div>
+        </div>
+    </div>
+
+    <div class="calculator-display">
+        {{ display }}
+    </div>
+
+    <div class="calculator-keypad">
+        <div class="calculator-row">
+            <button class="memory-btn" (click)="memoryClear()">MC</button>
+            <button class="memory-btn" (click)="memoryRecall()">MR</button>
+            <button class="memory-btn" (click)="memoryAdd()">M+</button>
+            <button class="memory-btn" (click)="memorySubtract()">M-</button>
+        </div>
+
+        <div class="calculator-row">
+            <button class="function-btn" (click)="clearAll()">C</button>
+            <button class="function-btn" (click)="clearEntry()">CE</button>
+            <button class="function-btn" (click)="percent()">%</button>
+            <button class="operator-btn" (click)="handleOperator('/')">&divide;</button>
+        </div>
+
+        <div class="calculator-row">
+            <button class="number-btn" (click)="inputDigit('7')">7</button>
+            <button class="number-btn" (click)="inputDigit('8')">8</button>
+            <button class="number-btn" (click)="inputDigit('9')">9</button>
+            <button class="operator-btn" (click)="handleOperator('*')">&times;</button>
+        </div>
+
+        <div class="calculator-row">
+            <button class="number-btn" (click)="inputDigit('4')">4</button>
+            <button class="number-btn" (click)="inputDigit('5')">5</button>
+            <button class="number-btn" (click)="inputDigit('6')">6</button>
+            <button class="operator-btn" (click)="handleOperator('-')">-</button>
+        </div>
+
+        <div class="calculator-row">
+            <button class="number-btn" (click)="inputDigit('1')">1</button>
+            <button class="number-btn" (click)="inputDigit('2')">2</button>
+            <button class="number-btn" (click)="inputDigit('3')">3</button>
+            <button class="operator-btn" (click)="handleOperator('+')">+</button>
+        </div>
+
+        <div class="calculator-row">
+            <button class="number-btn" (click)="negate()">+/-</button>
+            <button class="number-btn" (click)="inputDigit('0')">0</button>
+            <button class="number-btn" (click)="inputDecimal()">.</button>
+            <button class="equals-btn" (click)="calculateResult()">=</button>
+        </div>
+
+        <div class="calculator-row">
+            <button class="function-btn" (click)="squareRoot()">√</button>
+            <button class="function-btn" (click)="square()">x²</button>
+            <button class="function-btn" disabled></button>
+            <button class="function-btn" disabled></button>
+        </div>
+    </div>
+</div>

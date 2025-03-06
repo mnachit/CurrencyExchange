@@ -1,4 +1,11 @@
 <!-- Enhanced Transaction History Component with Better Admin Features -->
+ <!-- Loading overlay -->
+ <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner-container">
+        <div class="spinner"></div>
+        <p>Loading transaction history data...</p>
+    </div>
+</div>
 <div class="container-fluid transaction-container">
     <!-- Dashboard Summary Cards -->
     <div class="row mb-4">

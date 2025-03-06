@@ -4,6 +4,7 @@ import { Currency } from '../models/currency.model';
 import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { TransactionService } from '../services/transaction.service';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-exchange-calculator', standalone: true, // Keep as standalone component
@@ -17,7 +18,18 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
     NgbDropdownModule
   ],
   templateUrl: './exchange-calculator.component.html',
-  styleUrls: ['./exchange-calculator.component.css']
+  styleUrls: ['./exchange-calculator.component.css'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-20px)' }),
+        animate('300ms ease-in', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-out', style({ opacity: 0, transform: 'translateY(-20px)' }))
+      ])
+    ])
+  ]
 })
 export class ExchangeCalculatorComponent implements OnInit {
   exchangeForm: FormGroup;
@@ -98,6 +110,7 @@ export class ExchangeCalculatorComponent implements OnInit {
   isCalculating: boolean = false;
   transactionComplete: boolean = false;
   lastRateUpdate: Date = new Date();
+  saveSuccess: boolean = false;
 
   // For the recent exchanges display
   recentExchanges: any[] = [];
@@ -403,9 +416,6 @@ export class ExchangeCalculatorComponent implements OnInit {
       this.showConfirmation = true;
     } else {
       this.showConfirmation = true;
-      // Mark all form controls as touched to trigger validation messages
-      // this.markFormGroupTouched(this.exchangeForm);
-      // this.markFormGroupTouched(this.customerForm);
     }
   }
 
@@ -413,18 +423,23 @@ export class ExchangeCalculatorComponent implements OnInit {
     this.showConfirmation = false;
   }
 
+  messageResponse: string = '';
+
+  // Add these properties to your component class
+  errorMessage: string = '';
+  showError: boolean = false;
+
+  // Updated confirmExchange method
   confirmExchange(): void {
     // Close confirmation dialog
     this.showConfirmation = false;
 
-    // Show success dialog
-    this.showSuccess = true;
+    // Show loading state first
+    this.saveSuccess = true;
+    this.messageResponse = "Processing your exchange";
 
     // Generate receipt data
     this.generateReceiptData();
-
-    // Add to recent exchanges
-    this.addToRecentExchanges();
 
     // In a real application, you would call a service to save the transaction
     this.transactionComplete = true;
@@ -432,7 +447,44 @@ export class ExchangeCalculatorComponent implements OnInit {
     // Save user preferences for next time
     this.savePreferences();
 
-    this.transactionService.addTransaction(this.receiptData).subscribe();
+    this.transactionService.addTransaction(this.receiptData).subscribe(
+      (response) => {
+        console.log("Response: ", response);
+
+        // Hide loading spinner
+        this.saveSuccess = false;
+
+        if (response.status === 200) {
+          // Show success dialog after a short delay
+          setTimeout(() => {
+            this.showSuccess = true;
+          }, 300);
+        } else {
+          // Show error for other status codes including 400
+          this.errorMessage = response.message || "Transaction failed";
+          this.showError = true;
+          this.hideErrorAfterDelay();
+        }
+      },
+      (error) => {
+        console.error("Error occurred:", error);
+
+        // Hide loading spinner
+        this.saveSuccess = false;
+
+        // Show clear error message
+        this.errorMessage = "Transaction not saved. Please try again.";
+        this.showError = true;
+        this.hideErrorAfterDelay();
+      }
+    );
+  }
+
+  // Method to hide error after delay
+  hideErrorAfterDelay(): void {
+    setTimeout(() => {
+      this.showError = false;
+    }, 2000); // Longer display time (7 seconds) to ensure visibility
   }
 
   closeSuccess(): void {

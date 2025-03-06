@@ -3,34 +3,38 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { DashboardStats } from './../models/DashboardStats.model';
 import { Transaction } from '../models/transaction.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
-  private apiUrl = 'api/dashboard'; // This would be the actual API URL in a real application
+  private apiUrl = environment.apiUrl + '/dashboard';// This would be the actual API URL in a real application
 
   constructor(private http: HttpClient) { }
 
   // In a real application, these methods would make actual HTTP requests
   // For now, we'll use mock data
 
-  getDashboardStats(): Observable<DashboardStats> {
-    // Mock data
-    const stats: DashboardStats = {
-      availableFunds: 124750,
-      totalExchanges: 432,
-      activeLoans: 26380,
-      todayProfit: 2148,
-      fundsTrend: 12.5,
-      exchangesTrend: 8.3,
-      loansTrend: -3.2,
-      profitTrend: 15.7
-    };
+  // getDashboardStats(): Observable<DashboardStats> {
+  //   // Mock data
+  //   const stats: DashboardStats = {
+  //     availableFunds: 124750,
+  //     totalExchanges: 432,
+  //     activeLoans: 26380,
+  //     todayProfit: 2148,
+  //     fundsTrend: 12.5,
+  //     exchangesTrend: 8.3,
+  //     loansTrend: -3.2,
+  //     profitTrend: 15.7
+  //   };
 
-    return of(stats);
+  //   return of(stats);
+  // }
+
+  getDashboardStats(): Observable<{ message: string, result: DashboardStats[], errors: string, errorMap: string[] }> {
+    return this.http.get<{ message: string, result: DashboardStats[], errors: string, errorMap: string[] }>(this.apiUrl + '/getStatistics');
   }
-
   getRecentTransactions(limit: number = 5): Observable<Transaction[]> {
     // Mock data
     const transactions: Transaction[] = [
