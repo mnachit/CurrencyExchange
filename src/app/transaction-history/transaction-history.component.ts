@@ -6,6 +6,8 @@ import { CurrencyService } from '../services/currency.service';
 import { Router } from '@angular/router';
 import { Currency } from '../models/currency.model';
 import { HttpParams } from '@angular/common/http';
+import { AlertService } from '../services/alert.service';
+import { ConfirmationService } from '../services/confirmation.service';
 declare var bootstrap: any;
 
 @Component({
@@ -84,6 +86,7 @@ export class TransactionHistoryComponent implements OnInit {
     private dashboardService: DashboardService,
     private currencyService: CurrencyService,
     private router: Router,
+    private confirmationService: ConfirmationService
   ) { }
 
   ngOnInit(): void {
@@ -100,39 +103,63 @@ export class TransactionHistoryComponent implements OnInit {
     });
   }
   loading: boolean = true;
+  loading1: boolean = true;
 
   // Modified loadTransactions method
-loadTransactions(): void {
-  this.loading = true;
-  
-  this.transactionService.getTransactions().subscribe({
-    next: (data: any) => {
-      if (data && data.result) {
-        // Set the transactions from the content array
-        this.transactions = data.result.content || [];
-        
-        // Ensure totalPages is set correctly
-        this.totalPages = data.result.totalPages || 1;
-        
-        this.calculateStatistics();
-        this.applyFilters();
+  loadTransactions(): void {
+    this.loading = true;
 
-    this.loadFilteredTransactions();
+    this.transactionService.getTransactions().subscribe({
+      next: (data: any) => {
+        if (data && data.result) {
+          // Set the transactions from the content array
+          this.transactions = data.result.content || [];
+
+          // Ensure totalPages is set correctly
+          this.totalPages = data.result.totalPages || 1;
+
+          this.calculateStatistics();
+          this.applyFilters();
+
+          this.loadFilteredTransactions();
+        }
+
+        // Always set loading to false regardless of condition
+        this.loading = false;
+      },
+      error: (e) => {
+        console.error("Error loading transactions:", e);
+        this.loading = false;
       }
-      
-      // Always set loading to false regardless of condition
-      this.loading = false;
-    },
-    error: (e) => {
-      console.error("Error loading transactions:", e);
-      this.loading = false;
-    }
-  });
-}
+    });
+  }
 
   loadCurrencies(): void {
-    this.currencyService.getCurrencies().subscribe(data => {
-      this.currencies = data;
+    this.loading1 = true;
+    this.currencyService.getCurrencies().subscribe({
+      next: (response) => {
+        if (response && response.result) {
+          this.currencies = response.result;
+          console.log("Currencies loaded:", this.currencies);
+
+          // Only proceed if we have currencies
+          if (this.currencies && this.currencies.length > 0) {
+            // Set default currencies if they exist in the loaded data
+            const usdCurrency = this.currencies.find(c => c.code === 'USD');
+            const madCurrency = this.currencies.find(c => c.code === 'MAD');
+          }
+        } else {
+          console.error("No currencies returned from API");
+        }
+        this.loading1 = false;
+      },
+      error: (err) => {
+        console.error("Error loading currencies:", err);
+        this.loading1 = false;
+      },
+      complete: () => {
+        this.loading1 = false;
+      }
     });
   }
 
@@ -427,6 +454,40 @@ loadTransactions(): void {
     }
   }
 
+  downloadExcel(list: any[]): void {
+    this.transactionService.exportExcel(list).subscribe({
+      next: (response: Blob) => {
+        // Crear URL del objeto Blob
+        const url = window.URL.createObjectURL(response);
+        
+        // Crear un elemento de enlace temporal
+        const a = document.createElement('a');
+        a.href = url;
+        
+        // Generar nombre de archivo con timestamp
+        const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+        a.download = `transactions_${date}.xlsx`;
+        
+        // Anexar al documento, hacer clic y luego eliminar
+        document.body.appendChild(a);
+        a.click();
+        
+        // Limpiar
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        // Opcional: Mostrar un mensaje de éxito
+        // this.showSuccessMessage('Excel file downloaded successfully');
+        // alert('Excel file downloaded successfully');
+      },
+      error: (error) => {
+        console.error('Error downloading Excel file:', error);
+        // this.showErrorMessage('Failed to download Excel file');
+        alert('Failed to download Excel');
+      }
+    });
+  }
+
   // Handle bulk actions on selected transactions
   bulkAction(action: string): void {
     if (this.selectedTransactions.length === 0) {
@@ -438,28 +499,26 @@ loadTransactions(): void {
         alert(`Printing ${this.selectedTransactions.length} transaction receipts`);
         break;
       case 'export':
-        alert(`Exporting ${this.selectedTransactions.length} transactions as CSV`);
+        this.downloadExcel(this.selectedTransactions.map(t => t.id))
         break;
       case 'delete':
-        if (confirm(`Are you sure you want to delete ${this.selectedTransactions.length} transactions?`)) {
-          // In a real app, call service to delete transactions
-          this.transactions = this.transactions.filter(
-            t => !this.selectedTransactions.includes(t)
-          );
-          this.calculateStatistics();
-          this.applyFilters();
-
-          // Add to activity log
-          this.recentActivities.unshift({
-            action: 'Bulk Delete',
-            description: `${this.selectedTransactions.length} transactions were deleted`,
-            time: new Date(),
-            type: 'danger',
-            icon: 'fa-trash'
+        this.confirmationService.confirm({
+          title: 'Confirm Delete',
+          message: 'Are you sure you want to delete this item?',
+          type: 'danger'
+        }).then(confirmed => {
+          // console.log("selectedTransactions", this.selectedTransactions);
+          this.transactionService.deleteTransactions(this.selectedTransactions.map(t => t.id)).subscribe({
+            next: (response) => {
+              if (response) {
+                // Remove the transactions from the array
+                this.transactions = this.transactions.filter(t => !this.selectedTransactions.includes(t));
+                this.calculateStatistics();
+                this.applyFilters();
+              }
+            }
           });
-
-          this.selectedTransactions = [];
-        }
+        });
         break;
     }
   }

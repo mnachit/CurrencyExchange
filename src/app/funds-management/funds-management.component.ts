@@ -365,6 +365,8 @@ export class FundsManagementComponent implements OnInit {
       createdAt: new Date(),
     };
 
+    this.loadBalancesByCurrency(this.selectedCurrency);
+
     this.fundsService.addFundsManagement(newFund)
       .pipe(
         finalize(() => {

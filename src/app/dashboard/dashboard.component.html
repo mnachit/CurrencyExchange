@@ -35,13 +35,10 @@
                         <i class="fas fa-wallet"></i>
                     </div>
                 </div>
-                <div class="card-value-wrapper">
-                    <div class="card-value">${{ stats.availableFunds | number }}</div>
-                    <div class="card-trend"
-                        [ngClass]="{'positive': stats.fundsTrend > 0, 'negative': stats.fundsTrend < 0}">
-                        <i class="fas" [ngClass]="stats.fundsTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-                        {{ stats.fundsTrend }}% from last month
-                    </div>
+                <div class="mt-2">
+                    <a routerLink="/funds-management" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-cog me-1"></i> Manage Funds
+                    </a>
                 </div>
             </div>
             <div class="card-chart">
@@ -62,11 +59,12 @@
                     </div>
                 </div>
                 <div class="card-value-wrapper">
-                    <div class="card-value">{{ stats.totalExchanges | number }}</div>
+                    <div class="card-value">{{ dashboardStats.totalExchanges | number }}</div>
                     <div class="card-trend"
-                        [ngClass]="{'positive': stats.exchangesTrend > 0, 'negative': stats.exchangesTrend < 0}">
-                        <i class="fas" [ngClass]="stats.exchangesTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-                        {{ stats.exchangesTrend }}% from last month
+                        [ngClass]="{'positive': dashboardStats.exchangesTrend > 0, 'negative': dashboardStats.exchangesTrend < 0}">
+                        <i class="fas"
+                            [ngClass]="dashboardStats.exchangesTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+                        {{ dashboardStats.exchangesTrend }}% from last month
                     </div>
                 </div>
             </div>
@@ -88,11 +86,11 @@
                     </div>
                 </div>
                 <div class="card-value-wrapper">
-                    <div class="card-value">${{ stats.activeLoans | number }}</div>
+                    <div class="card-value">${{ dashboardStats.activeLoans | number }}</div>
                     <div class="card-trend"
-                        [ngClass]="{'positive': stats.loansTrend > 0, 'negative': stats.loansTrend < 0}">
-                        <i class="fas" [ngClass]="stats.loansTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-                        {{ stats.loansTrend * -1 }}% from last month
+                        [ngClass]="{'positive': dashboardStats.loansTrend > 0, 'negative': dashboardStats.loansTrend < 0}">
+                        <i class="fas" [ngClass]="dashboardStats.loansTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+                        {{ dashboardStats.loansTrend * -1 }}% from last month
                     </div>
                 </div>
             </div>
@@ -113,13 +111,19 @@
                         <i class="fas fa-chart-line"></i>
                     </div>
                 </div>
-                <div class="card-value-wrapper">
-                    <div class="card-value">${{ stats.todayProfit | number }}</div>
+                <!-- <div class="card-value-wrapper">
+                    <div class="card-value">${{ dashboardStats.todayProfit | number }}</div>
                     <div class="card-trend"
-                        [ngClass]="{'positive': stats.profitTrend > 0, 'negative': stats.profitTrend < 0}">
-                        <i class="fas" [ngClass]="stats.profitTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-                        {{ stats.profitTrend }}% from yesterday
+                        [ngClass]="{'positive': dashboardStats.profitTrend > 0, 'negative': dashboardStats.profitTrend < 0}">
+                        <i class="fas" [ngClass]="dashboardStats.profitTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+                        {{ dashboardStats.profitTrend }}% from yesterday
                     </div>
+                </div> -->
+
+                <div class="mt-2">
+                    <a routerLink="/funds-management" class="btn btn-sm btn-outline-danger">
+                        <i class="fas fa-cog me-1"></i> Manage Funds
+                    </a>
                 </div>
             </div>
             <div class="card-chart">
@@ -167,7 +171,7 @@
                     </div>
                     <div class="chart-metrics">
                         <div class="metric-item">
-                            <div class="metric-value">{{ totalTransactions | number }}</div>
+                            <div class="metric-value">{{ dashboardStats.totalExchanges | number }}</div>
                             <div class="metric-label">Total Transactions</div>
                         </div>
                         <div class="metric-item">
@@ -205,7 +209,7 @@
                                 </div>
                                 <div class="transaction-info">
                                     <span class="transaction-customer">{{ transaction.customerName }}</span>
-                                    <span class="transaction-time">{{ transaction.date | date:'shortTime' }}</span>
+                                    <span class="transaction-time">{{ transaction.createdAt | date:'shortTime' }}</span>
                                 </div>
                             </div>
                             <div class="transaction-amount"

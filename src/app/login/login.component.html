@@ -1,52 +1,55 @@
+<div class="global-error-banner float-end" *ngIf="showError">
+    <div class="error-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>email or password is incorrect</span>
+    </div>
+    <button class="close-error-btn" (click)="showError = false">×</button>
+</div>
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="login-card">
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <h2 class="login-title">Bureau de Change Al Jazira</h2>
-                        <p class="login-subtitle">Sign in to your account</p>
-                    </div>
-
-                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" id="username" formControlName="username" class="form-control"
-                                    placeholder="Enter your username"
-                                    [ngClass]="{'is-invalid': submitted && f['username'].errors}">
-                            </div>
-                            <div *ngIf="submitted && f['username'].errors" class="invalid-feedback d-block">
-                                <div *ngIf="f['username'].errors['required']">Username is required</div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input [type]="showPassword ? 'text' : 'password'" id="password"
-                                    formControlName="password" class="form-control" placeholder="Enter your password"
-                                    [ngClass]="{'is-invalid': submitted && f['password'].errors}">
-                                <button class="btn btn-outline-secondary" type="button"
-                                    (click)="togglePasswordVisibility()">
-                                    <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-                                </button>
-                            </div>
-                            <div *ngIf="submitted && f['password'].errors" class="invalid-feedback d-block">
-                                <div *ngIf="f['password'].errors['required']">Password is required</div>
-                            </div>
-                        </div>
-
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-sign-in-alt me-2"></i> Sign In
-                            </button>
-                        </div>
-                    </form>
-                </div>
+    <div class="login-card">
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <h2 class="login-title">Bureau de Change Al Jazira</h2>
+                <p class="login-subtitle">Sign in to your account</p>
             </div>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="email" id="email" formControlName="email" class="form-control"
+                            placeholder="Enter your email"
+                            [ngClass]="{'is-invalid': submitted && f['email'].errors}">
+                    </div>
+                    <div *ngIf="submitted && f['email'].errors" class="invalid-feedback d-block">
+                        <div *ngIf="f['email'].errors['required']">email is required</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input [type]="showPassword ? 'text' : 'password'" id="password"
+                            formControlName="password" class="form-control" placeholder="Enter your password"
+                            [ngClass]="{'is-invalid': submitted && f['password'].errors}">
+                        <button class="btn btn-outline-secondary" type="button"
+                            (click)="togglePasswordVisibility()">
+                            <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
+                    <div *ngIf="submitted && f['password'].errors" class="invalid-feedback d-block">
+                        <div *ngIf="f['password'].errors['required']">Password is required</div>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i> Sign In
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

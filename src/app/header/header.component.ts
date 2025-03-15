@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -78,7 +79,7 @@ export class HeaderComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, public authService: AuthService) { }
 
   ngOnInit(): void {
     // Close dropdowns when clicking outside
@@ -159,10 +160,6 @@ export class HeaderComponent implements OnInit {
    * Handle logout
    */
   logout(): void {
-    // In a real app, you would call an auth service logout method
-    console.log('Logging out...');
-
-    // Navigate to login page
-    // this.router.navigate(['/login']);
+    this.authService.logout();
   }
 }

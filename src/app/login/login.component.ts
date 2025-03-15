@@ -3,6 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../services/auth.service';
+import { User } from '../models/User';
+import { TokenService } from '../services/token.service';
 
 @Component({
   selector: 'app-login',
@@ -19,15 +22,18 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   submitted = false;
   showPassword = false;
+  showError = false;
 
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    public authService: AuthService,
+    public tokerService: TokenService
   ) { }
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
+      email: ['', Validators.required],
       password: ['', Validators.required]
     });
   }
@@ -45,17 +51,31 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    // In a real application, you would call an authentication service here
-    // For demo purposes, we'll just navigate to the dashboard
-    console.log('Login credentials:', this.loginForm.value);
 
     // Simple mock authentication (in a real app, this would be handled by a service)
-    if (this.loginForm.value.username === 'admin' && this.loginForm.value.password === 'admin') {
-      // Navigate to dashboard
-      this.router.navigate(['/dashboard']);
+    if (this.loginForm.value.email && this.loginForm.value.password) {
+      const user = {
+        email: this.loginForm.value.email,
+        password: this.loginForm.value.password
+      } as any;
+      this.authService.login1(user).pipe().subscribe(
+        {
+          next: (response) => {
+            if (response) {
+              this.tokerService.saveToken(response.result);
+              
+              this.router.navigate(['/dashboard']);
+            }
+          },
+          error: (error) => {
+            this.showError = true;
+            console.error('There was an error!', error);
+          }
+        }
+      );
     } else {
       // Show error message
-      alert('Invalid username or password');
+      alert('Invalid email or password');
     }
   }
 

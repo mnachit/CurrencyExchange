@@ -5,6 +5,7 @@ import { CommonModule, CurrencyPipe, DatePipe, DecimalPipe } from '@angular/comm
 import { TransactionService } from '../services/transaction.service';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { CurrencyService } from '../services/currency.service';
 
 @Component({
   selector: 'app-exchange-calculator', standalone: true, // Keep as standalone component
@@ -36,64 +37,7 @@ export class ExchangeCalculatorComponent implements OnInit {
   customerForm: FormGroup;
   showDropdownFrom = false;
   showDropdownTo = false;
-  currencies: Currency[] = [
-    {
-      code: 'USD',
-      name: 'US Dollar',
-      flagUrl: 'https://flagcdn.com/w40/us.png',
-      buyRate: 1.0000,
-      sellRate: 1.0000
-    },
-    {
-      code: 'EUR',
-      name: 'Euro',
-      flagUrl: 'https://flagcdn.com/w40/eu.png',
-      buyRate: 0.9120,
-      sellRate: 0.9280
-    },
-    {
-      code: 'GBP',
-      name: 'British Pound',
-      flagUrl: 'https://flagcdn.com/w40/gb.png',
-      buyRate: 0.7850,
-      sellRate: 0.7990
-    },
-    {
-      code: 'JPY',
-      name: 'Japanese Yen',
-      flagUrl: 'https://flagcdn.com/w40/jp.png',
-      buyRate: 142.50,
-      sellRate: 145.20
-    },
-    {
-      code: 'SAR',
-      name: 'Saudi Riyal',
-      flagUrl: 'https://flagcdn.com/w40/sa.png',
-      buyRate: 3.7500,
-      sellRate: 3.7600
-    },
-    {
-      code: 'AED',
-      name: 'UAE Dirham',
-      flagUrl: 'https://flagcdn.com/w40/ae.png',
-      buyRate: 3.6720,
-      sellRate: 3.6780
-    },
-    {
-      code: 'MAD',
-      name: 'Moroccan Dirham',
-      flagUrl: 'https://flagcdn.com/w40/ma.png',
-      buyRate: 9.8500,
-      sellRate: 9.9200
-    },
-    {
-      code: 'CAD',
-      name: 'Canadian Dollar',
-      flagUrl: 'https://flagcdn.com/w40/ca.png',
-      buyRate: 1.3520,
-      sellRate: 1.3680
-    }
-  ];
+  currencies: Currency[] = [];
 
   fromCurrency: Currency;
   toCurrency: Currency;
@@ -111,6 +55,7 @@ export class ExchangeCalculatorComponent implements OnInit {
   transactionComplete: boolean = false;
   lastRateUpdate: Date = new Date();
   saveSuccess: boolean = false;
+  loading = true;
 
   // For the recent exchanges display
   recentExchanges: any[] = [];
@@ -118,7 +63,7 @@ export class ExchangeCalculatorComponent implements OnInit {
   // For the display rates (simplified for the UI)
   displayRates: any[] = [];
 
-  constructor(private fb: FormBuilder, private transactionService: TransactionService) {
+  constructor(private fb: FormBuilder, private transactionService: TransactionService, private currencyService : CurrencyService) {
     this.fromCurrency = this.currencies[0]; // USD
     this.toCurrency = this.currencies[6]; // MAD - Moroccan Dirham
 
@@ -141,6 +86,43 @@ export class ExchangeCalculatorComponent implements OnInit {
   ngOnInit(): void {
     // Load any saved preferences or previous transactions
     this.loadSavedPreferences();
+    this.getCurrencies();
+  }
+
+  getCurrencies(): void {
+    this.loading = true;
+    this.currencyService.getCurrencies().subscribe({
+      next: (response) => {
+        if (response && response.result) {
+          this.currencies = response.result;
+          this.messageResponse = response.message;
+          console.log("Currencies loaded:", this.currencies);
+          
+          // Only proceed if we have currencies
+          if (this.currencies && this.currencies.length > 0) {
+            // Set default currencies if they exist in the loaded data
+            const usdCurrency = this.currencies.find(c => c.code === 'USD');
+            const madCurrency = this.currencies.find(c => c.code === 'MAD');
+            
+            if (usdCurrency) this.fromCurrency = usdCurrency;
+            if (madCurrency) this.toCurrency = madCurrency;
+            
+            // Calculate exchange rates after currencies are loaded
+            this.calculateExchangeRate();
+          }
+        } else {
+          console.error("No currencies returned from API");
+        }
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error("Error loading currencies:", err);
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
   }
 
   loadSavedPreferences(): void {
@@ -177,13 +159,18 @@ export class ExchangeCalculatorComponent implements OnInit {
 
   prepareDisplayRates(): void {
     // Create a simplified list of rates against USD for the rates display
-    this.displayRates = this.currencies.slice(1).map(currency => {
-      return {
-        currency: currency.code,
-        buyRate: currency.buyRate,
-        sellRate: currency.sellRate
-      };
-    });
+    // We'll update this after currencies are loaded
+    setTimeout(() => {
+      if (this.currencies.length > 0) {
+        this.displayRates = this.currencies.filter(c => c.code !== 'USD').map(currency => {
+          return {
+            currency: currency.code,
+            buyRate: currency.buyRate,
+            sellRate: currency.sellRate
+          };
+        });
+      }
+    }, 500);
   }
 
   generateMockRecentExchanges(): void {

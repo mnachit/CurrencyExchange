@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-calculator',
-  standalone: true,
-  imports: [CommonModule],
+  standalone: false,
   templateUrl: './calculator.component.html',
   styleUrls: ['./calculator.component.css']
 })

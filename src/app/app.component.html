@@ -1,4 +1,4 @@
-<div class="app-container">
+<div class="app-container" *ngIf="authService.isLoggedIn(); else loginTemplate">
   <app-sidebar></app-sidebar>
   <div class="main-content">
     <app-header></app-header>
@@ -6,6 +6,9 @@
       <router-outlet></router-outlet>
     </div>
   </div>
-
   <app-calculator></app-calculator>
+  <app-confirmation-dialog></app-confirmation-dialog>
 </div>
+<ng-template #loginTemplate>
+  <app-login></app-login>
+</ng-template>

@@ -1,84 +1,96 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Loan } from '../models/loan.model';
+import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+
+interface ApiResponse<T> {
+  message: string;
+  result: T;
+}
+
+interface PageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoanService {
-  private apiUrl = 'api/loans'; // This would be the actual API URL in a real application
+  private apiUrl = environment.apiUrl + '/loan';
 
   constructor(private http: HttpClient) { }
 
-  // In a real application, these methods would make actual HTTP requests
-  // For now, we'll use mock data
+  /**
+   * Get loans with pagination and optional filtering
+   */
+  getLoans(
+    page: number = 0, 
+    size: number = 10, 
+    searchTerm?: string, 
+    status?: string, 
+    date?: string, 
+    currency?: string
+  ): Observable<{ loans: Loan[], totalPages: number, totalElements: number }> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
 
-  getLoans(): Observable<Loan[]> {
-    // Mock data
-    const loans: Loan[] = [
-      {
-        id: 'L78901',
-        customerName: 'Abdul Rahman',
-        amount: 5000,
-        currency: 'USD',
-        issueDate: new Date(2025, 0, 15), // Jan 15, 2025
-        dueDate: new Date(2025, 2, 15), // Mar 15, 2025
-        status: 'active'
-      },
-      {
-        id: 'L78900',
-        customerName: 'Layla Mahmoud',
-        amount: 10000,
-        currency: 'SAR',
-        issueDate: new Date(2025, 0, 10), // Jan 10, 2025
-        dueDate: new Date(2025, 1, 10), // Feb 10, 2025
-        status: 'repaid'
-      },
-      {
-        id: 'L78899',
-        customerName: 'Omar Khalid',
-        amount: 3500,
-        currency: 'EUR',
-        issueDate: new Date(2024, 11, 28), // Dec 28, 2024
-        dueDate: new Date(2025, 1, 28), // Feb 28, 2025
-        status: 'overdue'
-      }
-    ];
+    // Add optional filters if they exist
+    if (searchTerm) params = params.set('searchTerm', searchTerm);
+    if (status && status !== 'all') params = params.set('status', status);
+    if (date) params = params.set('date', date);
+    if (currency && currency !== 'all') params = params.set('currency', currency);
 
-    return of(loans);
+    return this.http.get<ApiResponse<PageResponse<Loan>>>(`${this.apiUrl}/getList`, { params })
+      .pipe(
+        map(response => {
+          // Convert dates from strings to Date objects
+          const loans = response.result.content.map(loan => ({
+            ...loan,
+            issueDate: new Date(loan.issueDate),
+            dueDate: new Date(loan.dueDate)
+          }));
+
+          return {
+            loans,
+            totalPages: response.result.totalPages,
+            totalElements: response.result.totalElements
+          };
+        })
+      );
   }
 
-  getLoan(id: string): Observable<Loan | undefined> {
-    return this.getLoans().pipe(
-      map(loans => loans.find(loan => loan.id === id))
-    );
+  /**
+   * Save a new loan
+   */
+  saveLoan(loan: Loan): Observable<ApiResponse<Loan>> {
+    return this.http.post<ApiResponse<Loan>>(`${this.apiUrl}/save`, loan);
   }
 
-  addLoan(loan: Omit<Loan, 'id' | 'status'>): Observable<Loan> {
-    const newLoan: Loan = {
-      ...loan,
-      id: 'L' + Math.floor(Math.random() * 100000).toString().padStart(5, '0'),
-      status: 'active'
-    };
-
-    // In a real application, this would make an API call
-    return of(newLoan);
+  /**
+   * Update an existing loan
+   */
+  updateLoan(loan: Loan): Observable<ApiResponse<Loan>> {
+    return this.http.put<ApiResponse<Loan>>(`${this.apiUrl}/update/${loan.id}`, loan);
   }
 
-  updateLoan(id: string, loan: Partial<Loan>): Observable<boolean> {
-    // In a real application, this would make an API call
-    return of(true);
+  /**
+   * Delete a loan
+   */
+  deleteLoan(id: string): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/delete/${id}`);
   }
 
-  deleteLoan(id: string): Observable<boolean> {
-    // In a real application, this would make an API call
-    return of(true);
-  }
-
-  markAsRepaid(id: string): Observable<boolean> {
-    // In a real application, this would make an API call
-    return of(true);
+  /**
+   * Change loan status
+   */
+  changeStatus(id: string, status: string): Observable<ApiResponse<Loan>> {
+    return this.http.post<ApiResponse<Loan>>(`${this.apiUrl}/status/${id}/${status}`, null);
   }
 }

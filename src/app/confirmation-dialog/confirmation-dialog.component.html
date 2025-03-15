@@ -1,0 +1,25 @@
+<!-- src/app/components/confirmation-dialog/confirmation-dialog.component.html -->
+<div class="modal fade" #confirmationModal tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" *ngIf="dialogData">
+            <div class="modal-header" [ngClass]="'bg-' + dialogData.type">
+                <h5 class="modal-title"
+                    [ngClass]="{'text-white': dialogData.type !== 'info' && dialogData.type !== 'warning'}">
+                    {{ dialogData.title }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p [innerHTML]="dialogData.message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="onCancel()">
+                    {{ dialogData.cancelText }}
+                </button>
+                <button type="button" class="btn" [ngClass]="'btn-' + dialogData.type" (click)="onConfirm()">
+                    {{ dialogData.confirmText }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

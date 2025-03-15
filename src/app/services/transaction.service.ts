@@ -21,6 +21,10 @@ export class TransactionService {
     return this.http.get<any>(`${this.apiUrl}/getList?page=${page}&size=${size}`);
   }
 
+  getRecentTransactions(): Observable<{ message: string, result: Transaction[], errors: string, errorMap: string[] }> {
+    return this.http.get<{ message: string, result: Transaction[], errors: string, errorMap: string[] }>(`${this.apiUrl}/getRecentTransactions`);
+  }
+
   getFilteredTransactionss(page: number = 0, size: number = 10, filters?: any): Observable<any> {
     let params = new HttpParams()
       .set('page', page.toString())
@@ -76,6 +80,19 @@ export class TransactionService {
     // In a real application, this would make an API call
     return of(true);
   }
+
+  deleteTransactions(ids: string[]): Observable<{ message: string, result: string, errors: [status: number, message: string], errorMap: string[], status: number }> {
+
+    return this.http.post<{ message: string, result: string, errors: [status: number, message: string], errorMap: string[], status: number }>(this.apiUrl + '/deleteTransactions',ids);    
+  }
+
+  exportExcel(ids: number[]): Observable<Blob> {
+    return this.http.post(this.apiUrl + '/exportExcel', ids, {
+      responseType: 'blob'  // Importante: esto indica que esperamos un archivo binario
+    });
+  }
+
+  
 
   exportTransactions(format: 'csv' | 'excel' = 'csv'): Observable<Blob> {
     // In a real application, this would make an API call to get export data

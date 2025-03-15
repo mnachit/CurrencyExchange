@@ -7,17 +7,18 @@ import { CurrencyRatesComponent } from './currency-rates/currency-rates.componen
 import { LoanManagementComponent } from './loan-management/loan-management.component';
 import { FundsManagementComponent } from './funds-management/funds-management.component';
 import { LoginComponent } from './login/login.component';
+import { checkTokenGuard } from './Guard/check-token.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'exchange', component: ExchangeCalculatorComponent },
-  { path: 'transactions', component: TransactionHistoryComponent },
-  { path: 'currencies', component: CurrencyRatesComponent },
-  { path: 'loans', component: LoanManagementComponent },
-  { path: 'funds-management', component: FundsManagementComponent },
-  { path: '**', redirectTo: 'dashboard' }
+  { path: '', redirectTo: 'login', pathMatch: 'full'},
+  { path: 'dashboard', component: DashboardComponent, canActivate: [checkTokenGuard]},
+  { path: 'exchange', component: ExchangeCalculatorComponent, canActivate: [checkTokenGuard]},
+  { path: 'transactions', component: TransactionHistoryComponent, canActivate: [checkTokenGuard]},
+  { path: 'currencies', component: CurrencyRatesComponent, canActivate: [checkTokenGuard]},
+  { path: 'loans', component: LoanManagementComponent, canActivate: [checkTokenGuard]},
+  { path: 'funds-management', component: FundsManagementComponent, canActivate: [checkTokenGuard]},
+  { path: '**', redirectTo: 'dashboard'}
 ];
 
 @NgModule({

@@ -32,8 +32,8 @@ export class DashboardService {
   //   return of(stats);
   // }
 
-  getDashboardStats(): Observable<{ message: string, result: DashboardStats[], errors: string, errorMap: string[] }> {
-    return this.http.get<{ message: string, result: DashboardStats[], errors: string, errorMap: string[] }>(this.apiUrl + '/getStatistics');
+  getDashboardStats(): Observable<{ message: string, result: DashboardStats, errors: string, errorMap: string[] }> {
+    return this.http.get<{ message: string, result: DashboardStats, errors: string, errorMap: string[] }>(this.apiUrl + '/getStatistics');
   }
   getRecentTransactions(limit: number = 5): Observable<Transaction[]> {
     // Mock data
@@ -108,5 +108,25 @@ export class DashboardService {
     }
 
     return of({ labels, data });
+  }
+
+  getRecentCountTransactionsWithDay(day: string): Observable<any> {
+    return this.http.get<any>(this.apiUrl + '/getRecentCountTransactionsWithDay/' + day);
+  }
+
+  getRecentTransactionsLast3Months(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + '/getRecentTransactionsLast3Months');
+  }
+
+  getRecentTransactionsLast7Days(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + '/getRecentTransactionsLast7Days');
+  }
+
+  getRecentTransactionsLast4Weeks(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + '/getRecentTransactionsLast4Weeks');
+  }
+
+  getRecentTransactionsLast12Months(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + '/getRecentTransactionsLast12Months');
   }
 }
