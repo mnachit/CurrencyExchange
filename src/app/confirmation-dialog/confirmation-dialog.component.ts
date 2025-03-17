@@ -22,11 +22,11 @@ export class ConfirmationDialogComponent implements OnInit {
     this.modalInstance = new bootstrap.Modal(this.modalElement.nativeElement);
     
     // Listen for dialog data changes
-    setInterval(() => {
-      if (this.confirmationService.isDialogOpen() && !this.modalElement.nativeElement.classList.contains('show')) {
-        this.modalInstance.show();
-      }
-    }, 100);
+    // setInterval(() => {
+    //   if (this.confirmationService.isDialogOpen() && !this.modalElement.nativeElement.classList.contains('show')) {
+    //     this.modalInstance.show();
+    //   }
+    // }, 100);
     
     // Set up modal hide event listener
     this.modalElement.nativeElement.addEventListener('hidden.bs.modal', () => {

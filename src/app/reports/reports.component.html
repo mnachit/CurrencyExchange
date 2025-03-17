@@ -1,0 +1,287 @@
+<div class="reports-container">
+    <!-- Header section -->
+    <div class="header-section mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="section-title">
+                    <i class="fas fa-file-alt me-2"></i> Reports
+                </h2>
+                <p class="text-muted">Generate and download reports for your exchange bureau</p>
+            </div>
+            <div class="d-print-none">
+                <button class="btn btn-outline-primary me-2" (click)="printReport()">
+                    <i class="fas fa-print me-2"></i> Print Current View
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Report Configuration Card -->
+        <div class="col-lg-4 d-print-none">
+            <div class="card config-card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cog me-2"></i> Report Configuration
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="reportForm">
+                        <!-- Report Type -->
+                        <div class="mb-3">
+                            <label class="form-label">Report Type</label>
+                            <select class="form-select" formControlName="reportType" (change)="onReportTypeChange()">
+                                <option *ngFor="let type of reportTypes" [value]="type.id">{{ type.name }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Format Selection -->
+                        <div class="mb-3">
+                            <label class="form-label">Format</label>
+                            <div class="format-selector" formControlName="format">
+                                <div class="row g-2">
+                                    <div class="col-4" *ngFor="let format of formats">
+                                        <div class="format-option"
+                                            [class.active]="reportForm.get('format')?.value === format.id"
+                                            (click)="reportForm.get('format')?.setValue(format.id)">
+                                            <i class="fas" [ngClass]="format.icon"></i>
+                                            <span>{{ format.name }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date Range -->
+                        <div class="mb-3" *ngIf="selectedReport?.showDateRange">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label mb-0">Date Range</label>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                        id="dateRangePresets" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-calendar-alt me-1"></i> Presets
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dateRangePresets">
+                                        <li><a class="dropdown-item" href="javascript:void(0)"
+                                                (click)="setPresetDateRange('today')">Today</a></li>
+                                        <li><a class="dropdown-item" href="javascript:void(0)"
+                                                (click)="setPresetDateRange('yesterday')">Yesterday</a></li>
+                                        <li><a class="dropdown-item" href="javascript:void(0)"
+                                                (click)="setPresetDateRange('last7days')">Last 7 Days</a></li>
+                                        <li><a class="dropdown-item" href="javascript:void(0)"
+                                                (click)="setPresetDateRange('last30days')">Last 30 Days</a></li>
+                                        <li><a class="dropdown-item" href="javascript:void(0)"
+                                                (click)="setPresetDateRange('thisMonth')">This Month</a></li>
+                                        <li><a class="dropdown-item" href="javascript:void(0)"
+                                                (click)="setPresetDateRange('lastMonth')">Last Month</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div formGroupName="dateRange" class="row g-2">
+                                <div class="col-6">
+                                    <input type="date" class="form-control" formControlName="startDate">
+                                </div>
+                                <div class="col-6">
+                                    <input type="date" class="form-control" formControlName="endDate">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Currency -->
+                        <div class="mb-3" *ngIf="selectedReport?.showCurrency">
+                            <label class="form-label">Currency</label>
+                            <select class="form-select" formControlName="currency">
+                                <option value="all">All Currencies</option>
+                                <option *ngFor="let currency of currencies" [value]="currency.code">
+                                    {{ currency.code }} - {{ currency.name }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="mb-3" *ngIf="selectedReport?.showStatus">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" formControlName="status">
+                                <option value="all">All Statuses</option>
+                                <option value="COMPLETED">Completed</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="CANCELED">Canceled</option>
+                                <option value="ACTIVE">Active</option>
+                                <option value="OVERDUE">Overdue</option>
+                                <option value="REPAID">Repaid</option>
+                            </select>
+                        </div>
+
+                        <!-- Include Details -->
+                        <div class="form-check mb-3" *ngIf="selectedReport?.showDetails">
+                            <input class="form-check-input" type="checkbox" id="includeDetails"
+                                formControlName="includeDetails">
+                            <label class="form-check-label" for="includeDetails">
+                                Include detailed information
+                            </label>
+                        </div>
+
+                        <!-- Generate Button -->
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" [disabled]="loading" (click)="generateReport()">
+                                <i class="fas fa-file-download me-2"></i>
+                                {{ loading ? 'Generating...' : 'Generate & Download Report' }}
+                            </button>
+                        </div>
+
+                        <!-- Progress bar -->
+                        <div class="progress mt-3" *ngIf="generateClicked">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                [style.width]="downloadProgress + '%'" [attr.aria-valuenow]="downloadProgress"
+                                aria-valuemin="0" aria-valuemax="100">
+                                {{ downloadProgress }}%
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent Reports -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-history me-2"></i> Recent Reports
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <a href="javascript:void(0)" class="list-group-item list-group-item-action"
+                            *ngFor="let report of recentReports">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <div class="report-icon me-3">
+                                        <i class="fas" [ngClass]="getFormatIcon(report.format)"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">{{ report.reportName }}</h6>
+                                        <small class="text-muted">Generated on {{ report.createdAt | date }}</small>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-icon" (click)="downloadReport(report)">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Preview Card -->
+        <div class="col-lg-8">
+            <div class="card preview-card" *ngIf="selectedReport">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas" [ngClass]="selectedReport.icon"></i>
+                        {{ selectedReport.title }} Preview
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="report-preview-container">
+                        <!-- Report Header -->
+                        <div class="report-header text-center mb-4 pb-3 border-bottom">
+                            <div class="report-logo mb-2">Bureau de Change Al Jazira</div>
+                            <h2 class="report-title">{{ selectedReport.title }}</h2>
+                            <p class="report-subtitle">
+                                {{ reportForm.get('dateRange.startDate')?.value | date:'mediumDate' }} -
+                                {{ reportForm.get('dateRange.endDate')?.value | date:'mediumDate' }}
+                            </p>
+                        </div>
+
+                        <!-- Report Description -->
+                        <div class="report-description mb-4">
+                            <p>{{ selectedReport.description }}</p>
+                            <p class="text-muted">
+                                <small>* This is a preview of the report. The actual report may contain more
+                                    data.</small>
+                            </p>
+                        </div>
+
+                        <!-- Report Format Badge -->
+                        <div class="format-badge mb-4">
+                            <span class="badge bg-light text-dark">
+                                <i class="fas" [ngClass]="getFormatIcon(reportForm.get('format')?.value)"></i>
+                                {{ reportForm.get('format')?.value | uppercase }} Format
+                            </span>
+                            <span class="badge bg-light text-dark ms-2"
+                                *ngIf="reportForm.get('currency')?.value !== 'all'">
+                                <i class="fas fa-coins"></i>
+                                Currency: {{ reportForm.get('currency')?.value }}
+                            </span>
+                            <span class="badge bg-light text-dark ms-2"
+                                *ngIf="reportForm.get('status')?.value !== 'all'">
+                                <i class="fas fa-tag"></i>
+                                Status: {{ reportForm.get('status')?.value }}
+                            </span>
+                        </div>
+
+                        <!-- Report Data Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <ng-container
+                                            *ngIf="selectedReport?.previewData && selectedReport.previewData.length > 0">
+                                            <th *ngFor="let key of objectKeys(selectedReport.previewData[0])">
+                                                {{ key | titlecase }}
+                                            </th>
+                                        </ng-container>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of selectedReport?.previewData">
+                                        <ng-container *ngIf="item">
+                                            <td *ngFor="let key of objectKeys(item)">
+                                                {{ item[key] }}
+                                            </td>
+                                        </ng-container>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Report Summary -->
+                        <div class="report-summary mt-4 pt-3 border-top">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="summary-card bg-light p-3 rounded">
+                                        <h6 class="summary-title">Total Records</h6>
+                                        <div class="summary-value">{{ selectedReport.previewData.length }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="summary-card bg-light p-3 rounded">
+                                        <h6 class="summary-title">Date Range</h6>
+                                        <div class="summary-value">{{ reportForm.get('dateRange.startDate')?.value |
+                                            date:'shortDate' }} - {{ reportForm.get('dateRange.endDate')?.value |
+                                            date:'shortDate' }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="summary-card bg-light p-3 rounded">
+                                        <h6 class="summary-title">Generated On</h6>
+                                        <div class="summary-value">{{ getDefaultEndDate() | date:'medium' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Report Footer -->
+                        <div class="report-footer text-center mt-4 pt-3 border-top">
+                            <p class="mb-0">
+                                <small>Report generated by Bureau de Change Al Jazira. For official use only.</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

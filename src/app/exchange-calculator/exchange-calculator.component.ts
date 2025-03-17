@@ -542,13 +542,13 @@ export class ExchangeCalculatorComponent implements OnInit {
 
   saveTransactionToHistory(transaction: any): void {
     // In a real application, this would save to a database or local storage
-    try {
-      const history = JSON.parse(localStorage.getItem('transactionHistory') || '[]');
-      history.push(transaction);
-      localStorage.setItem('transactionHistory', JSON.stringify(history));
-    } catch (e) {
-      console.error('Error saving transaction history', e);
-    }
+    // try {
+    //   const history = JSON.parse(localStorage.getItem('transactionHistory') || '[]');
+    //   history.push(transaction);
+    //   localStorage.setItem('transactionHistory', JSON.stringify(history));
+    // } catch (e) {
+    //   console.error('Error saving transaction history', e);
+    // }
   }
 
   resetForms(): void {

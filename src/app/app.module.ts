@@ -25,6 +25,7 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
 import { ConfirmationService } from './services/confirmation.service';
 import { AuthInterceptor } from './auth.interceptor';
 import { TokenService } from './services/token.service';
+import { ReportsComponent } from './reports/reports.component';
 
 
 @NgModule({
@@ -41,6 +42,7 @@ import { TokenService } from './services/token.service';
     CalculatorComponent,
     AlertComponent,
     ConfirmationDialogComponent,
+    ReportsComponent,
   ],
   imports: [
     BrowserModule,

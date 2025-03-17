@@ -8,6 +8,7 @@ import { LoanManagementComponent } from './loan-management/loan-management.compo
 import { FundsManagementComponent } from './funds-management/funds-management.component';
 import { LoginComponent } from './login/login.component';
 import { checkTokenGuard } from './Guard/check-token.guard';
+import { ReportsComponent } from './reports/reports.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'currencies', component: CurrencyRatesComponent, canActivate: [checkTokenGuard]},
   { path: 'loans', component: LoanManagementComponent, canActivate: [checkTokenGuard]},
   { path: 'funds-management', component: FundsManagementComponent, canActivate: [checkTokenGuard]},
+  { path: 'reports', component: ReportsComponent, canActivate: [checkTokenGuard]},
   { path: '**', redirectTo: 'dashboard'}
 ];
 

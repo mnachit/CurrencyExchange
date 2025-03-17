@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { FundsManagementService } from '../services/funds-management.service';
 import { finalize } from 'rxjs/operators';
-import { Currency, Funds, OperationFunds } from '../models/funds.mode';
+import { Currency, Funds, OperationFunds, User } from '../models/funds.mode';
 
 // Define currency type to fix index signature errors
 type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'MAD' | 'SAR' | 'AED';
@@ -46,7 +46,6 @@ export class FundsManagementComponent implements OnInit {
   selectedCurrency: CurrencyCode = 'MAD';
   confirmationData: ConfirmationData | null = null;
 
-
   // Currency balances for each supported currency
   currencyBalances: Record<CurrencyCode, number> = {
     USD: 0,
@@ -86,7 +85,6 @@ export class FundsManagementComponent implements OnInit {
   loadingOperations: boolean = false;
   loadingBalances: boolean = false;
   showConfirmation: boolean = false;
-  // confirmationData: any = null;
   errorMessage: string = '';
 
   // For the sparkline chart
@@ -120,13 +118,13 @@ export class FundsManagementComponent implements OnInit {
    */
   loadBalancesByCurrency(currencyCode: CurrencyCode): void {
     this.loadingBalances = true;
-  
+
     const currencyRequest: Funds = {
       operationFunds: OperationFunds.ADD,
       currency: currencyCode as Currency,
       amount: 0,
     };
-  
+
     this.fundsService.getAvailableBalanceWithCurrency(currencyRequest)
       .pipe(
         finalize(() => {
@@ -139,10 +137,10 @@ export class FundsManagementComponent implements OnInit {
           if (response.result !== null && response.result !== undefined) {
             // The result is directly the balance, not a JSON object
             // Just update the selected currency's balance
-            this.currencyBalances[currencyCode] = typeof response.result === 'string' 
-              ? parseFloat(response.result) 
+            this.currencyBalances[currencyCode] = typeof response.result === 'string'
+              ? parseFloat(response.result)
               : response.result;
-  
+
             // Calculate statistics and chart data with the new balance
             this.calculateStatistics();
             this.generateChartData();
@@ -177,6 +175,8 @@ export class FundsManagementComponent implements OnInit {
                 // If it's already an object, assign it directly
                 this.fundOperations = response.result;
               }
+              console.log('Fund operations:', this.fundOperations);
+
               this.calculateStatistics();
               this.generateChartData();
             } catch (error) {
@@ -325,7 +325,7 @@ export class FundsManagementComponent implements OnInit {
     if (this.fundsForm.valid) {
       const formValues = this.fundsForm.value;
       const currencyValue = formValues.currency;
-      
+
       if (this.isCurrencyCode(currencyValue)) {
         this.confirmationData = {
           operationFunds: formValues.operationFunds,
@@ -334,7 +334,7 @@ export class FundsManagementComponent implements OnInit {
           notes: formValues.notes,
           date: formValues.date
         };
-        
+
         this.showConfirmation = true;
       }
     } else {
@@ -433,7 +433,7 @@ export class FundsManagementComponent implements OnInit {
     if (amount === null || amount === undefined) {
       return '0.00';
     }
-    
+
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currency
@@ -467,5 +467,12 @@ export class FundsManagementComponent implements OnInit {
       case OperationFunds.WITHDRAW: return 'fa-minus-circle';
       default: return 'fa-circle';
     }
+  }
+
+  /**
+   * Type guard to check if the value is of type User
+   */
+  isUser(value: any): value is User {
+    return value && typeof value === 'object' && 'fullName' in value;
   }
 }

@@ -14,6 +14,7 @@ export enum OperationFunds {
   
   export interface User {
     id: number;
+    fullName?: string;
     // Add other user properties if needed
   }
   

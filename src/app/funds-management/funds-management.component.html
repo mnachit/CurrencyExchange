@@ -236,7 +236,9 @@
                                     <div class="operation-meta">
                                         <span class="operation-date">{{ operation.createdAt | date:'MMM d, y, h:mm a'
                                             }}</span>
-                                        <!-- <span class="operation-user">{{ operation.updateBy }}</span> -->
+                                        <span class="operation-user" *ngIf="isUser(operation.updateBy)">
+                                            {{ operation.updateBy.fullName }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
