@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
-export interface ConfirmationDialogData {
+export interface ConfirmationData {
   title: string;
   message: string;
   confirmText?: string;
@@ -14,49 +14,49 @@ export interface ConfirmationDialogData {
   providedIn: 'root'
 })
 export class ConfirmationService {
-  private confirmationSubject = new Subject<boolean>();
-  private dialogData: ConfirmationDialogData | null = null;
-  private isOpen = false;
+  private confirmationSubject = new Subject<{id: string, confirmed: boolean}>();
+  private activeConfirmations: Map<string, ConfirmationData> = new Map();
+  private counter = 0;
 
-  constructor() { }
+  constructor() {}
 
-  // Open confirmation dialog and return promise
-  confirm(data: ConfirmationDialogData): Promise<boolean> {
-    // If a dialog is already open, reject
-    if (this.isOpen) {
-      return Promise.reject('A dialog is already open');
-    }
+  // Get a unique ID for each confirmation
+  private getNextId(): string {
+    return `confirmation-${++this.counter}`;
+  }
 
-    this.dialogData = {
+  // Add a new confirmation request
+  confirm(data: ConfirmationData): Promise<boolean> {
+    const id = this.getNextId();
+    
+    // Store the confirmation data with default values
+    this.activeConfirmations.set(id, {
       confirmText: 'Confirm',
       cancelText: 'Cancel',
       type: 'warning',
       ...data
-    };
+    });
     
-    this.isOpen = true;
-    
-    // Return promise that resolves when user responds
+    // Return a promise that resolves when user responds
     return new Promise<boolean>((resolve) => {
-      const subscription = this.confirmationSubject.subscribe(result => {
-        resolve(result);
-        this.isOpen = false;
-        this.dialogData = null;
-        subscription.unsubscribe();
-      });
+      const subscription = this.confirmationSubject
+        .subscribe(result => {
+          if (result.id === id) {
+            resolve(result.confirmed);
+            this.activeConfirmations.delete(id);
+            subscription.unsubscribe();
+          }
+        });
     });
   }
 
-  // Methods called by the confirmation component
-  getDialogData(): ConfirmationDialogData | null {
-    return this.dialogData;
+  // Get all active confirmations
+  getActiveConfirmations(): Map<string, ConfirmationData> {
+    return this.activeConfirmations;
   }
 
-  isDialogOpen(): boolean {
-    return this.isOpen;
-  }
-
-  confirm_response(confirmed: boolean): void {
-    this.confirmationSubject.next(confirmed);
+  // Respond to a confirmation
+  respond(id: string, confirmed: boolean): void {
+    this.confirmationSubject.next({ id, confirmed });
   }
 }

@@ -1,90 +1,70 @@
 // src/app/services/alert.service.ts
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-
-export enum AlertType {
-  SUCCESS = 'success',
-  DANGER = 'danger',
-  WARNING = 'warning',
-  INFO = 'info'
-}
-
-export interface Alert {
-  type: AlertType;
-  message: string;
-  autoClose?: boolean;
-  timeout?: number;
-  id?: number;
-}
+import { Observable, Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { Alert } from '../models/Alert';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class AlertService {
-  private alerts = new BehaviorSubject<Alert[]>([]);
-  private counter = 0;
+  private subject = new Subject<Alert>();
+  private defaultId = 'default-alert';
 
-  constructor() { }
-
-  getAlerts(): Observable<Alert[]> {
-    return this.alerts.asObservable();
+  // Enable subscribing to alerts observable
+  onAlert(id = this.defaultId): Observable<Alert> {
+    return this.subject.asObservable().pipe(
+      filter(x => x && x.id === id)
+    );
   }
 
-  success(message: string, autoClose = true, timeout = 5000): void {
-    
-    this.addAlert({
-      type: AlertType.SUCCESS,
-      message,
-      autoClose,
-      timeout
-    });
+  // Convenience methods
+  success(message: string, options?: any) {
+    this.alert(new AlertOptions({ ...options, type: 'success', message }));
   }
 
-  failure(message: string, autoClose = true, timeout = 5000): void {
-    this.addAlert({
-      type: AlertType.DANGER,
-      message,
-      autoClose,
-      timeout
-    });
+  error(message: string, options?: any) {
+    this.alert(new AlertOptions({ ...options, type: 'danger', message }));
   }
 
-  warning(message: string, autoClose = true, timeout = 5000): void {
-    this.addAlert({
-      type: AlertType.WARNING,
-      message,
-      autoClose,
-      timeout
-    });
+  info(message: string, options?: any) {
+    this.alert(new AlertOptions({ ...options, type: 'info', message }));
   }
 
-  info(message: string, autoClose = true, timeout = 5000): void {
-    this.addAlert({
-      type: AlertType.INFO,
-      message,
-      autoClose,
-      timeout
-    });
+  warn(message: string, options?: any) {
+    this.alert(new AlertOptions({ ...options, type: 'warning', message }));
   }
 
-  clear(): void {
-    this.alerts.next([]);
+  // Main alert method
+  alert(options: AlertOptions) {
+    const alert: Alert = {
+      id: options.id || this.defaultId,
+      type: options.type || 'info',
+      message: options.message,
+      autoClose: options.autoClose !== false,
+      keepAfterRouteChange: options.keepAfterRouteChange || false,
+      fade: options.fade || true
+    };
+
+    this.subject.next(alert);
   }
 
-  removeAlert(id: number): void {
-    const currentAlerts = this.alerts.getValue();
-    const filteredAlerts = currentAlerts.filter(alert => alert.id !== id);
-    this.alerts.next(filteredAlerts);
+  // Clear alerts
+  clear(id = this.defaultId) {
+    this.subject.next({ id } as Alert);
   }
+}
 
-  private addAlert(alert: Alert): void {
-    alert.id = ++this.counter;
-    
-    const currentAlerts = this.alerts.getValue();
-    this.alerts.next([...currentAlerts, alert]);
+export class AlertOptions {
+  id?: string;
+  type?: 'success' | 'info' | 'warning' | 'danger';
+  message?: string;
+  autoClose?: boolean;
+  keepAfterRouteChange?: boolean;
+  fade?: boolean;
 
-    if (alert.autoClose) {
-      setTimeout(() => this.removeAlert(alert.id!), alert.timeout);
-    }
+  constructor(init?: Partial<AlertOptions>) {
+    Object.assign(this, init);
   }
 }

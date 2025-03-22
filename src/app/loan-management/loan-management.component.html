@@ -1,7 +1,8 @@
 <!-- Add this at the end of your existing HTML -->
+<!-- <app-alert></app-alert>
 <app-alert [title]="modalTitle" [body]="modalBody" [confirmText]="modalConfirmText" [cancelText]="modalCancelText"
     (onConfirm)="handleModalConfirm()" (onCancel)="handleModalCancel()">
-</app-alert>
+</app-alert> -->
 <div class="container-fluid p-0">
     <!-- Header Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -10,7 +11,7 @@
             <p class="text-muted">Manage all loan operations and customer accounts</p>
         </div>
         <div class="d-flex">
-            <button class="btn btn-outline-secondary me-2" (click)="exportLoans()">
+            <!-- <button class="btn btn-outline-secondary me-2" (click)="exportLoans()">
                 <i class="fas fa-file-export me-1"></i> Export
             </button>
             <div class="dropdown me-2">
@@ -35,7 +36,7 @@
                     <li><a class="dropdown-item" href="#" (click)="onDateChange(thisWeek); $event.preventDefault()">This
                             Week's Loans</a></li>
                 </ul>
-            </div>
+            </div> -->
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newLoanModal"
                 (click)="showNewLoan()">
                 <i class="fas fa-plus me-1"></i> New Loan

@@ -4,10 +4,12 @@
     <app-header></app-header>
     <div class="content-container">
       <router-outlet></router-outlet>
+
+      <app-confirmation-dialog></app-confirmation-dialog>
     </div>
   </div>
   <app-calculator></app-calculator>
-  <app-confirmation-dialog></app-confirmation-dialog>
+  <!-- <app-confirmation-dialog></app-confirmation-dialog> -->
 </div>
 <ng-template #loginTemplate>
   <app-login></app-login>

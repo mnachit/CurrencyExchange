@@ -152,4 +152,8 @@ export class ReportsService {
   getRecentReports(): Observable<{ message: string, result: recentReports[], errors: string, errorMap: string[] }> {
     return this.http.get<{ message: string, result: recentReports[], errors: string, errorMap: string[] }>(this.apiUrl + '/recentReports');
   }
+
+  recentReportsWithType(kind : string): Observable<{ message: string, result: recentReports[], errors: string, errorMap: string[] }> {
+    return this.http.get<{ message: string, result: recentReports[], errors: string, errorMap: string[] }>(this.apiUrl + '/recentActivities/' + kind);
+  }
 }

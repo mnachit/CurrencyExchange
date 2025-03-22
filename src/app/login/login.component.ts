@@ -23,6 +23,9 @@ export class LoginComponent implements OnInit {
   submitted = false;
   showPassword = false;
   showError = false;
+  imageUrl?: string;
+  email?: string;
+  number?: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -31,7 +34,11 @@ export class LoginComponent implements OnInit {
     public tokerService: TokenService
   ) { }
 
+
   ngOnInit(): void {
+    this.imageUrl = 'assets/images/currency-exchange.jpg';
+    this.email = 'nachit.m.dev@gmail.com';
+    this.number = "+212 696-563044";
     this.loginForm = this.formBuilder.group({
       email: ['', Validators.required],
       password: ['', Validators.required]

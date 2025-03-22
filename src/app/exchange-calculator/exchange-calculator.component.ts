@@ -8,14 +8,15 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { CurrencyService } from '../services/currency.service';
 
 @Component({
-  selector: 'app-exchange-calculator', standalone: true, // Keep as standalone component
+  selector: 'app-exchange-calculator',
+  standalone: true,
   imports: [
-    CommonModule,        // For *ngIf, *ngFor, and ngClass
-    ReactiveFormsModule, // For formGroup
-    FormsModule,         // For ngModel
-    DecimalPipe,         // For number pipe
-    CurrencyPipe,        // For currency pipe
-    DatePipe,             // For date pipe
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    DecimalPipe,
+    CurrencyPipe,
+    DatePipe,
     NgbDropdownModule
   ],
   templateUrl: './exchange-calculator.component.html',
@@ -33,40 +34,77 @@ import { CurrencyService } from '../services/currency.service';
   ]
 })
 export class ExchangeCalculatorComponent implements OnInit {
-  exchangeForm: FormGroup;
-  customerForm: FormGroup;
+  // Form groups
+  exchangeForm!: FormGroup;
+  customerForm!: FormGroup;
+
+  // UI state properties
   showDropdownFrom = false;
   showDropdownTo = false;
-  currencies: Currency[] = [];
-
-  fromCurrency: Currency;
-  toCurrency: Currency;
-  exchangeRate: number = 0;
-  customExchangeRate: number = 0;
-  defaultExchangeRate: number = 0;
-  isEditingRate: boolean = false;
-
-  showReceipt: boolean = false;
-  showConfirmation: boolean = false;
-  showSuccess: boolean = false;
-
-  receiptData: any = {};
-  isCalculating: boolean = false;
-  transactionComplete: boolean = false;
-  lastRateUpdate: Date = new Date();
-  saveSuccess: boolean = false;
+  showReceipt = false;
+  showConfirmation = false;
+  showSuccess = false;
+  isCalculating = false;
+  transactionComplete = false;
+  saveSuccess = false;
   loading = true;
+  isEditingRate = false;
+  showError = false;
 
-  // For the recent exchanges display
+  // Currency data
+  currencies: Currency[] = [];
+  fromCurrency: Currency = this.getDefaultFromCurrency();
+  toCurrency: Currency = this.getDefaultToCurrency();
+
+  // Exchange rate data
+  exchangeRate = 0;
+  customExchangeRate = 0;
+  defaultExchangeRate = 0;
+  lastRateUpdate = new Date();
+
+  // Transaction data
+  receiptData: any = {};
   recentExchanges: any[] = [];
-
-  // For the display rates (simplified for the UI)
   displayRates: any[] = [];
+  messageResponse = '';
+  errorMessage = '';
 
-  constructor(private fb: FormBuilder, private transactionService: TransactionService, private currencyService : CurrencyService) {
-    this.fromCurrency = this.currencies[0]; // USD
-    this.toCurrency = this.currencies[6]; // MAD - Moroccan Dirham
+  constructor(
+    private fb: FormBuilder,
+    private transactionService: TransactionService,
+    private currencyService: CurrencyService
+  ) {
+    // Define explicit default objects instead of using this.currencies array
+    this.fromCurrency = {
+      id: 1,
+      code: 'USD',
+      name: 'US Dollar',
+      symbol: '$',
+      buyRate: 1,
+      sellRate: 1
+    };
 
+    this.toCurrency = {
+      id: 2,
+      code: 'MAD',
+      name: 'Moroccan Dirham',
+      symbol: 'د.م.',
+      buyRate: 9.85,
+      sellRate: 9.95
+    };
+
+    this.initializeForms();
+  }
+
+  ngOnInit(): void {
+    this.getCurrencies();
+    this.generateMockRecentExchanges();
+  }
+
+  /**
+   * Initialize form groups with validators
+   */
+  private initializeForms(): void {
     this.exchangeForm = this.fb.group({
       fromAmount: [1000, [Validators.required, Validators.min(0.01)]],
       toAmount: [0]
@@ -77,18 +115,32 @@ export class ExchangeCalculatorComponent implements OnInit {
       idNumber: ['', Validators.required],
       phone: ['']
     });
-
-    this.calculateExchangeRate();
-    this.prepareDisplayRates();
-    this.generateMockRecentExchanges();
   }
 
-  ngOnInit(): void {
-    // Load any saved preferences or previous transactions
-    this.loadSavedPreferences();
-    this.getCurrencies();
+  /**
+   * Default currencies to use before API data is loaded
+   */
+  private getDefaultFromCurrency(): Currency {
+    return {
+      code: 'USD',
+      name: 'US Dollar',
+      buyRate: 1,
+      sellRate: 1
+    };
   }
 
+  private getDefaultToCurrency(): Currency {
+    return {
+      code: 'MAD',
+      name: 'Moroccan Dirham',
+      buyRate: 9.85,
+      sellRate: 9.95
+    };
+  }
+
+  /**
+   * Currency data loading
+   */
   getCurrencies(): void {
     this.loading = true;
     this.currencyService.getCurrencies().subscribe({
@@ -96,20 +148,23 @@ export class ExchangeCalculatorComponent implements OnInit {
         if (response && response.result) {
           this.currencies = response.result;
           this.messageResponse = response.message;
-          console.log("Currencies loaded:", this.currencies);
-          
+
           // Only proceed if we have currencies
           if (this.currencies && this.currencies.length > 0) {
             // Set default currencies if they exist in the loaded data
             const usdCurrency = this.currencies.find(c => c.code === 'USD');
             const madCurrency = this.currencies.find(c => c.code === 'MAD');
-            
+
             if (usdCurrency) this.fromCurrency = usdCurrency;
             if (madCurrency) this.toCurrency = madCurrency;
-            
+
             // Calculate exchange rates after currencies are loaded
             this.calculateExchangeRate();
+            this.prepareDisplayRates();
           }
+
+          // Load preferences after currencies are loaded
+          this.loadSavedPreferences();
         } else {
           console.error("No currencies returned from API");
         }
@@ -118,20 +173,29 @@ export class ExchangeCalculatorComponent implements OnInit {
       error: (err) => {
         console.error("Error loading currencies:", err);
         this.loading = false;
-      },
-      complete: () => {
-        this.loading = false;
       }
     });
   }
 
+  /**
+   * Set default currencies after loading from API
+   */
+  private setDefaultCurrencies(): void {
+    const usdCurrency = this.currencies.find(c => c.code === 'USD');
+    const madCurrency = this.currencies.find(c => c.code === 'MAD');
+
+    if (usdCurrency) this.fromCurrency = usdCurrency;
+    if (madCurrency) this.toCurrency = madCurrency;
+  }
+
+  /**
+   * User preferences management
+   */
   loadSavedPreferences(): void {
-    // In a real application, this would load saved customer data or preferences from storage
     const savedData = localStorage.getItem('exchangePreferences');
     if (savedData) {
       try {
         const preferences = JSON.parse(savedData);
-        // Apply preferences if they exist
         if (preferences.lastFromCurrency) {
           const savedFromCurrency = this.currencies.find(c => c.code === preferences.lastFromCurrency);
           if (savedFromCurrency) this.fromCurrency = savedFromCurrency;
@@ -148,7 +212,8 @@ export class ExchangeCalculatorComponent implements OnInit {
   }
 
   savePreferences(): void {
-    // Save current exchange preferences
+    if (!this.fromCurrency || !this.toCurrency) return;
+
     const preferences = {
       lastFromCurrency: this.fromCurrency.code,
       lastToCurrency: this.toCurrency.code,
@@ -157,55 +222,46 @@ export class ExchangeCalculatorComponent implements OnInit {
     localStorage.setItem('exchangePreferences', JSON.stringify(preferences));
   }
 
-  prepareDisplayRates(): void {
-    // Create a simplified list of rates against USD for the rates display
-    // We'll update this after currencies are loaded
+  /**
+   * Exchange rate calculations
+   */
+  calculateExchangeRate(): void {
+    if (!this.fromCurrency || !this.toCurrency) return;
+
+    this.isCalculating = true;
+
+    // Simulate API call with a slight delay
     setTimeout(() => {
-      if (this.currencies.length > 0) {
-        this.displayRates = this.currencies.filter(c => c.code !== 'USD').map(currency => {
-          return {
-            currency: currency.code,
-            buyRate: currency.buyRate,
-            sellRate: currency.sellRate
-          };
-        });
+      // Calculate the default exchange rate
+      if (this.fromCurrency.code === 'USD') {
+        // Converting from USD to another currency
+        this.defaultExchangeRate = this.toCurrency.sellRate;
+      } else if (this.toCurrency.code === 'USD') {
+        // Converting from another currency to USD
+        this.defaultExchangeRate = 1 / this.fromCurrency.buyRate;
+      } else {
+        // Cross currency exchange (convert through USD)
+        const fromToUSD = 1 / this.fromCurrency.buyRate;
+        const usdToTo = this.toCurrency.sellRate;
+        this.defaultExchangeRate = fromToUSD * usdToTo;
       }
-    }, 500);
-  }
 
-  generateMockRecentExchanges(): void {
-    // Generate some mock recent exchanges for the display
-    const mockExchanges = [
-      {
-        fromCurrency: 'USD',
-        toCurrency: 'MAD',
-        fromAmount: 500,
-        toAmount: 4925,
-        date: new Date(Date.now() - 15 * 60000) // 15 minutes ago
-      },
-      {
-        fromCurrency: 'EUR',
-        toCurrency: 'SAR',
-        fromAmount: 200,
-        toAmount: 812.5,
-        date: new Date(Date.now() - 45 * 60000) // 45 minutes ago
-      },
-      {
-        fromCurrency: 'SAR',
-        toCurrency: 'USD',
-        fromAmount: 1000,
-        toAmount: 266.67,
-        date: new Date(Date.now() - 75 * 60000) // 1 hour 15 minutes ago
+      // If we're not using a custom rate, set the exchange rate to the default
+      if (!this.isEditingRate || this.customExchangeRate === 0) {
+        this.exchangeRate = this.defaultExchangeRate;
+        this.customExchangeRate = this.defaultExchangeRate;
       }
-    ];
 
-    this.recentExchanges = mockExchanges;
+      this.updateToAmount();
+      this.isCalculating = false;
+    }, 300);
   }
 
   refreshRates(): void {
+    if (this.currencies.length === 0) return;
+
     this.isCalculating = true;
 
-    // Simulate an API call to refresh rates
     setTimeout(() => {
       // Randomly adjust rates a small amount to simulate market movements
       this.currencies.forEach(currency => {
@@ -216,50 +272,28 @@ export class ExchangeCalculatorComponent implements OnInit {
         }
       });
 
-      // Update the exchange rate for the current currency pair
       this.calculateExchangeRate();
       this.prepareDisplayRates();
-
-      // Update the last refresh time
       this.lastRateUpdate = new Date();
-
       this.isCalculating = false;
-    }, 800); // Simulate network delay
+    }, 800);
   }
 
-  calculateExchangeRate(): void {
-    this.isCalculating = true;
+  prepareDisplayRates(): void {
+    if (this.currencies.length === 0) return;
 
-    // Simulate API call with a slight delay
-    setTimeout(() => {
-      if (this.fromCurrency && this.toCurrency) {
-        // Calculate the default exchange rate
-        if (this.fromCurrency.code === 'USD') {
-          // Converting from USD to another currency
-          this.defaultExchangeRate = this.toCurrency.sellRate;
-        } else if (this.toCurrency.code === 'USD') {
-          // Converting from another currency to USD
-          this.defaultExchangeRate = 1 / this.fromCurrency.buyRate;
-        } else {
-          // Cross currency exchange (convert through USD)
-          const fromToUSD = 1 / this.fromCurrency.buyRate;
-          const usdToTo = this.toCurrency.sellRate;
-          this.defaultExchangeRate = fromToUSD * usdToTo;
-        }
-
-        // If we're not using a custom rate, set the exchange rate to the default
-        if (!this.isEditingRate || this.customExchangeRate === 0) {
-          this.exchangeRate = this.defaultExchangeRate;
-          this.customExchangeRate = this.defaultExchangeRate;
-        }
-
-        this.updateToAmount();
-      }
-
-      this.isCalculating = false;
-    }, 300);
+    this.displayRates = this.currencies
+      .filter(c => c.code !== 'USD')
+      .map(currency => ({
+        currency: currency.code,
+        buyRate: currency.buyRate,
+        sellRate: currency.sellRate
+      }));
   }
 
+  /**
+   * Amount calculation and currency handling
+   */
   updateToAmount(): void {
     const fromAmount = this.exchangeForm.get('fromAmount')?.value || 0;
     const toAmount = fromAmount * this.exchangeRate;
@@ -277,6 +311,8 @@ export class ExchangeCalculatorComponent implements OnInit {
   }
 
   swapCurrencies(): void {
+    if (!this.fromCurrency || !this.toCurrency) return;
+
     const temp = this.fromCurrency;
     this.fromCurrency = this.toCurrency;
     this.toCurrency = temp;
@@ -291,36 +327,35 @@ export class ExchangeCalculatorComponent implements OnInit {
   }
 
   selectFromCurrency(currency: Currency): void {
-    // Don't select the same currency as the "to" currency
+    if (!currency || !this.toCurrency) return;
+
     if (this.toCurrency.code === currency.code) {
       this.swapCurrencies();
     } else {
       this.fromCurrency = currency;
       this.calculateExchangeRate();
     }
-    // Close the dropdown after selection
     this.showDropdownFrom = false;
   }
 
-  // Select a "to" currency
   selectToCurrency(currency: Currency): void {
-    // Don't select the same currency as the "from" currency
+    if (!currency || !this.fromCurrency) return;
+
     if (this.fromCurrency.code === currency.code) {
       this.swapCurrencies();
     } else {
       this.toCurrency = currency;
       this.calculateExchangeRate();
     }
-    // Close the dropdown after selection
     this.showDropdownTo = false;
   }
 
+  /**
+   * UI event handlers
+   */
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    // Get the target element
     const target = event.target as HTMLElement;
-
-    // Check if the click was outside the dropdowns
     if (!target.closest('.dropdown')) {
       this.showDropdownFrom = false;
       this.showDropdownTo = false;
@@ -329,19 +364,17 @@ export class ExchangeCalculatorComponent implements OnInit {
 
   toggleDropdown(type: 'from' | 'to'): void {
     if (type === 'from') {
-      // Close the other dropdown if it's open
       this.showDropdownTo = false;
-      // Toggle the current dropdown
       this.showDropdownFrom = !this.showDropdownFrom;
     } else {
-      // Close the other dropdown if it's open
       this.showDropdownFrom = false;
-      // Toggle the current dropdown
       this.showDropdownTo = !this.showDropdownTo;
     }
   }
 
-  // Rate editor functions
+  /**
+   * Custom rate handling
+   */
   toggleRateEditor(): void {
     this.isEditingRate = !this.isEditingRate;
     if (this.isEditingRate && this.customExchangeRate === 0) {
@@ -367,111 +400,79 @@ export class ExchangeCalculatorComponent implements OnInit {
   }
 
   getMarginPercentage(): number {
-    // Calculate the percentage difference between custom and default rate
     if (this.defaultExchangeRate === 0) return 0;
     return ((this.customExchangeRate - this.defaultExchangeRate) / this.defaultExchangeRate) * 100;
   }
 
-  // Fee calculations
+  /**
+   * Transaction fee calculations
+   */
   calculateFee(): number {
-    // 0.5% exchange fee
-    // return this.exchangeForm.get('fromAmount')?.value * 0.005 || 0;
-    return 0;
+    return 0; // Currently no fee
   }
 
   calculateServiceCharge(): number {
-    // Fixed service charge based on amount
     const amount = this.exchangeForm.get('fromAmount')?.value || 0;
     if (amount <= 0) return 0;
     if (amount < 1000) return 0;
     if (amount < 5000) return 0;
-    return 0;
+    return 0; // Currently no service charge
   }
 
   calculateTotalPayment(): number {
     return parseFloat(this.exchangeForm.get('toAmount')?.value) || 0;
   }
 
-  // Get currency object by code
-  getCurrencyByCode(code: string): Currency {
-    return this.currencies.find(c => c.code === code) || this.currencies[0];
-  }
-
-  // Confirmation process
+  /**
+   * Transaction processing
+   */
   proceedToConfirmation(): void {
-    if (this.exchangeForm.valid && this.customerForm.valid) {
-      this.showConfirmation = true;
-    } else {
-      this.showConfirmation = true;
-    }
+    this.showConfirmation = true;
   }
 
   closeConfirmation(): void {
     this.showConfirmation = false;
   }
 
-  messageResponse: string = '';
-
-  // Add these properties to your component class
-  errorMessage: string = '';
-  showError: boolean = false;
-
-  // Updated confirmExchange method
   confirmExchange(): void {
-    // Close confirmation dialog
-    this.showConfirmation = false;
+    if (!this.fromCurrency || !this.toCurrency) return;
 
-    // Show loading state first
+    this.showConfirmation = false;
     this.saveSuccess = true;
     this.messageResponse = "Processing your exchange";
 
-    // Generate receipt data
     this.generateReceiptData();
-
-    // In a real application, you would call a service to save the transaction
     this.transactionComplete = true;
-
-    // Save user preferences for next time
     this.savePreferences();
 
-    this.transactionService.addTransaction(this.receiptData).subscribe(
-      (response) => {
-        console.log("Response: ", response);
-
-        // Hide loading spinner
+    this.transactionService.addTransaction(this.receiptData).subscribe({
+      next: (response) => {
         this.saveSuccess = false;
 
         if (response.status === 200) {
-          // Show success dialog after a short delay
           setTimeout(() => {
             this.showSuccess = true;
           }, 300);
         } else {
-          // Show error for other status codes including 400
           this.errorMessage = response.message || "Transaction failed";
           this.showError = true;
           this.hideErrorAfterDelay();
         }
       },
-      (error) => {
+      error: (error) => {
         console.error("Error occurred:", error);
-
-        // Hide loading spinner
         this.saveSuccess = false;
-
-        // Show clear error message
         this.errorMessage = "Transaction not saved. Please try again.";
         this.showError = true;
         this.hideErrorAfterDelay();
       }
-    );
+    });
   }
 
-  // Method to hide error after delay
   hideErrorAfterDelay(): void {
     setTimeout(() => {
       this.showError = false;
-    }, 2000); // Longer display time (7 seconds) to ensure visibility
+    }, 2000);
   }
 
   closeSuccess(): void {
@@ -479,8 +480,12 @@ export class ExchangeCalculatorComponent implements OnInit {
     this.resetForms();
   }
 
-  // Receipt handling
+  /**
+   * Receipt handling
+   */
   generateReceiptData(): void {
+    if (!this.fromCurrency || !this.toCurrency) return;
+
     const now = new Date();
     const receiptId = 'TX' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
 
@@ -502,10 +507,7 @@ export class ExchangeCalculatorComponent implements OnInit {
   }
 
   generateReceipt(): void {
-    // Close success modal if open
     this.showSuccess = false;
-
-    // Show receipt modal
     this.showReceipt = true;
   }
 
@@ -514,12 +516,41 @@ export class ExchangeCalculatorComponent implements OnInit {
   }
 
   printReceipt(): void {
-    // You could implement a more sophisticated print functionality here
     window.print();
   }
 
+  /**
+   * Recent exchanges management
+   */
+  generateMockRecentExchanges(): void {
+    this.recentExchanges = [
+      {
+        fromCurrency: 'USD',
+        toCurrency: 'MAD',
+        fromAmount: 500,
+        toAmount: 4925,
+        date: new Date(Date.now() - 15 * 60000) // 15 minutes ago
+      },
+      {
+        fromCurrency: 'EUR',
+        toCurrency: 'SAR',
+        fromAmount: 200,
+        toAmount: 812.5,
+        date: new Date(Date.now() - 45 * 60000) // 45 minutes ago
+      },
+      {
+        fromCurrency: 'SAR',
+        toCurrency: 'USD',
+        fromAmount: 1000,
+        toAmount: 266.67,
+        date: new Date(Date.now() - 75 * 60000) // 1 hour 15 minutes ago
+      }
+    ];
+  }
+
   addToRecentExchanges(): void {
-    // Add the current exchange to the recent exchanges list
+    if (!this.fromCurrency || !this.toCurrency) return;
+
     const newExchange = {
       fromCurrency: this.fromCurrency.code,
       toCurrency: this.toCurrency.code,
@@ -528,29 +559,22 @@ export class ExchangeCalculatorComponent implements OnInit {
       date: new Date()
     };
 
-    // Add to the beginning of the array
     this.recentExchanges.unshift(newExchange);
 
-    // Keep only the most recent exchanges
     if (this.recentExchanges.length > 5) {
       this.recentExchanges = this.recentExchanges.slice(0, 5);
     }
 
-    // In a real application, you would also persist this to storage or a database
     this.saveTransactionToHistory(this.receiptData);
   }
 
   saveTransactionToHistory(transaction: any): void {
-    // In a real application, this would save to a database or local storage
-    // try {
-    //   const history = JSON.parse(localStorage.getItem('transactionHistory') || '[]');
-    //   history.push(transaction);
-    //   localStorage.setItem('transactionHistory', JSON.stringify(history));
-    // } catch (e) {
-    //   console.error('Error saving transaction history', e);
-    // }
+    // In a real app, save to database or local storage
   }
 
+  /**
+   * Reset forms and state
+   */
   resetForms(): void {
     this.exchangeForm.reset({
       fromAmount: 1000,
@@ -563,18 +587,18 @@ export class ExchangeCalculatorComponent implements OnInit {
     this.showConfirmation = false;
     this.showSuccess = false;
     this.transactionComplete = false;
-
-    // Reset rates to default
     this.isEditingRate = false;
     this.customExchangeRate = 0;
-
-    // Reset currencies to default if needed
-    // this.fromCurrency = this.currencies[0];
-    // this.toCurrency = this.currencies[6];
-    // this.calculateExchangeRate();
   }
 
-  // Helper function to mark all controls in a form group as touched
+  /**
+   * Utility methods
+   */
+  getCurrencyByCode(code: string): Currency {
+    const found = this.currencies.find(c => c.code === code);
+    return found || this.getDefaultFromCurrency();
+  }
+
   private markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();

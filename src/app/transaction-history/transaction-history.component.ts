@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Transaction } from '../models/transaction.model';
 import { TransactionService } from '../services/transaction.service';
 import { DashboardService } from '../services/dashboard.service';
@@ -8,7 +8,17 @@ import { Currency } from '../models/currency.model';
 import { HttpParams } from '@angular/common/http';
 import { AlertService } from '../services/alert.service';
 import { ConfirmationService } from '../services/confirmation.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { finalize as rxjsFinalize } from 'rxjs/operators';
+import { ReportsService } from '../reports.service';
 declare var bootstrap: any;
+
+interface Statistics {
+  totalExchanges : number;
+  completedTransactions : number;
+  pendingTransactions : number;
+  canceledTransactions : number;
+}
 
 @Component({
   selector: 'app-transaction-history',
@@ -50,49 +60,42 @@ export class TransactionHistoryComponent implements OnInit {
   currencies: Currency[] = [];
 
   // Recent activities log
-  recentActivities: any[] = [
-    {
-      action: 'Transaction Completed',
-      description: 'Ahmed Mohammed exchanged USD to EUR',
-      time: new Date(),
-      type: 'success',
-      icon: 'fa-check-circle'
-    },
-    {
-      action: 'New Transaction',
-      description: 'Sara Abdullah created a new transaction',
-      time: new Date(new Date().getTime() - 30 * 60000),
-      type: 'primary',
-      icon: 'fa-plus-circle'
-    },
-    {
-      action: 'Rate Updated',
-      description: 'USD to EUR rate changed from 0.92 to 0.91',
-      time: new Date(new Date().getTime() - 60 * 60000),
-      type: 'info',
-      icon: 'fa-sync-alt'
-    },
-    {
-      action: 'Transaction Canceled',
-      description: 'Khalid Omar canceled transaction #TX123451',
-      time: new Date(new Date().getTime() - 2 * 60 * 60000),
-      type: 'danger',
-      icon: 'fa-times-circle'
-    }
-  ];
+  recentActivities: any[] = [];
+  recentReportsWithType() {
+    this.reportsService.recentReportsWithType("transaction").subscribe(
+      (res) => {
+        this.recentActivities = res.result;
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+  }
 
   constructor(
     private transactionService: TransactionService,
     private dashboardService: DashboardService,
     private currencyService: CurrencyService,
     private router: Router,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private alertService: AlertService,
+    private modalService: NgbModal,
+    private reportsService: ReportsService
   ) { }
+
+  showSuccess: boolean = false;
+  showReceipt: boolean = false;
+
+  generateReceipt(): void {
+    this.showSuccess = false;
+    this.showReceipt = true;
+  }
 
   ngOnInit(): void {
     this.loading = true;
     this.loadTransactions();
     this.loadCurrencies();
+    this.recentReportsWithType();
 
     // For opening modals when viewing transaction details
     document.addEventListener('DOMContentLoaded', () => {
@@ -187,11 +190,27 @@ export class TransactionHistoryComponent implements OnInit {
     }, 800);
   }
 
+  statics : Statistics = {
+    totalExchanges : 0,
+    completedTransactions : 0,
+    pendingTransactions : 0,
+    canceledTransactions : 0
+  }
+
   calculateStatistics(): void {
-    this.totalTransactions = this.transactions.length;
-    this.completedTransactions = this.transactions.filter(t => t.status === 'COMPLETED').length;
-    this.pendingTransactions = this.transactions.filter(t => t.status === 'PENDING').length;
-    this.canceledTransactions = this.transactions.filter(t => t.status === 'CANCELED').length;
+    // this.totalTransactions = this.transactions.length;
+    // this.completedTransactions = this.transactions.filter(t => t.status === 'COMPLETED').length;
+    // this.pendingTransactions = this.transactions.filter(t => t.status === 'PENDING').length;
+    // this.canceledTransactions = this.transactions.filter(t => t.status === 'CANCELED').length;
+    this.transactionService.calculateStatistics().subscribe(
+      (res) => {
+        this.statics = res.result;
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+
 
     // Calculate today's volume (all transactions from today in USD equivalent)
     const today = new Date();
@@ -459,23 +478,23 @@ export class TransactionHistoryComponent implements OnInit {
       next: (response: Blob) => {
         // Crear URL del objeto Blob
         const url = window.URL.createObjectURL(response);
-        
+
         // Crear un elemento de enlace temporal
         const a = document.createElement('a');
         a.href = url;
-        
+
         // Generar nombre de archivo con timestamp
         const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
         a.download = `transactions_${date}.xlsx`;
-        
+
         // Anexar al documento, hacer clic y luego eliminar
         document.body.appendChild(a);
         a.click();
-        
+
         // Limpiar
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-        
+
         // Opcional: Mostrar un mensaje de éxito
         // this.showSuccessMessage('Excel file downloaded successfully');
         // alert('Excel file downloaded successfully');
@@ -504,20 +523,31 @@ export class TransactionHistoryComponent implements OnInit {
       case 'delete':
         this.confirmationService.confirm({
           title: 'Confirm Delete',
-          message: 'Are you sure you want to delete this item?',
-          type: 'danger'
+          message: `Are you sure you want to delete ${this.selectedTransactions.length} transaction(s)?`,
+          type: 'danger',
+          confirmText: 'Delete',
+          cancelText: 'Cancel'
         }).then(confirmed => {
-          // console.log("selectedTransactions", this.selectedTransactions);
-          this.transactionService.deleteTransactions(this.selectedTransactions.map(t => t.id)).subscribe({
-            next: (response) => {
-              if (response) {
-                // Remove the transactions from the array
-                this.transactions = this.transactions.filter(t => !this.selectedTransactions.includes(t));
-                this.calculateStatistics();
-                this.applyFilters();
+          if (confirmed) {  // Solo procede si el usuario confirma
+            this.transactionService.deleteTransactions(this.selectedTransactions.map(t => t.id)).subscribe({
+              next: (response) => {
+                if (response) {
+                  // Remove the transactions from the array
+                  this.transactions = this.transactions.filter(t => !this.selectedTransactions.includes(t));
+                  this.calculateStatistics();
+                  this.applyFilters();
+                  this.alertService.success('Transactions deleted successfully');
+                  this.selectedTransactions = []; // Clear selection
+                }
+              },
+              error: (error) => {
+                console.error('Error deleting transactions', error);
+                this.alertService.error('Failed to delete transactions');
               }
-            }
-          });
+            });
+          }
+        }).catch(error => {
+          console.error('Confirmation error', error);
         });
         break;
     }
@@ -605,7 +635,84 @@ export class TransactionHistoryComponent implements OnInit {
     });
   }
 
+  // In your transaction-history.component.ts file
+
+  // Add this property to store the receipt data
+  receiptData: any = null;
+
+  // Updated printReceipt method
   printReceipt(transaction: Transaction): void {
+    // Prepare receipt data from the transaction
+    this.receiptData = {
+      receiptId: transaction.id,
+      date: transaction.createdAt || transaction.date,
+      customerName: transaction.customerName,
+      idNumber: transaction.customerID || 'N/A',
+      fromCurrency: transaction.fromCurrency,
+      toCurrency: transaction.toCurrency,
+      exchangeRate: transaction.exchangeRate,
+      fromAmount: transaction.fromAmount,
+      toAmount: transaction.toAmount,
+      fee: transaction.fee || 0,
+      serviceCharge: 0,
+      // totalPaid: transaction.fromAmount + (transaction.fee || 0) + (transaction.serviceCharge || 0)
+    };
+
+    // Show the receipt modal
+    this.showReceipt = true;
+  }
+
+  // Add this method to close the receipt
+  closeReceipt(): void {
+    this.showReceipt = false;
+  }
+
+  // Add print functionality
+  printReceiptDocument(): void {
+    // Create a copy of the receipt for printing
+    const printContents = document.querySelector('.receipt')?.innerHTML;
+    if (printContents) {
+      const originalContents = document.body.innerHTML;
+      this.closeReceipt()
+
+      // Open a new window with just the receipt
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.open();
+        printWindow.document.write(`
+        <html>
+          <head>
+            <title>Transaction Receipt</title>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+            <style>
+              body { padding: 20px; }
+              .receipt { max-width: 400px; margin: 0 auto; }
+              .border-dashed { border-style: dashed !important; }
+              @media print {
+                body { padding: 0; }
+                .btn { display: none; }
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="receipt">${printContents}</div>
+              <div class="text-center mt-4">
+                <button class="btn btn-primary" onclick="window.print();">Print</button>
+              </div>
+            </div>
+          </body>
+        </html>
+      `);
+        printWindow.document.close();
+      }
+    }
+  }
+
+
+
+  printReceipt1(transaction: Transaction): void {
     // In a real app, would generate a printable receipt
     alert(`Printing receipt for transaction ${transaction.id}`);
   }
@@ -650,4 +757,108 @@ export class TransactionHistoryComponent implements OnInit {
       alert(`Transaction ${transaction.id} has been marked as ${newStatus}`);
     }
   }
+
+
+  selectedFile?: File | null = null;
+  importing: boolean = false;
+  uploadProgress: number = 0;
+  uploadMessage: string = '';
+  uploadSuccess: boolean = false;
+  importModal: any;
+
+  openImportModal(): void {
+
+    this.resetImportState();
+    if (this.importModal) {
+      this.importModal.show();
+    } else {
+      // Fallback if modal isn't initialized yet
+      this.importModal = new bootstrap.Modal(this.modalElement.nativeElement);
+      this.importModal.show();
+    }
+  }
+
+  resetImportState(): void {
+    this.selectedFile = null;
+    this.importing = false;
+    this.uploadProgress = 0;
+    this.uploadMessage = '';
+    this.uploadSuccess = false;
+  }
+
+  @ViewChild('importModal') modalElement!: ElementRef;
+
+  ngAfterViewInit(): void {
+    // Initialize modal after view is initialized and DOM element is available
+    setTimeout(() => {
+      this.importModal = new bootstrap.Modal(this.modalElement.nativeElement);
+    });
+  }
+
+  onFileSelected(event: any): void {
+    const files = event.target.files;
+    if (files.length > 0) {
+      this.selectedFile = files[0];
+
+      // Validate file type
+      const fileExt = this.selectedFile?.name.split('.').pop()?.toLowerCase();
+      if (fileExt !== 'xlsx' && fileExt !== 'xls') {
+        this.uploadMessage = 'Please select an Excel file (.xlsx or .xls)';
+        this.uploadSuccess = false;
+        this.selectedFile = null;
+      } else {
+        this.uploadMessage = '';
+      }
+    }
+  }
+
+  importTransactions(): void {
+    if (!this.selectedFile) {
+      this.alertService.error('Please select a file to import');
+      return;
+    }
+
+    this.importing = true;
+    this.uploadProgress = 0;
+    this.uploadMessage = '';
+
+    const formData = new FormData();
+    formData.append('file', this.selectedFile);
+
+    this.transactionService.importTransactions(formData)
+      .pipe(
+        finalize(() => {
+          this.importing = false;
+          this.loadTransactions();
+          this.resetImportState()
+        })
+      )
+      .subscribe(
+        (event: any) => {
+          // Handle progress events if your backend supports it
+          if (event.type === 'progress') {
+            this.uploadProgress = Math.round(100 * event.loaded / event.total);
+          } else if (event.type === 'response') {
+            this.uploadProgress = 100;
+            this.uploadSuccess = true;
+            this.uploadMessage = `Successfully imported ${event.body.count} transactions`;
+
+            // Refresh the transactions list
+            setTimeout(() => {
+              this.refreshTransactions();
+              this.importModal.hide();
+              this.alertService.success(this.uploadMessage);
+            }, 1500);
+          }
+        },
+        (error) => {
+          this.uploadSuccess = false;
+          this.uploadMessage = error.error?.message || 'Error importing transactions';
+          this.alertService.error(this.uploadMessage);
+        }
+      );
+  }
+}
+function finalize(callback: () => void) {
+  return rxjsFinalize(callback);
 }

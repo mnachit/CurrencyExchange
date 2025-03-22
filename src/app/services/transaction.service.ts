@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpParams, HttpRequest } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Transaction } from '../models/transaction.model';
@@ -100,5 +100,28 @@ export class TransactionService {
     const mockData = 'Transaction ID,Date,Customer,From Currency,From Amount,To Currency,To Amount,Status\nTX123456,2025-02-24 11:42,Ahmed Mohammed,USD,2000,EUR,1842.5,completed';
     const blob = new Blob([mockData], { type: 'text/csv;charset=utf-8;' });
     return of(blob);
+  }
+
+  importTransactions(formData: FormData): Observable<HttpEvent<any>> {
+    const req = new HttpRequest('POST', `${this.apiUrl}/import`, formData, {
+      reportProgress: true,
+      responseType: 'json'
+    });
+    
+    return this.http.request(req);
+  }
+
+  /**
+   * Export transactions to different formats
+   * @param type Export type ('csv', 'excel', 'pdf')
+   */
+  exportTransactions1(type: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/export/${type}`, {
+      responseType: 'blob'
+    });
+  }
+
+  calculateStatistics(): Observable<{ message: string, result: any, errors: string, errorMap: string[] }> {
+    return this.http.get<{ message: string, result: any, errors: string, errorMap: string[] }>(`${this.apiUrl}/calculateStatistics`);
   }
 }

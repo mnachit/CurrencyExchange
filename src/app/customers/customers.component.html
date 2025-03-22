@@ -1,0 +1,617 @@
+<!-- here model -->
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"
+                [ngClass]="confirmationOptions?.type ? ('bg-' + confirmationOptions?.type + ' text-white') : 'bg-primary text-white'">
+                <h5 class="modal-title" id="confirmationModalLabel">
+                    <i class="fas" [ngClass]="getConfirmationIcon()"></i>
+                    {{ confirmationOptions?.title || 'Confirmation' }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ confirmationOptions?.message || 'Are you sure you want to proceed?' }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" (click)="onCancel()">
+                    <i class="fas fa-times me-1"></i> {{ confirmationOptions?.cancelText || 'Cancel' }}
+                </button>
+                <button type="button" class="btn" [ngClass]="'btn-' + (confirmationOptions?.type || 'primary')"
+                    (click)="onConfirm()">
+                    <i class="fas" [ngClass]="getConfirmButtonIcon()"></i> {{ confirmationOptions?.confirmText ||
+                    'Confirm' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Management Component -->
+<div class="container-fluid customer-container">
+    <!-- Loading overlay -->
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <p>Processing your request...</p>
+        </div>
+    </div>
+
+    <!-- Header section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2 class="section-title">
+                <i class="fas fa-users me-2"></i> Customer Management
+            </h2>
+            <p class="text-muted">Manage users and their roles in the system</p>
+        </div>
+        <div class="col-md-6 d-flex justify-content-md-end align-items-center">
+            <button class="btn btn-outline-primary me-2 d-flex align-items-center" (click)="loadCustomers()">
+                <i class="fas fa-sync-alt me-2"></i> Refresh
+            </button>
+            <!-- <div class="dropdown me-2">
+                <button class="btn btn-primary dropdown-toggle d-flex align-items-center" type="button"
+                    id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-download me-2"></i> Export
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
+                    <li><a class="dropdown-item" (click)="bulkAction('export')"><i
+                                class="fas fa-file-csv me-2"></i> CSV</a></li>
+                    <li><a class="dropdown-item" (click)="bulkAction('export')"><i
+                                class="fas fa-file-excel me-2"></i> Excel</a></li>
+                    <li><a class="dropdown-item" (click)="bulkAction('export')"><i
+                                class="fas fa-file-pdf me-2"></i> PDF</a></li>
+                </ul>
+            </div> -->
+            <button class="btn btn-success d-flex align-items-center" (click)="showAddCustomerModal()">
+                <i class="fas fa-user-plus me-2"></i> Add User
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="statistic-card bg-light">
+                <div class="statistic-card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="statistic-icon bg-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="statistic-info">
+                            <h6 class="statistic-label">Total Users</h6>
+                            <h3 class="statistic-value">{{ totalCustomers | number }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="statistic-card bg-light">
+                <div class="statistic-card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="statistic-icon bg-success">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="statistic-info">
+                            <h6 class="statistic-label">Active Users</h6>
+                            <h3 class="statistic-value">{{ activeCustomers | number }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="statistic-card bg-light">
+                <div class="statistic-card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="statistic-icon bg-danger">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="statistic-info">
+                            <h6 class="statistic-label">Administrators</h6>
+                            <h3 class="statistic-value">{{ adminUsers | number }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="statistic-card bg-light">
+                <div class="statistic-card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="statistic-icon bg-info">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="statistic-info">
+                            <h6 class="statistic-label">Manager</h6>
+                            <h3 class="statistic-value">{{ regularUsers | number }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Card -->
+    <div class="card filter-card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3"><i class="fas fa-filter me-2"></i>Search and Filter</h5>
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Search by name, email, phone..."
+                            [(ngModel)]="searchTerm" (keyup.enter)="onSearch()">
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <select class="form-select" [(ngModel)]="roleFilter" (change)="onRoleChange(roleFilter)">
+                        <option value="all">All Roles</option>
+                        <option value="ADMIN">Administrator</option>
+                        <option value="MANAGER">Manager</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <select class="form-select" [(ngModel)]="statusFilter" (change)="onStatusChange(statusFilter)">
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <div class="d-grid">
+                        <button class="btn btn-secondary" (click)="resetFilters()">
+                            <i class="fas fa-redo-alt me-2"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table Card -->
+    <div class="card table-card mb-4">
+        <div class="card-body">
+            <div class="table-toolbar d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0"><i class="fas fa-list me-2"></i>Users List</h5>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-success me-1" (click)="bulkAction('activate')"
+                        [disabled]="selectedCustomers.length === 0">
+                        <i class="fas fa-check-circle me-1"></i> Activate
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning me-1" (click)="bulkAction('deactivate')"
+                        [disabled]="selectedCustomers.length === 0">
+                        <i class="fas fa-ban me-1"></i> Deactivate
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="bulkAction('delete')"
+                        [disabled]="selectedCustomers.length === 0">
+                        <i class="fas fa-trash me-1"></i> Delete
+                    </button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle users-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="selectAll"
+                                        [checked]="areAllSelected()" (change)="toggleSelectAll()">
+                                </div>
+                            </th>
+                            <th>User <i class="fas fa-sort ms-1"></i></th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Last Active</th>
+                            <th>Created Date</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let customer of filteredCustomers"
+                            [ngClass]="{'selected-row': isSelected(customer)}">
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" [checked]="isSelected(customer)"
+                                        (change)="toggleSelect(customer)">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle">{{ getInitials(customer.fullName) }}</div>
+                                    <div class="ms-2">
+                                        <div class="fw-medium">{{ customer.fullName }}</div>
+                                        <small class="text-muted" *ngIf="customer.phoneNumber">{{ customer.phoneNumber
+                                            }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ customer.email }}</td>
+                            <td>
+                                <span class="badge" [ngClass]="customer.role ? getRoleBadgeClass(customer.role) : ''">
+                                    {{ customer.role ? getRoleName(customer.role) : '' }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge ms-2 bg-success" *ngIf="customer.active === true">
+                                    Active
+                                </span>
+                                <span class="badge ms-2 bg-warning" *ngIf="customer.locked === true">
+                                    Inactive
+                                </span>
+                            </td>
+                            <td>{{ customer.lastActive | date:'MMM d, y' }}</td>
+                            <td>{{ customer.createdAt | date:'MMM d, y' }}</td>
+                            <td>
+                                <div class="d-flex justify-content-center action-buttons">
+                                    <button class="btn btn-icon btn-sm btn-light"
+                                        (click)="viewCustomerDetails(customer)" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-icon btn-sm btn-light"
+                                        (click)="showEditCustomerModal(customer)" title="Edit User">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <!-- <div class="dropdown action-dropdown">
+                                        <button class="btn btn-icon btn-sm btn-light" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-end shadow-sm action-menu">
+                                            <a class="dropdown-item d-flex align-items-center"
+                                                (click)="resetPassword(customer); $event.preventDefault()">
+                                                <span class="icon-wrapper text-warning">
+                                                    <i class="fas fa-key"></i>
+                                                </span>
+                                                <span>Reset Password</span>
+                                            </a>
+
+                                            <div class="dropdown-divider"></div>
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="filteredCustomers.length === 0">
+                            <td colspan="8" class="text-center py-4">
+                                <div class="empty-state">
+                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                    <h6>No users found</h6>
+                                    <p class="text-muted">Try changing your search criteria or clear filters</p>
+                                    <button class="btn btn-sm btn-primary" (click)="resetFilters()">Clear
+                                        Filters</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap mt-3">
+                <div class="pagination-info mb-2">
+                    Showing <span class="fw-medium">{{ paginationInfo.from }}</span> to
+                    <span class="fw-medium">{{ paginationInfo.to }}</span> of
+                    <span class="fw-medium">{{ paginationInfo.total }}</span> users
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="Users pagination" *ngIf="totalPages > 1">
+                    <ul class="pagination justify-content-center m-0">
+                        <li class="page-item" [ngClass]="{'disabled': currentPage === 1}">
+                            <a class="page-link" href="javascript:void(0)" (click)="goToPage(1)" aria-label="First">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" [ngClass]="{'disabled': currentPage === 1}">
+                            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage - 1)"
+                                aria-label="Previous">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" *ngFor="let page of getPaginationArray()"
+                            [ngClass]="{'active': currentPage === page, 'disabled': page === '...'}">
+                            <a class="page-link" href="javascript:void(0)" *ngIf="page !== '...'"
+                                (click)="goToPage(page)">{{ page }}</a>
+                            <span class="page-link" *ngIf="page === '...'">{{ page }}</span>
+                        </li>
+                        <li class="page-item" [ngClass]="{'disabled': currentPage === totalPages}">
+                            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage + 1)"
+                                aria-label="Next">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" [ngClass]="{'disabled': currentPage === totalPages}">
+                            <a class="page-link" href="javascript:void(0)" (click)="goToPage(totalPages)"
+                                aria-label="Last">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row with Recent Activity and Add User form -->
+    <div class="row">
+        <!-- Recent Activity Card -->
+        <div class="col-lg-6 mb-4">
+            <div class="card activity-card h-100">
+                <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i class="fas fa-history me-2"></i>Recent Activities</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item list-group-item-action" *ngFor="let activity of recentActivities">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <div class="activity-icon" [ngClass]="'bg-' + activity.type">
+                                        <i class="fas" [ngClass]="activity.icon"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <h6 class="mb-0">{{ activity.action }}</h6>
+                                        <small class="text-muted">{{ activity.description }}</small>
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ activity.time | date:'shortTime' }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal fade" id="customerModal" tabindex="-1" aria-labelledby="customerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"
+                    [ngClass]="formMode === 'add' ? 'bg-success text-white' : 'bg-primary text-white'">
+                    <h5 class="modal-title" id="customerModalLabel">
+                        <i class="fas" [ngClass]="formMode === 'add' ? 'fa-user-plus' : 'fa-user-edit'"></i>
+                        {{ formMode === 'add' ? 'Add New User' : 'Edit User' }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="customerForm">
+                        <div class="row g-3">
+                            <!-- Basic Info -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <input type="text" class="form-control" formControlName="fullName"
+                                            [ngClass]="{'is-invalid': customerForm.get('fullName')?.touched && customerForm.get('fullName')?.invalid}">
+                                    </div>
+                                    <div *ngIf="customerForm.get('fullName')?.touched && customerForm.get('fullName')?.errors?.['required']"
+                                        class="text-danger small mt-1">
+                                        Full name is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        <input type="email" class="form-control" formControlName="email"
+                                            [ngClass]="{'is-invalid': customerForm.get('email')?.touched && customerForm.get('email')?.invalid}">
+                                    </div>
+                                    <div *ngIf="customerForm.get('email')?.touched && customerForm.get('email')?.errors?.['required']"
+                                        class="text-danger small mt-1">
+                                        Email is required
+                                    </div>
+                                    <div *ngIf="customerForm.get('email')?.touched && customerForm.get('email')?.errors?.['email']"
+                                        class="text-danger small mt-1">
+                                        Invalid email format
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Password <span class="text-danger"
+                                            *ngIf="formMode === 'add'">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                        <input type="password" class="form-control" formControlName="password"
+                                            [ngClass]="{'is-invalid': customerForm.get('password')?.touched && customerForm.get('password')?.invalid}">
+                                    </div>
+                                    <div *ngIf="customerForm.get('password')?.touched && customerForm.get('password')?.errors?.['required']"
+                                        class="text-danger small mt-1">
+                                        Password is required
+                                    </div>
+                                    <div *ngIf="customerForm.get('password')?.touched && customerForm.get('password')?.errors?.['minlength']"
+                                        class="text-danger small mt-1">
+                                        Password must be at least 6 characters
+                                    </div>
+                                    <div *ngIf="formMode === 'edit'" class="text-muted small mt-1">
+                                        Leave blank to keep current password
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                        <input type="text" class="form-control" formControlName="phoneNumber"
+                                            [ngClass]="{'is-invalid': customerForm.get('phoneNumber')?.touched && customerForm.get('phoneNumber')?.invalid}">
+                                    </div>
+                                    <div *ngIf="customerForm.get('phoneNumber')?.touched && customerForm.get('phoneNumber')?.errors?.['pattern']"
+                                        class="text-danger small mt-1">
+                                        Please enter a valid phone number
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Role and Status -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Role <span class="text-danger">*</span></label>
+                                    <select class="form-select" formControlName="role">
+                                        <option *ngFor="let role of availableRoles" [value]="role.id">{{ role.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Status</label>
+                                    <div class="d-flex mt-2">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" formControlName="status"
+                                                id="statusSwitch">
+                                            <label class="form-check-label" for="statusSwitch">
+                                                {{ customerForm.get('status')?.value ? 'Active' : 'Inactive' }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">Address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                        <input type="text" class="form-control" formControlName="address">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">Notes</label>
+                                    <textarea class="form-control" formControlName="notes" rows="3"
+                                        placeholder="Additional notes about this user..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </button>
+                    <button type="button" class="btn" [ngClass]="formMode === 'add' ? 'btn-success' : 'btn-primary'"
+                        (click)="saveCustomer()" [disabled]="loading">
+                        <i class="fas"
+                            [ngClass]="loading ? 'fa-spinner fa-spin' : (formMode === 'add' ? 'fa-user-plus' : 'fa-save')"></i>
+                        {{ loading ? ' Saving...' : (formMode === 'add' ? ' Add User' : ' Save Changes') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View User Details Modal -->
+    <div class="modal fade" id="viewCustomerModal" tabindex="-1" aria-labelledby="viewCustomerModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" *ngIf="selectedCustomer">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="viewCustomerModalLabel">
+                        <i class="fas fa-user me-2"></i> User Details
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="user-profile-section mb-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="avatar-circle large-avatar">{{ getInitials(selectedCustomer.fullName) }}
+                                    </div>
+                                    <div class="ms-3">
+                                        <h4 class="mb-0">{{ selectedCustomer.fullName }}</h4>
+                                        <div>
+                                            <span class="badge"
+                                                [ngClass]="selectedCustomer.role ? getRoleBadgeClass(selectedCustomer.role) : ''">
+                                                {{ selectedCustomer.role ? getRoleName(selectedCustomer.role) : '' }}
+                                            </span>
+                                            <span class="badge ms-2 bg-success"
+                                                *ngIf="selectedCustomer.active === true">
+                                                Active
+                                            </span>
+                                            <span class="badge ms-2 bg-secondary"
+                                                *ngIf="selectedCustomer.active != true">
+                                                Inactive
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="user-details-section mb-4">
+                                <h6 class="details-section-title">Contact Information</h6>
+                                <div class="detail-item">
+                                    <div class="detail-label"><i class="fas fa-envelope me-2"></i> Email:</div>
+                                    <div class="detail-value">{{ selectedCustomer.email }}</div>
+                                </div>
+                                <div class="detail-item" *ngIf="selectedCustomer.phoneNumber">
+                                    <div class="detail-label"><i class="fas fa-phone me-2"></i> Phone:</div>
+                                    <div class="detail-value">{{ selectedCustomer.phoneNumber }}</div>
+                                </div>
+                                <div class="detail-item" *ngIf="selectedCustomer.address">
+                                    <div class="detail-label"><i class="fas fa-map-marker-alt me-2"></i> Address:</div>
+                                    <div class="detail-value">{{ selectedCustomer.address }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="account-details-section mb-4">
+                                <h6 class="details-section-title">Account Information</h6>
+                                <div class="detail-item">
+                                    <div class="detail-label"><i class="fas fa-id-card me-2"></i> User ID:</div>
+                                    <div class="detail-value">{{ selectedCustomer.id }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label"><i class="fas fa-calendar-alt me-2"></i> Created Date:
+                                    </div>
+                                    <div class="detail-value">{{ selectedCustomer.createdAt | date:'medium' }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label"><i class="fas fa-clock me-2"></i> Last Active:</div>
+                                    <div class="detail-value">{{ selectedCustomer.lastActive | date:'medium' }}</div>
+                                </div>
+                            </div>
+
+                            <div class="notes-section mb-4" *ngIf="selectedCustomer.notes">
+                                <h6 class="details-section-title">Notes</h6>
+                                <div class="p-3 bg-light rounded">
+                                    {{ selectedCustomer.notes }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Close
+                    </button>
+                    <!-- <button type="button" class="btn btn-primary"
+                        (click)="showEditCustomerModal(selectedCustomer); document.getElementById('viewCustomerModal')?.querySelector('.btn-close')?.dispatchEvent(new Event('click'));">
+                        <i class="fas fa-edit me-1"></i> Edit
+                    </button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -21,11 +21,13 @@ import { LoginComponent } from './login/login.component';
 import { CalculatorComponent } from './calculator/calculator.component';
 import { AlertComponent } from './alert/alert.component';
 import { AlertService } from './services/alert.service';
-import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { ConfirmationService } from './services/confirmation.service';
 import { AuthInterceptor } from './auth.interceptor';
 import { TokenService } from './services/token.service';
 import { ReportsComponent } from './reports/reports.component';
+import { CustomersComponent } from './customers/customers.component';
+import { SettingsComponent } from './settings/settings.component';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 
 
 @NgModule({
@@ -41,8 +43,10 @@ import { ReportsComponent } from './reports/reports.component';
     ReceiptTemplateComponent,
     CalculatorComponent,
     AlertComponent,
-    ConfirmationDialogComponent,
     ReportsComponent,
+    CustomersComponent,
+    SettingsComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,

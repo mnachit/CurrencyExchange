@@ -1,26 +1,91 @@
 /* src/app/components/alert/alert.component.css */
 .alert-container {
     position: fixed;
-    top: 20px;
+    top: 90px;
     right: 20px;
     z-index: 1050;
-    max-width: 400px;
+    max-width: 350px;
 }
 
 .alert {
-    margin-bottom: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    animation: slideIn 0.3s ease-in-out;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    opacity: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-@keyframes slideIn {
+.alert-success {
+    border-top: 3px solid #2ecc71;
+}
+
+.alert-info {
+    border-top: 3px solid #3498db;
+}
+
+.alert-warning {
+    border-top: 3px solid #f39c12;
+}
+
+.alert-danger {
+    border-top: 3px solid #e74c3c;
+}
+
+.alert i {
+    font-size: 18px;
+    margin-right: 12px;
+}
+
+.alert-success i {
+    color: #2ecc71;
+}
+
+.alert-info i {
+    color: #3498db;
+}
+
+.alert-warning i {
+    color: #f39c12;
+}
+
+.alert-danger i {
+    color: #e74c3c;
+}
+
+.alert-content {
+    flex: 1;
+}
+
+.btn-close {
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    margin-left: 10px;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+.fade {
+    animation: fadeInSlide 0.4s ease-out;
+}
+
+@keyframes fadeInSlide {
     from {
-        transform: translateX(100%);
         opacity: 0;
+        transform: translateX(30px);
     }
 
     to {
-        transform: translateX(0);
         opacity: 1;
+        transform: translateX(0);
     }
 }

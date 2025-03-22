@@ -1,7 +1,9 @@
 export interface Currency {
+    id?: number;
+    symbol?: string;
     code: string;
     name: string;
-    flagUrl: string;
+    flagUrl?: string;
     buyRate: number;
     sellRate: number;
     previousBuyRate?: number;

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { TokenService } from '../services/token.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -15,7 +16,10 @@ export class SidebarComponent implements OnInit {
   isSidebarCollapsed: boolean = false;
   screenWidth: number;
 
-  constructor(private router: Router) {
+  fullName?: string;
+  role?: string;
+
+  constructor(private router: Router, private tokenService: TokenService) {
     this.screenWidth = window.innerWidth;
     this.checkScreenSize();
   }
@@ -29,6 +33,8 @@ export class SidebarComponent implements OnInit {
         this.closeSidebar();
       }
     });
+    this.role = this.tokenService.getRoleUserWithToken() ?? undefined;
+    this.fullName = this.tokenService.getFullNameUserWithToken() ?? undefined;
   }
 
   @HostListener('window:resize', ['$event'])

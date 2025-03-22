@@ -1,6 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { TokenService } from '../services/token.service';
 
 @Component({
   selector: 'app-header',
@@ -17,6 +18,8 @@ export class HeaderComponent implements OnInit {
   showNotifications: boolean = false;
   showMessages: boolean = false;
   showUserMenu: boolean = false;
+  fullName?: string;
+  role?: string;
 
   // Mock notification data
   notificationList = [
@@ -79,11 +82,13 @@ export class HeaderComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router, public authService: AuthService) { }
+  constructor(private router: Router, public authService: AuthService, private tokenService: TokenService) { }
 
   ngOnInit(): void {
     // Close dropdowns when clicking outside
     document.addEventListener('click', this.closeDropdowns.bind(this));
+    this.fullName = this.tokenService.getFullNameUserWithToken() ?? undefined;
+    this.role = this.tokenService.getRoleUserWithToken() ?? undefined;
   }
 
   /**

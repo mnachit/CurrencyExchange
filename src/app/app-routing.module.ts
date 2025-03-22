@@ -9,6 +9,8 @@ import { FundsManagementComponent } from './funds-management/funds-management.co
 import { LoginComponent } from './login/login.component';
 import { checkTokenGuard } from './Guard/check-token.guard';
 import { ReportsComponent } from './reports/reports.component';
+import { CustomersComponent } from './customers/customers.component';
+import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -20,6 +22,8 @@ const routes: Routes = [
   { path: 'loans', component: LoanManagementComponent, canActivate: [checkTokenGuard]},
   { path: 'funds-management', component: FundsManagementComponent, canActivate: [checkTokenGuard]},
   { path: 'reports', component: ReportsComponent, canActivate: [checkTokenGuard]},
+  { path: 'customers', component: CustomersComponent, canActivate: [checkTokenGuard]},
+  { path: 'settings', component: SettingsComponent, canActivate: [checkTokenGuard]},
   { path: '**', redirectTo: 'dashboard'}
 ];
 

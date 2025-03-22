@@ -732,3 +732,44 @@ tr.table-success {
   align-items: center;
   justify-content: center;
 }
+
+/* Add these styles to your transaction-history.component.css */
+.receipt {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+.receipt-header {
+  margin-bottom: 1.5rem;
+}
+
+.receipt-logo {
+  margin-bottom: 0.5rem;
+  color: #1e3a8a;
+}
+
+.receipt-calculation {
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+}
+
+.border-dashed {
+  border-style: dashed !important;
+}
+
+.receipt-qr {
+  background-color: #f8f9fa;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+/* Modal styles when using ngClass approach */
+.modal.show {
+  display: block;
+  background-color: rgba(0, 0, 0, 0.5);
+}

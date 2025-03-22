@@ -1,23 +1,24 @@
 <!-- src/app/components/confirmation-dialog/confirmation-dialog.component.html -->
-<div class="modal fade" #confirmationModal tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content" *ngIf="dialogData">
-            <div class="modal-header" [ngClass]="'bg-' + dialogData.type">
-                <h5 class="modal-title"
-                    [ngClass]="{'text-white': dialogData.type !== 'info' && dialogData.type !== 'warning'}">
-                    {{ dialogData.title }}
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true"
+    data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" *ngIf="confirmations.length > 0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">
+                    {{ confirmations[0].data.title }}
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" (click)="cancel(confirmations[0].id)"></button>
             </div>
             <div class="modal-body">
-                <p [innerHTML]="dialogData.message"></p>
+                <p>{{ confirmations[0].data.message }}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="onCancel()">
-                    {{ dialogData.cancelText }}
+                <button type="button" class="btn btn-secondary" (click)="cancel(confirmations[0].id)">
+                    {{ confirmations[0].data.cancelText || 'Cancel' }}
                 </button>
-                <button type="button" class="btn" [ngClass]="'btn-' + dialogData.type" (click)="onConfirm()">
-                    {{ dialogData.confirmText }}
+                <button type="button" class="btn" [ngClass]="getButtonClass(confirmations[0].data.type)"
+                    (click)="confirm(confirmations[0].id)">
+                    {{ confirmations[0].data.confirmText || 'Confirm' }}
                 </button>
             </div>
         </div>

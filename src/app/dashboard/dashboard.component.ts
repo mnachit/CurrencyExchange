@@ -9,6 +9,7 @@ import { startWith, switchMap } from 'rxjs/operators';
 import { CurrencyService } from '../services/currency.service';
 import { DashboardService } from '../services/dashboard.service';
 import { TransactionService } from '../services/transaction.service';
+import { TokenService } from '../services/token.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,7 +33,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   today: Date = new Date();
   loading: boolean = true;
   refreshInterval: any;
-  constructor(private dashboardService: DashboardService, private currencyService: CurrencyService, private transactionService: TransactionService) { }
+  fullName?: string;
+  constructor(private dashboardService: DashboardService, private currencyService: CurrencyService, private transactionService: TransactionService, private tokenService: TokenService) { }
 
   ngOnInit(): void {
     this.loading = true;
@@ -40,6 +42,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.getCurrencies();
     this.getTransactions();
     this.initializeChartData();
+    this.fullName = this.tokenService.getFullNameUserWithToken() ?? undefined;
+    
 
     // Simulate loading data
     setTimeout(() => {

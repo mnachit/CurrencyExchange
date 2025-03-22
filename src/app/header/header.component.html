@@ -65,14 +65,14 @@
         <div class="user-dropdown" (click)="toggleUserMenu($event)">
             <div class="user-avatar">AM</div>
             <div class="user-info">
-                <div class="user-name">Admin</div>
-                <div class="user-role">Manager</div>
+                <div class="user-name">{{role}}</div>
+                <div class="user-role">menu</div>
             </div>
             <i class="fas fa-chevron-down" style="font-size: 0.75rem; color: #64748b;"></i>
 
             <!-- User Dropdown Menu -->
             <div class="dropdown-menu" [ngClass]="{'show': showUserMenu}">
-                <div class="dropdown-content">
+                <!-- <div class="dropdown-content">
                     <div class="dropdown-item">
                         <div class="dropdown-icon">
                             <i class="fas fa-user-circle"></i>
@@ -97,7 +97,7 @@
                             <div class="dropdown-message">Change Password</div>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="dropdown-footer">
                     <a href="javascript:void(0)" class="dropdown-link" (click)="logout()">
                         <i class="fas fa-sign-out-alt mr-1"></i> Logout

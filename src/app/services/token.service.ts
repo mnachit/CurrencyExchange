@@ -44,4 +44,26 @@ export class TokenService {
     const payloadObject = JSON.parse(payloadDecoded);
     return payloadObject.id;
   }
+
+  getFullNameUserWithToken(): string | null {
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+    const payload = token.split('.')[1];
+    const payloadDecoded = atob(payload);
+    const payloadObject = JSON.parse(payloadDecoded);
+    return payloadObject.fullName;
+  }
+
+  getRoleUserWithToken(): string | null {
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+    const payload = token.split('.')[1];
+    const payloadDecoded = atob(payload);
+    const payloadObject = JSON.parse(payloadDecoded);
+    return payloadObject.role;
+  }
 }
