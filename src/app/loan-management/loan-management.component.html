@@ -1,8 +1,3 @@
-<!-- Add this at the end of your existing HTML -->
-<!-- <app-alert></app-alert>
-<app-alert [title]="modalTitle" [body]="modalBody" [confirmText]="modalConfirmText" [cancelText]="modalCancelText"
-    (onConfirm)="handleModalConfirm()" (onCancel)="handleModalCancel()">
-</app-alert> -->
 <div class="container-fluid p-0">
     <!-- Header Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -11,7 +6,7 @@
             <p class="text-muted">Manage all loan operations and customer accounts</p>
         </div>
         <div class="d-flex">
-            <!-- <button class="btn btn-outline-secondary me-2" (click)="exportLoans()">
+            <button class="btn btn-outline-secondary me-2" (click)="exportLoans()">
                 <i class="fas fa-file-export me-1"></i> Export
             </button>
             <div class="dropdown me-2">
@@ -36,7 +31,7 @@
                     <li><a class="dropdown-item" href="#" (click)="onDateChange(thisWeek); $event.preventDefault()">This
                             Week's Loans</a></li>
                 </ul>
-            </div> -->
+            </div>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newLoanModal"
                 (click)="showNewLoan()">
                 <i class="fas fa-plus me-1"></i> New Loan
@@ -44,49 +39,111 @@
         </div>
     </div>
 
-    <!-- Stats Cards -->
+    <!-- Analytics Dashboard Section -->
     <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card stats-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title text-primary">Active Loans</h6>
-                    <div class="d-flex align-items-center mt-auto">
-                        <h2 class="mb-0">{{ activeLoansCount }}</h2>
+        <div class="col-lg-8">
+            <!-- Stats Cards -->
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title text-primary">Active Loans</h6>
+                            <div class="d-flex align-items-center mt-auto">
+                                <h2 class="mb-0">{{ activeLoansCount }}</h2>
+                            </div>
+                            <p class="mb-0 small text-muted">Currently outstanding</p>
+                        </div>
                     </div>
-                    <p class="mb-0 small text-muted">Currently outstanding</p>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title text-danger">Overdue Loans</h6>
+                            <div class="d-flex align-items-center mt-auto">
+                                <h2 class="mb-0">{{ overdueLoansCount }}</h2>
+                            </div>
+                            <p class="mb-0 small text-muted">Past due date</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title text-success">Repaid Loans</h6>
+                            <div class="d-flex align-items-center mt-auto">
+                                <h2 class="mb-0">{{ repaidLoansCount }}</h2>
+                            </div>
+                            <p class="mb-0 small text-muted">Successfully closed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card">
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title" style="color: #5e72e4;">Total Amount</h6>
+                            <div class="d-flex align-items-center mt-auto">
+                                <h2 class="mb-0">${{ totalLoansAmount | number:'1.0-0' }}</h2>
+                            </div>
+                            <p class="mb-0 small text-muted">Outstanding loans</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Chart -->
+            <div class="card mt-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Monthly Loan Performance</h6>
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-primary" (click)="updateChartPeriod('monthly')">
+                            Monthly
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" (click)="updateChartPeriod('quarterly')">
+                            Quarterly
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" (click)="updateChartPeriod('yearly')">
+                            Yearly
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height:250px;">
+                        <canvas id="loanPerformanceChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card stats-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title text-danger">Overdue Loans</h6>
-                    <div class="d-flex align-items-center mt-auto">
-                        <h2 class="mb-0">{{ overdueLoansCount }}</h2>
-                    </div>
-                    <p class="mb-0 small text-muted">Past due date</p>
+
+        <div class="col-lg-4">
+            <!-- Activity Log -->
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Recent Activity</h6>
+                    <button class="btn btn-sm btn-outline-primary" (click)="refreshActivityLog()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card stats-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title text-success">Repaid Loans</h6>
-                    <div class="d-flex align-items-center mt-auto">
-                        <h2 class="mb-0">{{ repaidLoansCount }}</h2>
+                <div class="card-body p-0">
+                    <div class="activity-timeline">
+                        <div class="timeline-item" *ngFor="let activity of activityLog">
+                            <div class="timeline-icon" [ngClass]="getActivityIconClass(activity.type)">
+                                <i class="fas" [ngClass]="getActivityIcon(activity.type)"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <p class="mb-0 fw-medium">{{ activity.description }}</p>
+                                <small class="text-muted">{{ activity.timestamp | date:'MMM d, h:mm a' }}</small>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item" *ngIf="activityLog.length === 0">
+                            <div class="timeline-content text-center py-3">
+                                <p class="text-muted mb-0">No recent activity</p>
+                            </div>
+                        </div>
                     </div>
-                    <p class="mb-0 small text-muted">Successfully closed</p>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card stats-card">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="card-title" style="color: #5e72e4;">Total Amount</h6>
-                    <div class="d-flex align-items-center mt-auto">
-                        <h2 class="mb-0">${{ totalLoansAmount | number:'1.0-0' }}</h2>
-                    </div>
-                    <p class="mb-0 small text-muted">Outstanding loans</p>
+                <div class="card-footer text-center">
+                    <a href="#" class="text-primary">View All Activity</a>
                 </div>
             </div>
         </div>
@@ -122,6 +179,67 @@
                         <button type="button" class="btn"
                             [ngClass]="statusFilter === 'overdue' ? 'btn-primary' : 'btn-outline-primary'"
                             (click)="onStatusChange('overdue')">Overdue</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="advanced-filters" [ngClass]="{'d-none': !showAdvancedFilters}">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Issue Date Range</label>
+                                <div class="input-group">
+                                    <input type="date" class="form-control" [(ngModel)]="issueDateStart">
+                                    <span class="input-group-text">to</span>
+                                    <input type="date" class="form-control" [(ngModel)]="issueDateEnd">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Due Date Range</label>
+                                <div class="input-group">
+                                    <input type="date" class="form-control" [(ngModel)]="dueDateStart">
+                                    <span class="input-group-text">to</span>
+                                    <input type="date" class="form-control" [(ngModel)]="dueDateEnd">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Amount Range</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" placeholder="Min" [(ngModel)]="amountMin">
+                                    <span class="input-group-text">-</span>
+                                    <input type="number" class="form-control" placeholder="Max" [(ngModel)]="amountMax">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Currency</label>
+                                <select class="form-select" [(ngModel)]="currencyFilter">
+                                    <option value="all">All Currencies</option>
+                                    <option *ngFor="let currency of currencies" [value]="currency">{{ currency }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button class="btn btn-outline-primary w-100" (click)="applyAdvancedFilters()">
+                                    Apply Filters
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-12 d-flex justify-content-end">
+                                <button class="btn btn-sm btn-outline-secondary me-2" (click)="resetFilters()">
+                                    <i class="fas fa-times me-1"></i>Reset
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" (click)="saveSearchFilters()">
+                                    <i class="fas fa-save me-1"></i>Save This Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-1">
+                        <button class="btn btn-sm btn-link" (click)="toggleAdvancedFilters()">
+                            {{ showAdvancedFilters ? 'Hide Advanced Filters' : 'Show Advanced Filters' }}
+                            <i class="fas" [ngClass]="showAdvancedFilters ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -184,7 +302,7 @@
                             <td>
                                 <div class="d-flex justify-content-center">
                                     <button class="btn btn-sm btn-icon btn-outline-secondary me-1"
-                                        (click)="viewLoan(loan)" title="View Deails">
+                                        (click)="viewLoan(loan)" title="View Details">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     <button class="btn btn-sm btn-icon btn-outline-primary me-1"
@@ -209,8 +327,7 @@
                                 <div class="py-4">
                                     <i class="fas fa-search fa-3x text-muted mb-3"></i>
                                     <p class="mb-0 lead">No loans found matching your criteria</p>
-                                    <button class="btn btn-outline-primary mt-3"
-                                        (click)="statusFilter = 'all'; searchTerm = ''; onSearch()">
+                                    <button class="btn btn-outline-primary mt-3" (click)="resetFilters()">
                                         <i class="fas fa-sync me-1"></i> Reset Filters
                                     </button>
                                 </div>
@@ -222,24 +339,40 @@
 
             <!-- Pagination -->
             <div class="p-3 border-top" *ngIf="totalPages > 1 && !loading">
-                <nav aria-label="Loan pagination">
-                    <ul class="pagination justify-content-center mb-0">
-                        <li class="page-item" [ngClass]="{'disabled': currentPage === 0}">
-                            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage - 1)">
-                                <i class="fas fa-chevron-left"></i>
-                            </a>
-                        </li>
-                        <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
-                            [ngClass]="{'active': currentPage === i}">
-                            <a class="page-link" href="javascript:void(0)" (click)="goToPage(i)">{{ i + 1 }}</a>
-                        </li>
-                        <li class="page-item" [ngClass]="{'disabled': currentPage === totalPages - 1}">
-                            <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage + 1)">
-                                <i class="fas fa-chevron-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <select class="form-select form-select-sm me-2" style="width: auto;" [(ngModel)]="itemsPerPage"
+                            (change)="onItemsPerPageChange()">
+                            <option [value]="10">10 per page</option>
+                            <option [value]="20">20 per page</option>
+                            <option [value]="50">50 per page</option>
+                            <option [value]="100">100 per page</option>
+                        </select>
+                        <span class="text-muted small">
+                            Showing {{ (currentPage * itemsPerPage) + 1 }} -
+                            {{ (currentPage * itemsPerPage) + filteredLoans.length }} of {{ totalElements }} items
+                        </span>
+                    </div>
+                    <nav aria-label="Loan pagination">
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item" [ngClass]="{'disabled': currentPage === 0}">
+                                <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage - 1)">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item" *ngFor="let page of getPaginationRange(); let i = index"
+                                [ngClass]="{'active': currentPage === page}">
+                                <a class="page-link" href="javascript:void(0)" (click)="goToPage(page)">{{ page + 1
+                                    }}</a>
+                            </li>
+                            <li class="page-item" [ngClass]="{'disabled': currentPage === totalPages - 1}">
+                                <a class="page-link" href="javascript:void(0)" (click)="goToPage(currentPage + 1)">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
@@ -366,13 +499,13 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <div class="form-group mt-4">
-                                    <div class="form-check">
+                            <div class="col-md-12">
+                                <div class="form-group mt-2">
+                                    <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" formControlName="isConfidential"
                                             id="isConfidential">
                                         <label class="form-check-label" for="isConfidential">
-                                            <i class="fas fa-user-secret me-1"></i> Confidential Record
+                                            <i class="fas fa-user-secret me-1"></i> Mark as Confidential Record
                                         </label>
                                     </div>
                                 </div>
@@ -383,6 +516,77 @@
                                     <label class="form-label">Notes</label>
                                     <textarea class="form-control" rows="3" formControlName="notes"
                                         placeholder="Add any additional information about this loan..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Payment Schedule Section -->
+                            <div class="col-12 mt-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">Payment Schedule</h6>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox"
+                                                    [(ngModel)]="enablePaymentSchedule"
+                                                    [ngModelOptions]="{standalone: true}" id="enableSchedule">
+                                                <label class="form-check-label" for="enableSchedule">Enable</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body" *ngIf="enablePaymentSchedule">
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Payment Frequency</label>
+                                                <select class="form-select" [(ngModel)]="paymentFrequency"
+                                                    [ngModelOptions]="{standalone: true}"
+                                                    (change)="generatePaymentSchedule()">
+                                                    <option value="monthly">Monthly</option>
+                                                    <option value="bi-weekly">Bi-Weekly</option>
+                                                    <option value="weekly">Weekly</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">First Payment Date</label>
+                                                <input type="date" class="form-control" [(ngModel)]="firstPaymentDate"
+                                                    [ngModelOptions]="{standalone: true}"
+                                                    (change)="generatePaymentSchedule()">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Number of Payments</label>
+                                                <input type="number" class="form-control" [(ngModel)]="numberOfPayments"
+                                                    [ngModelOptions]="{standalone: true}" min="1"
+                                                    (change)="generatePaymentSchedule()">
+                                            </div>
+                                        </div>
+                                        <div class="table-responsive" *ngIf="paymentSchedule.length > 0">
+                                            <table class="table table-sm table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Date</th>
+                                                        <th>Amount</th>
+                                                        <th>Principal</th>
+                                                        <th>Interest</th>
+                                                        <th>Balance</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let payment of paymentSchedule; let i = index">
+                                                        <td>{{ i + 1 }}</td>
+                                                        <td>{{ payment.date | date:'MMM d, y' }}</td>
+                                                        <td>{{ formatAmount(payment.amount,
+                                                            loanForm.get('currency')?.value) }}</td>
+                                                        <td>{{ formatAmount(payment.principal,
+                                                            loanForm.get('currency')?.value) }}</td>
+                                                        <td>{{ formatAmount(payment.interest,
+                                                            loanForm.get('currency')?.value) }}</td>
+                                                        <td>{{ formatAmount(payment.remainingBalance,
+                                                            loanForm.get('currency')?.value) }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -396,6 +600,223 @@
                         (click)="saveLoan()">
                         <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
                         {{ loading ? ' Saving...' : ' Save Loan' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Saved Searches -->
+    <div class="modal fade" id="savedSearchesModal" tabindex="-1" aria-labelledby="savedSearchesModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="savedSearchesModalLabel">
+                        <i class="fas fa-bookmark"></i> Saved Searches
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div *ngIf="savedSearches.length === 0" class="text-center py-4">
+                        <i class="fas fa-search fa-2x text-muted mb-3"></i>
+                        <p class="mb-0">You don't have any saved searches yet.</p>
+                    </div>
+                    <ul class="list-group" *ngIf="savedSearches.length > 0">
+                        <li class="list-group-item d-flex justify-content-between align-items-center"
+                            *ngFor="let search of savedSearches; let i = index">
+                            <div>
+                                <h6 class="mb-0">{{ search.name }}</h6>
+                                <small class="text-muted">{{ search.description }}</small>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary me-1" (click)="applySavedSearch(i)"
+                                    data-bs-dismiss="modal">
+                                    <i class="fas fa-filter"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" (click)="deleteSavedSearch(i)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for New Saved Search -->
+    <div class="modal fade" id="newSavedSearchModal" tabindex="-1" aria-labelledby="newSavedSearchModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="newSavedSearchModalLabel">
+                        <i class="fas fa-save"></i> Save Current Search
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="savedSearchForm">
+                        <div class="mb-3">
+                            <label class="form-label">Search Name</label>
+                            <input type="text" class="form-control" formControlName="name"
+                                placeholder="My custom search">
+                            <div *ngIf="savedSearchForm.get('name')?.touched && savedSearchForm.get('name')?.errors?.['required']"
+                                class="text-danger small mt-1">
+                                Search name is required
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description (Optional)</label>
+                            <textarea class="form-control" formControlName="description"
+                                placeholder="What does this search help you find?"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" [disabled]="savedSearchForm.invalid"
+                        (click)="confirmSaveSearch()" data-bs-dismiss="modal">
+                        <i class="fas fa-save me-1"></i> Save Search
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Modal for Confirmation -->
+    <div class="modal fade" id="genericModal" tabindex="-1" aria-labelledby="genericModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" [ngClass]="{'bg-danger text-white': modalAction === 'delete', 
+                                                   'bg-primary text-white': modalAction === 'change',
+                                                   'bg-info text-white': modalAction === 'add'}">
+                    <h5 class="modal-title" id="genericModalLabel">{{ modalTitle }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ modalBody }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
+                        (click)="handleModalCancel()">
+                        {{ modalCancelText }}
+                    </button>
+                    <button type="button" class="btn"
+                        [ngClass]="{'btn-danger': modalAction === 'delete', 'btn-primary': modalAction === 'change' || modalAction === 'add'}"
+                        data-bs-dismiss="modal" (click)="handleModalConfirm()">
+                        {{ modalConfirmText }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Generation Modal -->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="reportModalLabel">
+                        <i class="fas fa-file-alt me-1"></i> Generate Report
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="reportForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Report Type</label>
+                                    <select class="form-select" formControlName="reportType">
+                                        <option value="summary">Loan Summary Report</option>
+                                        <option value="detailed">Detailed Loan Report</option>
+                                        <option value="overdue">Overdue Loans Report</option>
+                                        <option value="performance">Performance Report</option>
+                                        <option value="customer">Customer Report</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Date Range</label>
+                                    <select class="form-select" formControlName="dateRange">
+                                        <option value="today">Today</option>
+                                        <option value="yesterday">Yesterday</option>
+                                        <option value="thisWeek">This Week</option>
+                                        <option value="lastWeek">Last Week</option>
+                                        <option value="thisMonth">This Month</option>
+                                        <option value="lastMonth">Last Month</option>
+                                        <option value="custom">Custom Range</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" *ngIf="reportForm.get('dateRange')?.value === 'custom'">
+                                <div class="form-group">
+                                    <label class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" formControlName="startDate">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6" *ngIf="reportForm.get('dateRange')?.value === 'custom'">
+                                <div class="form-group">
+                                    <label class="form-label">End Date</label>
+                                    <input type="date" class="form-control" formControlName="endDate">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Format</label>
+                                    <select class="form-select" formControlName="format">
+                                        <option value="pdf">PDF</option>
+                                        <option value="excel">Excel</option>
+                                        <option value="csv">CSV</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Include Details</label>
+                                    <div class="mt-2">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                formControlName="includePaymentSchedule" id="includePaymentSchedule">
+                                            <label class="form-check-label" for="includePaymentSchedule">
+                                                Payment Schedule
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                formControlName="includeNotes" id="includeNotes">
+                                            <label class="form-check-label" for="includeNotes">
+                                                Notes
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                formControlName="includeConfidential" id="includeConfidential">
+                                            <label class="form-check-label" for="includeConfidential">
+                                                Confidential Data
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" (click)="generateReport()"
+                        [disabled]="!reportForm.valid">
+                        <i class="fas fa-file-download me-1"></i> Generate Report
                     </button>
                 </div>
             </div>

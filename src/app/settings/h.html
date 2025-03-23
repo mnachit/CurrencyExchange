@@ -1,0 +1,1781 @@
+<span class="text-muted small">{{activity.timestamp | date:'MMM d, h:mm a'}}</span>
+            </div>
+            <p class="mb-0">{{activity.description}}</p>
+            <small class="text-muted">By {{activity.performedBy}}</small>
+          </div>
+        </div>
+        <div class="empty-state text-center py-4" *ngIf="recentActivities.length === 0">
+          <i class="bi bi-calendar3 display-6 text-muted mb-3"></i>
+          <p class="mb-0">No recent activities found</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New/Edit Loan Modal -->
+<div class="modal fade" id="loanModal" tabindex="-1" aria-labelledby="loanModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" [ngClass]="{'bg-primary text-white': formMode === 'add', 'bg-info text-white': formMode === 'edit'}">
+        <h5 class="modal-title" id="loanModalLabel">
+          <i class="bi" [ngClass]="formMode === 'add' ? 'bi-plus-circle' : 'bi-pencil-square'"></i>
+          {{formMode === 'add' ? 'Create New Loan' : 'Edit Loan'}}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="loanForm">
+          <div class="row g-3">
+            <!-- Customer Information Section -->
+            <div class="col-12">
+              <h6 class="section-title">
+                <i class="bi bi-person me-2"></i>Customer Information
+              </h6>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Customer Name <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input type="text" class="form-control" formControlName="customerName"
+                       [ngClass]="{'is-invalid': submitted && f['customerName'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['customerName'].errors?.['required']">
+                Customer name is required
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Phone Number</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                <input type="text" class="form-control" formControlName="customerPhone"
+                       [ngClass]="{'is-invalid': submitted && f['customerPhone'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['customerPhone'].errors?.['pattern']">
+                Please enter a valid phone number
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                <input type="email" class="form-control" formControlName="customerEmail"
+                       [ngClass]="{'is-invalid': submitted && f['customerEmail'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['customerEmail'].errors?.['email']">
+                Please enter a valid email address
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Customer ID <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                <input type="text" class="form-control" formControlName="customerId"
+                       [ngClass]="{'is-invalid': submitted && f['customerId'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['customerId'].errors?.['required']">
+                Customer ID is required
+              </div>
+            </div>
+            
+            <!-- Loan Details Section -->
+            <div class="col-12 mt-4">
+              <h6 class="section-title">
+                <i class="bi bi-cash-coin me-2"></i>Loan Details
+              </h6>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Loan Amount <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-cash"></i></span>
+                <input type="number" class="form-control" formControlName="amount" min="1"
+                       [ngClass]="{'is-invalid': submitted && f['amount'].errors}">
+                <select class="form-select" style="max-width: 100px;" formControlName="currency">
+                  <option *ngFor="let curr of currencies" [value]="curr">{{curr}}</option>
+                </select>
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['amount'].errors?.['required']">
+                Loan amount is required
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['amount'].errors?.['min']">
+                Amount must be greater than 0
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Interest Rate (%) <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-percent"></i></span>
+                <input type="number" class="form-control" formControlName="interestRate" step="0.1"
+                       [ngClass]="{'is-invalid': submitted && f['interestRate'].errors}">
+                <span class="input-group-text">%</span>
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['interestRate'].errors?.['required']">
+                Interest rate is required
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['interestRate'].errors?.['min']">
+                Interest rate must be greater than or equal to 0
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Issue Date <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+                <input type="date" class="form-control" formControlName="issueDate"
+                       [ngClass]="{'is-invalid': submitted && f['issueDate'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['issueDate'].errors?.['required']">
+                Issue date is required
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Due Date <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+                <input type="date" class="form-control" formControlName="dueDate"
+                       [ngClass]="{'is-invalid': submitted && f['dueDate'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['dueDate'].errors?.['required']">
+                Due date is required
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Loan Purpose</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-info-circle"></i></span>
+                <select class="form-select" formControlName="purpose">
+                  <option value="">Select Purpose</option>
+                  <option value="Business">Business</option>
+                  <option value="Education">Education</option>
+                  <option value="Home">Home</option>
+                  <option value="Vehicle">Vehicle</option>
+                  <option value="Personal">Personal</option>
+                  <option value="Medical">Medical</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Collateral</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-shield"></i></span>
+                <input type="text" class="form-control" formControlName="collateral"
+                       placeholder="Property, vehicle, etc.">
+              </div>
+            </div>
+            
+            <!-- Risk Assessment Section -->
+            <div class="col-12 mt-4">
+              <h6 class="section-title">
+                <i class="bi bi-graph-up me-2"></i>Risk Assessment
+              </h6>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Risk Score <span class="text-danger">*</span></label>
+              <div class="d-flex align-items-center">
+                <input type="range" class="form-range flex-grow-1 me-2" min="1" max="10" step="1" 
+                       formControlName="riskScore">
+                <span class="risk-score" [ngClass]="getRiskClass(loanForm.get('riskScore')?.value)">
+                  {{loanForm.get('riskScore')?.value}}
+                </span>
+              </div>
+              <div class="form-text">
+                1 = Lowest Risk, 10 = Highest Risk
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Credit Score</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-graph-up"></i></span>
+                <input type="number" class="form-control" formControlName="creditScore" min="300" max="850">
+              </div>
+              <div class="form-text">
+                Enter customer's credit score (300-850)
+              </div>
+            </div>
+            
+            <!-- Additional Information Section -->
+            <div class="col-12 mt-4">
+              <h6 class="section-title">
+                <i class="bi bi-card-text me-2"></i>Additional Information
+              </h6>
+            </div>
+            
+            <div class="col-12">
+              <label class="form-label">Notes</label>
+              <textarea class="form-control" rows="3" formControlName="notes"
+                        placeholder="Add any additional information about this loan..."></textarea>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="isConfidential" formControlName="isConfidential">
+                <label class="form-check-label" for="isConfidential">
+                  <i class="bi bi-lock me-1"></i>Mark as Confidential
+                </label>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Tags</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-tags"></i></span>
+                <input type="text" class="form-control" formControlName="tags"
+                       placeholder="Enter tags separated by commas">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveLoan()" [disabled]="loading">
+          <i class="bi" [ngClass]="loading ? 'bi-hourglass-split' : 'bi-save'"></i>
+          {{loading ? ' Saving...' : ' Save Loan'}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loan Details Modal -->
+<div class="modal fade" id="loanDetailsModal" tabindex="-1" aria-labelledby="loanDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title" id="loanDetailsModalLabel">
+          <i class="bi bi-info-circle me-2"></i>Loan Details
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedLoan">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="loan-detail-section">
+              <h6 class="detail-section-title">
+                <i class="bi bi-person me-2"></i>Customer Information
+              </h6>
+              <div class="detail-item">
+                <span class="detail-label">Name:</span>
+                <span class="detail-value">{{selectedLoan.customerName}}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">ID:</span>
+                <span class="detail-value">{{selectedLoan.customerId}}</span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.customerPhone">
+                <span class="detail-label">Phone:</span>
+                <span class="detail-value">{{selectedLoan.customerPhone}}</span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.customerEmail">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value">{{selectedLoan.customerEmail}}</span>
+              </div>
+            </div>
+            
+            <div class="loan-detail-section">
+              <h6 class="detail-section-title">
+                <i class="bi bi-cash-coin me-2"></i>Loan Information
+              </h6>
+              <div class="detail-item">
+                <span class="detail-label">Amount:</span>
+                <span class="detail-value">{{selectedLoan.amount | currency:selectedLoan.currency}}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Interest Rate:</span>
+                <span class="detail-value">{{selectedLoan.interestRate}}%</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Issue Date:</span>
+                <span class="detail-value">{{selectedLoan.issueDate | date:'longDate'}}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Due Date:</span>
+                <span class="detail-value">{{selectedLoan.dueDate | date:'longDate'}}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Status:</span>
+                <span class="detail-value">
+                  <span class="status-badge" [ngClass]="getStatusClass(selectedLoan.status)">
+                    <i class="bi" [ngClass]="getStatusIcon(selectedLoan.status)"></i>
+                    {{selectedLoan.status}}
+                  </span>
+                </span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.purpose">
+                <span class="detail-label">Purpose:</span>
+                <span class="detail-value">{{selectedLoan.purpose}}</span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.collateral">
+                <span class="detail-label">Collateral:</span>
+                <span class="detail-value">{{selectedLoan.collateral}}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="loan-detail-section">
+              <h6 class="detail-section-title">
+                <i class="bi bi-graph-up me-2"></i>Risk Assessment
+              </h6>
+              <div class="detail-item">
+                <span class="detail-label">Risk Score:</span>
+                <span class="detail-value">
+                  <div class="risk-indicator">
+                    <div class="risk-bar" [ngClass]="getRiskClass(selectedLoan.riskScore)"></div>
+                    <span>{{selectedLoan.riskScore}}</span>
+                  </div>
+                </span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.creditScore">
+                <span class="detail-label">Credit Score:</span>
+                <span class="detail-value">{{selectedLoan.creditScore}}</span>
+              </div>
+            </div>
+            
+            <div class="loan-detail-section">
+              <h6 class="detail-section-title">
+                <i class="bi bi-clock-history me-2"></i>Payment History
+              </h6>
+              <div class="timeline payment-timeline" *ngIf="selectedLoan.payments?.length; else noPayments">
+                <div class="timeline-item" *ngFor="let payment of selectedLoan.payments">
+                  <div class="timeline-point"></div>
+                  <div class="timeline-content">
+                    <div class="d-flex justify-content-between">
+                      <span class="fw-medium">{{payment.amount | currency:selectedLoan.currency}}</span>
+                      <span class="text-muted small">{{payment.date | date:'MMM d, y'}}</span>
+                    </div>
+                    <p class="mb-0 small">{{payment.notes || 'Regular payment'}}</p>
+                  </div>
+                </div>
+              </div>
+              <ng-template #noPayments>
+                <div class="text-center py-3 text-muted">
+                  <i class="bi bi-info-circle me-1"></i>No payment records found
+                </div>
+              </ng-template>
+              
+              <button class="btn btn-sm btn-outline-primary mt-2" (click)="recordPayment(selectedLoan)">
+                <i class="bi bi-plus-circle me-1"></i>Record Payment
+              </button>
+            </div>
+            
+            <div class="loan-detail-section" *ngIf="selectedLoan.notes || selectedLoan.tags">
+              <h6 class="detail-section-title">
+                <i class="bi bi-card-text me-2"></i>Additional Information
+              </h6>
+              <div class="detail-item" *ngIf="selectedLoan.notes">
+                <span class="detail-label">Notes:</span>
+                <span class="detail-value">{{selectedLoan.notes}}</span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.tags && selectedLoan.tags.length > 0">
+                <span class="detail-label">Tags:</span>
+                <span class="detail-value">
+                  <span class="badge bg-light text-dark me-1" *ngFor="let tag of selectedLoan.tags.split(',')">
+                    {{tag.trim()}}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>Close
+        </button>
+        <button type="button" class="btn btn-primary" (click)="editLoan(selectedLoan)" data-bs-dismiss="modal">
+          <i class="bi bi-pencil me-1"></i>Edit Loan
+        </button>
+        <button type="button" class="btn btn-success" *ngIf="selectedLoan?.status === 'Active' || selectedLoan?.status === 'Overdue'" 
+                (click)="markAsCompleted(selectedLoan)">
+          <i class="bi bi-check-lg me-1"></i>Mark as Completed
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Record Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="paymentModalLabel">
+          <i class="bi bi-cash me-2"></i>Record Payment
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedLoan">
+        <form [formGroup]="paymentForm">
+          <div class="mb-3">
+            <label class="form-label">Payment Amount <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-cash"></i></span>
+              <input type="number" class="form-control" formControlName="amount" min="1"
+                     [ngClass]="{'is-invalid': paymentSubmitted && pf['amount'].errors}">
+              <span class="input-group-text">{{selectedLoan.currency}}</span>
+            </div>
+            <div class="invalid-feedback" *ngIf="paymentSubmitted && pf['amount'].errors?.['required']">
+              Payment amount is required
+            </div>
+            <div class="invalid-feedback" *ngIf="paymentSubmitted && pf['amount'].errors?.['min']">
+              Amount must be greater than 0
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Payment Date <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+              <input type="date" class="form-control" formControlName="date"
+                     [ngClass]="{'is-invalid': paymentSubmitted && pf['date'].errors}">
+            </div>
+            <div class="invalid-feedback" *ngIf="paymentSubmitted && pf['date'].errors?.['required']">
+              Payment date is required
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Payment Method <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+              <select class="form-select" formControlName="method"
+                      [ngClass]="{'is-invalid': paymentSubmitted && pf['method'].errors}">
+                <option value="">Select Method</option>
+                <option value="Cash">Cash</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Credit Card">Credit Card</option>
+                <option value="Debit Card">Debit Card</option>
+                <option value="Check">Check</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="invalid-feedback" *ngIf="paymentSubmitted && pf['method'].errors?.['required']">
+              Payment method is required
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" rows="2" formControlName="notes"
+                      placeholder="Add any additional information about this payment..."></textarea>
+          </div>
+          
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="markCompleted" formControlName="markCompleted">
+            <label class="form-check-label" for="markCompleted">
+              Mark loan as completed if this is the final payment
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-success" (click)="savePayment()">
+          <i class="bi bi-check-lg me-1"></i>Save Payment
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Tag Modal -->
+<div class="modal fade" id="tagModal" tabindex="-1" aria-labelledby="tagModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tagModalLabel">
+          <i class="bi bi-tag me-2"></i>Add Tags
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Tags (comma separated)</label>
+          <input type="text" class="form-control" [(ngModel)]="currentTags"
+                 placeholder="e.g., vip, priority, follow-up">
+        </div>
+        <div class="tag-suggestions mb-3">
+          <span class="tag-suggestion" (click)="addSuggestedTag('vip')">vip</span>
+          <span class="tag-suggestion" (click)="addSuggestedTag('priority')">priority</span>
+          <span class="tag-suggestion" (click)="addSuggestedTag('follow-up')">follow-up</span>
+          <span class="tag-suggestion" (click)="addSuggestedTag('special-rate')">special-rate</span>
+          <span class="tag-suggestion" (click)="addSuggestedTag('repeat-customer')">repeat-customer</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveTags()">Save Tags</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Note Modal -->
+<div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="noteModalLabel">
+          <i class="bi bi-sticky me-2"></i>Add Note
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Note</label>
+          <textarea class="form-control" rows="4" [(ngModel)]="currentNote"
+                    placeholder="Enter your note here..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveNote()">Save Note</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exportModalLabel">
+          <i class="bi bi-download me-2"></i>Export Loans Data
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Export Format</label>
+          <select class="form-select" [(ngModel)]="exportFormat">
+            <option value="excel">Excel (.xlsx)</option>
+            <option value="csv">CSV (.csv)</option>
+            <option value="pdf">PDF (.pdf)</option>
+          </select>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Data to Include</label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="includeCustomerDetails" [(ngModel)]="exportOptions.includeCustomerDetails">
+            <label class="form-check-label" for="includeCustomerDetails">
+              Customer Details
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="includePaymentHistory" [(ngModel)]="exportOptions.includePaymentHistory">
+            <label class="form-check-label" for="includePaymentHistory">
+              Payment History
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="includeNotes" [(ngModel)]="exportOptions.includeNotes">
+            <label class="form-check-label" for="includeNotes">
+              Notes
+            </label>
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Export Scope</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exportScope" id="exportAll" [(ngModel)]="exportOptions.scope" value="all">
+            <label class="form-check-label" for="exportAll">
+              All Loans
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exportScope" id="exportFiltered" [(ngModel)]="exportOptions.scope" value="filtered">
+            <label class="form-check-label" for="exportFiltered">
+              Filtere<!-- Loan Management Component -->
+<div class="loan-management-container">
+  <!-- Loading overlay -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header mb-4">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h1 class="page-title">Loan Management</h1>
+        <p class="text-muted">Monitor, analyze and manage all loan activities</p>
+      </div>
+      <div class="col-md-6 text-md-end">
+        <button class="btn btn-outline-secondary me-2" (click)="exportLoans()">
+          <i class="bi bi-file-earmark-excel me-2"></i>Export Data
+        </button>
+        <button class="btn btn-primary" (click)="openNewLoanForm()">
+          <i class="bi bi-plus-lg me-2"></i>New Loan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Dashboard -->
+  <div class="row mb-4">
+    <!-- Key Metrics -->
+    <div class="col-12 mb-4">
+      <div class="card dashboard-card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="metric-item">
+                <div class="metric-icon bg-primary">
+                  <i class="bi bi-cash-stack"></i>
+                </div>
+                <div class="metric-data">
+                  <h3 class="metric-value">{{totalAmount | currency}}</h3>
+                  <p class="metric-label">Total Loan Amount</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="metric-item">
+                <div class="metric-icon bg-success">
+                  <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="metric-data">
+                  <h3 class="metric-value">{{activeLoansCount}}</h3>
+                  <p class="metric-label">Active Loans</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="metric-item">
+                <div class="metric-icon bg-warning">
+                  <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div class="metric-data">
+                  <h3 class="metric-value">{{loansDueThisMonth}}</h3>
+                  <p class="metric-label">Due This Month</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="metric-item">
+                <div class="metric-icon bg-danger">
+                  <i class="bi bi-x-circle"></i>
+                </div>
+                <div class="metric-data">
+                  <h3 class="metric-value">{{overdueLoansCount}}</h3>
+                  <p class="metric-label">Overdue Loans</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">Monthly Loan Distribution</h5>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="bi bi-gear-fill me-1"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#" (click)="setChartPeriod('month'); $event.preventDefault()">This Month</a></li>
+              <li><a class="dropdown-item" href="#" (click)="setChartPeriod('quarter'); $event.preventDefault()">This Quarter</a></li>
+              <li><a class="dropdown-item" href="#" (click)="setChartPeriod('year'); $event.preventDefault()">This Year</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <canvas id="loanDistributionChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">Loan Status Overview</h5>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="bi bi-gear-fill me-1"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#" (click)="updateStatusChart('all'); $event.preventDefault()">All Loans</a></li>
+              <li><a class="dropdown-item" href="#" (click)="updateStatusChart('active'); $event.preventDefault()">Active Only</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <canvas id="loanStatusChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loan Applications Awaiting Approval -->
+  <div class="card mb-4" *ngIf="pendingApprovalLoans.length > 0">
+    <div class="card-header bg-warning-subtle">
+      <h5 class="card-title mb-0">
+        <i class="bi bi-hourglass-split me-2"></i>Pending Approval
+        <span class="badge bg-warning ms-2">{{pendingApprovalLoans.length}}</span>
+      </h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Applicant</th>
+              <th>Amount</th>
+              <th>Purpose</th>
+              <th>Applied Date</th>
+              <th>Risk Score</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let loan of pendingApprovalLoans">
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="avatar-circle me-2">{{getInitials(loan.customerName)}}</div>
+                  <div>
+                    <div class="fw-medium">{{loan.customerName}}</div>
+                    <div class="small text-muted">ID: {{loan.customerId}}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{{loan.amount | currency:loan.currency}}</td>
+              <td>{{loan.purpose || 'Not specified'}}</td>
+              <td>{{loan.applicationDate | date:'MMM d, y'}}</td>
+              <td>
+                <div class="risk-indicator">
+                  <div class="risk-bar" [ngClass]="getRiskClass(loan.riskScore)"></div>
+                  <span>{{loan.riskScore}}</span>
+                </div>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-success me-1" (click)="approveLoan(loan)">
+                  <i class="bi bi-check"></i> Approve
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="rejectLoan(loan)">
+                  <i class="bi bi-x"></i> Reject
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filter Tools -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" placeholder="Search loans..." [(ngModel)]="searchTerm" (keyup.enter)="searchLoans()">
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="d-flex flex-wrap gap-2">
+            <select class="form-select w-auto" [(ngModel)]="statusFilter" (change)="applyFilters()">
+              <option value="all">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="overdue">Overdue</option>
+              <option value="completed">Completed</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            
+            <select class="form-select w-auto" [(ngModel)]="riskFilter" (change)="applyFilters()">
+              <option value="all">All Risk Levels</option>
+              <option value="low">Low Risk</option>
+              <option value="medium">Medium Risk</option>
+              <option value="high">High Risk</option>
+            </select>
+            
+            <div class="input-group w-auto">
+              <span class="input-group-text">From</span>
+              <input type="date" class="form-control" [(ngModel)]="dateRangeStart" (change)="applyFilters()">
+            </div>
+            
+            <div class="input-group w-auto">
+              <span class="input-group-text">To</span>
+              <input type="date" class="form-control" [(ngModel)]="dateRangeEnd" (change)="applyFilters()">
+            </div>
+            
+            <button class="btn btn-secondary" (click)="resetFilters()">
+              <i class="bi bi-x-circle me-1"></i>Reset
+            </button>
+            
+            <div class="dropdown">
+              <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-bookmark me-1"></i>Saved Filters
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" (click)="loadSavedFilter('high-risk'); $event.preventDefault()">High Risk Loans</a></li>
+                <li><a class="dropdown-item" href="#" (click)="loadSavedFilter('due-next-week'); $event.preventDefault()">Due Next Week</a></li>
+                <li><a class="dropdown-item" href="#" (click)="loadSavedFilter('large-amounts'); $event.preventDefault()">Large Amounts (>$10,000)</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" (click)="saveCurrentFilter(); $event.preventDefault()"><i class="bi bi-plus-circle me-1"></i>Save Current Filter</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Loans Table -->
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">
+        <i class="bi bi-list-ul me-2"></i>Loan Inventory
+      </h5>
+      <div class="btn-group">
+        <button type="button" class="btn btn-sm btn-outline-secondary" [class.active]="viewMode === 'table'" (click)="viewMode = 'table'">
+          <i class="bi bi-table me-1"></i>Table
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" [class.active]="viewMode === 'kanban'" (click)="viewMode = 'kanban'">
+          <i class="bi bi-kanban me-1"></i>Kanban
+        </button>
+      </div>
+    </div>
+    
+    <!-- Table View -->
+    <div class="card-body p-0" *ngIf="viewMode === 'table'">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" (change)="toggleSelectAll()">
+                </div>
+              </th>
+              <th (click)="sortBy('customerId')">
+                ID <i class="bi" [ngClass]="{'bi-arrow-down': sortColumn === 'customerId' && !sortAscending, 'bi-arrow-up': sortColumn === 'customerId' && sortAscending}"></i>
+              </th>
+              <th (click)="sortBy('customerName')">
+                Customer <i class="bi" [ngClass]="{'bi-arrow-down': sortColumn === 'customerName' && !sortAscending, 'bi-arrow-up': sortColumn === 'customerName' && sortAscending}"></i>
+              </th>
+              <th (click)="sortBy('amount')">
+                Amount <i class="bi" [ngClass]="{'bi-arrow-down': sortColumn === 'amount' && !sortAscending, 'bi-arrow-up': sortColumn === 'amount' && sortAscending}"></i>
+              </th>
+              <th (click)="sortBy('issueDate')">
+                Issue Date <i class="bi" [ngClass]="{'bi-arrow-down': sortColumn === 'issueDate' && !sortAscending, 'bi-arrow-up': sortColumn === 'issueDate' && sortAscending}"></i>
+              </th>
+              <th (click)="sortBy('dueDate')">
+                Due Date <i class="bi" [ngClass]="{'bi-arrow-down': sortColumn === 'dueDate' && !sortAscending, 'bi-arrow-up': sortColumn === 'dueDate' && sortAscending}"></i>
+              </th>
+              <th (click)="sortBy('status')">
+                Status <i class="bi" [ngClass]="{'bi-arrow-down': sortColumn === 'status' && !sortAscending, 'bi-arrow-up': sortColumn === 'status' && sortAscending}"></i>
+              </th>
+              <th>Risk</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let loan of filteredLoans" 
+                [class.selected-row]="isSelected(loan)"
+                [class.overdue-row]="loan.status.toLowerCase() === 'overdue'"
+                [class.attention-row]="isDueSoon(loan.dueDate) && loan.status.toLowerCase() === 'active'">
+              <td>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" [checked]="isSelected(loan)" (change)="toggleSelect(loan)">
+                </div>
+              </td>
+              <td>
+                <span class="id-badge">{{loan.customerId}}</span>
+                <i *ngIf="loan.tags && loan.tags.includes('vip')" class="bi bi-star-fill text-warning ms-1" title="VIP Customer"></i>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="avatar-circle me-2">{{getInitials(loan.customerName)}}</div>
+                  <div>
+                    <div class="fw-medium">{{loan.customerName}}</div>
+                    <div class="small text-muted d-flex align-items-center">
+                      <i class="bi bi-telephone me-1"></i>
+                      {{loan.customerPhone || 'No phone'}}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="fw-medium">{{loan.amount | currency:loan.currency}}</div>
+                <small class="text-muted">{{loan.interestRate}}% interest</small>
+              </td>
+              <td>{{loan.issueDate | date:'MMM d, y'}}</td>
+              <td>
+                <div>{{loan.dueDate | date:'MMM d, y'}}</div>
+                <div *ngIf="isDueSoon(loan.dueDate) && loan.status.toLowerCase() === 'active'" class="badge bg-warning">Due soon</div>
+                <div *ngIf="loan.status.toLowerCase() === 'overdue'" class="badge bg-danger">
+                  Overdue {{getDaysOverdue(loan.dueDate)}} days
+                </div>
+              </td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatusClass(loan.status)">
+                  <i class="bi" [ngClass]="getStatusIcon(loan.status)"></i>
+                  {{loan.status}}
+                </span>
+              </td>
+              <td>
+                <div class="risk-indicator">
+                  <div class="risk-bar" [ngClass]="getRiskClass(loan.riskScore)"></div>
+                  <span>{{loan.riskScore}}</span>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex justify-content-end gap-1">
+                  <button class="btn btn-sm btn-icon btn-outline-primary" title="View Details" (click)="viewLoanDetails(loan)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button class="btn btn-sm btn-icon btn-outline-secondary" title="Edit Loan" (click)="editLoan(loan)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <div class="dropdown">
+                    <button class="btn btn-sm btn-icon btn-outline-secondary" data-bs-toggle="dropdown">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li><a class="dropdown-item" href="#" (click)="recordPayment(loan); $event.preventDefault()">
+                        <i class="bi bi-cash me-2 text-success"></i>Record Payment
+                      </a></li>
+                      <li><a class="dropdown-item" href="#" (click)="markAsCompleted(loan); $event.preventDefault()">
+                        <i class="bi bi-check-circle me-2 text-primary"></i>Mark as Completed
+                      </a></li>
+                      <li><a class="dropdown-item" href="#" (click)="sendReminder(loan); $event.preventDefault()">
+                        <i class="bi bi-bell me-2 text-warning"></i>Send Reminder
+                      </a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="#" (click)="addTag(loan); $event.preventDefault()">
+                        <i class="bi bi-tag me-2"></i>Add Tag
+                      </a></li>
+                      <li><a class="dropdown-item" href="#" (click)="addNote(loan); $event.preventDefault()">
+                        <i class="bi bi-sticky me-2"></i>Add Note
+                      </a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item text-danger" href="#" (click)="deleteLoan(loan); $event.preventDefault()">
+                        <i class="bi bi-trash me-2"></i>Delete Loan
+                      </a></li>
+                    </ul>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="filteredLoans.length === 0">
+              <td colspan="9" class="text-center py-4">
+                <div class="empty-state">
+                  <i class="bi bi-search display-6 text-muted mb-3"></i>
+                  <h6>No loans found</h6>
+                  <p class="text-muted">Try adjusting your search or filter criteria</p>
+                  <button class="btn btn-outline-primary" (click)="resetFilters()">Reset All Filters</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Kanban View -->
+    <div class="card-body" *ngIf="viewMode === 'kanban'">
+      <div class="kanban-container">
+        <div class="kanban-column">
+          <div class="kanban-column-header bg-info-subtle">
+            <h6 class="mb-0">New</h6>
+            <span class="badge bg-info">{{getCountByStatus('new')}}</span>
+          </div>
+          <div class="kanban-cards">
+            <div class="kanban-card" *ngFor="let loan of getLoansByStatus('new')" (click)="viewLoanDetails(loan)">
+              <div class="kanban-card-header">
+                <span class="id-badge">{{loan.customerId}}</span>
+                <span class="ms-auto">${{loan.amount}}</span>
+              </div>
+              <div class="kanban-card-body">
+                <div class="fw-medium">{{loan.customerName}}</div>
+                <div class="small text-muted">Due: {{loan.dueDate | date:'MMM d'}}</div>
+              </div>
+              <div class="kanban-card-footer">
+                <div class="risk-indicator small">
+                  <div class="risk-bar" [ngClass]="getRiskClass(loan.riskScore)"></div>
+                  <span>Risk: {{loan.riskScore}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="kanban-column">
+          <div class="kanban-column-header bg-primary-subtle">
+            <h6 class="mb-0">Active</h6>
+            <span class="badge bg-primary">{{getCountByStatus('active')}}</span>
+          </div>
+          <div class="kanban-cards">
+            <div class="kanban-card" *ngFor="let loan of getLoansByStatus('active')" (click)="viewLoanDetails(loan)"
+                 [class.attention-card]="isDueSoon(loan.dueDate)">
+              <div class="kanban-card-header">
+                <span class="id-badge">{{loan.customerId}}</span>
+                <span class="ms-auto">${{loan.amount}}</span>
+              </div>
+              <div class="kanban-card-body">
+                <div class="fw-medium">{{loan.customerName}}</div>
+                <div class="small" [ngClass]="{'text-warning fw-medium': isDueSoon(loan.dueDate), 'text-muted': !isDueSoon(loan.dueDate)}">
+                  Due: {{loan.dueDate | date:'MMM d'}}
+                  <i *ngIf="isDueSoon(loan.dueDate)" class="bi bi-exclamation-circle text-warning ms-1"></i>
+                </div>
+              </div>
+              <div class="kanban-card-footer">
+                <div class="risk-indicator small">
+                  <div class="risk-bar" [ngClass]="getRiskClass(loan.riskScore)"></div>
+                  <span>Risk: {{loan.riskScore}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="kanban-column">
+          <div class="kanban-column-header bg-danger-subtle">
+            <h6 class="mb-0">Overdue</h6>
+            <span class="badge bg-danger">{{getCountByStatus('overdue')}}</span>
+          </div>
+          <div class="kanban-cards">
+            <div class="kanban-card overdue-card" *ngFor="let loan of getLoansByStatus('overdue')" (click)="viewLoanDetails(loan)">
+              <div class="kanban-card-header">
+                <span class="id-badge">{{loan.customerId}}</span>
+                <span class="ms-auto">${{loan.amount}}</span>
+              </div>
+              <div class="kanban-card-body">
+                <div class="fw-medium">{{loan.customerName}}</div>
+                <div class="small text-danger fw-medium">
+                  Overdue: {{getDaysOverdue(loan.dueDate)}} days
+                </div>
+              </div>
+              <div class="kanban-card-footer">
+                <div class="risk-indicator small">
+                  <div class="risk-bar" [ngClass]="getRiskClass(loan.riskScore)"></div>
+                  <span>Risk: {{loan.riskScore}}</span>
+                </div>
+                <button class="btn btn-sm btn-outline-danger ms-auto" (click)="sendReminder(loan); $event.stopPropagation();">
+                  <i class="bi bi-bell-fill"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="kanban-column">
+          <div class="kanban-column-header bg-success-subtle">
+            <h6 class="mb-0">Completed</h6>
+            <span class="badge bg-success">{{getCountByStatus('completed')}}</span>
+          </div>
+          <div class="kanban-cards">
+            <div class="kanban-card" *ngFor="let loan of getLoansByStatus('completed')" (click)="viewLoanDetails(loan)">
+              <div class="kanban-card-header">
+                <span class="id-badge">{{loan.customerId}}</span>
+                <span class="ms-auto">${{loan.amount}}</span>
+              </div>
+              <div class="kanban-card-body">
+                <div class="fw-medium">{{loan.customerName}}</div>
+                <div class="small text-muted">Completed: {{loan.completionDate | date:'MMM d'}}</div>
+              </div>
+              <div class="kanban-card-footer">
+                <div class="risk-indicator small">
+                  <div class="risk-bar" [ngClass]="getRiskClass(loan.riskScore)"></div>
+                  <span>Risk: {{loan.riskScore}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Actions and Pagination -->
+    <div class="card-footer d-flex justify-content-between align-items-center">
+      <div class="bulk-actions">
+        <div class="btn-group" *ngIf="selectedLoans.length > 0">
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="bulkSendReminders()">
+            <i class="bi bi-bell me-1"></i>Send Reminders ({{selectedLoans.length}})
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-success" (click)="bulkMarkAsCompleted()">
+            <i class="bi bi-check-lg me-1"></i>Mark Completed ({{selectedLoans.length}})
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-danger" (click)="bulkDelete()">
+            <i class="bi bi-trash me-1"></i>Delete ({{selectedLoans.length}})
+          </button>
+        </div>
+        <span class="text-muted small" *ngIf="selectedLoans.length === 0">
+          Select loans to perform bulk actions
+        </span>
+      </div>
+      
+      <nav aria-label="Loans pagination" *ngIf="totalPages > 1">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 0">
+            <a class="page-link" href="#" (click)="goToPage(currentPage - 1); $event.preventDefault()">
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+          <li class="page-item" *ngFor="let page of getPaginationArray()" 
+              [class.active]="page === currentPage + 1"
+              [class.disabled]="page === '...'">
+            <a class="page-link" href="#" 
+               (click)="page !== '...' ? goToPage(page - 1) : null; $event.preventDefault()">
+              {{page}}
+            </a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+            <a class="page-link" href="#" (click)="goToPage(currentPage + 1); $event.preventDefault()">
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  
+  <!-- Recent Activity -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="card-title mb-0">
+        <i class="bi bi-activity me-2"></i>Recent Activity
+      </h5>
+      <a href="#" class="btn btn-sm btn-link" (click)="loadMoreActivities(); $event.preventDefault()">View All</a>
+    </div>
+    <div class="card-body p-0">
+      <div class="activity-timeline">
+        <div class="activity-item" *ngFor="let activity of recentActivities">
+          <div class="activity-icon" [ngClass]="getActivityIconClass(activity.type)">
+            <i class="bi" [ngClass]="getActivityIcon(activity.type)"></i>
+          </div>
+          <div class="activity-content">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-medium">{{activity.action}}</span>
+              <span class="text-muted small">{{activity.timestamp | date:'MMM d, h:mm a'}}</span>
+            </div>
+            <p class="mb-0">{{activity.description}}</p>
+            <small class="text-muted">By {{activity.performedBy}}</small>
+          </div>
+        </div>
+        <div class="empty-state text-center py-4" *ngIf="recentActivities.length === 0">
+          <i class="bi bi-calendar3 display-6 text-muted mb-3"></i>
+          <p class="mb-0">No recent activities found</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New/Edit Loan Modal -->
+<div class="modal fade" id="loanModal" tabindex="-1" aria-labelledby="loanModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" [ngClass]="{'bg-primary text-white': formMode === 'add', 'bg-info text-white': formMode === 'edit'}">
+        <h5 class="modal-title" id="loanModalLabel">
+          <i class="bi" [ngClass]="formMode === 'add' ? 'bi-plus-circle' : 'bi-pencil-square'"></i>
+          {{formMode === 'add' ? 'Create New Loan' : 'Edit Loan'}}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="loanForm">
+          <div class="row g-3">
+            <!-- Customer Information Section -->
+            <div class="col-12">
+              <h6 class="section-title">
+                <i class="bi bi-person me-2"></i>Customer Information
+              </h6>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Customer Name <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input type="text" class="form-control" formControlName="customerName"
+                       [ngClass]="{'is-invalid': submitted && f['customerName'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['customerName'].errors?.['required']">
+                Customer name is required
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Phone Number</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                <input type="text" class="form-control" formControlName="customerPhone"
+                       [ngClass]="{'is-invalid': submitted && f['customerPhone'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['customerPhone'].errors?.['pattern']">
+                Please enter a valid phone number
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                <input type="email" class="form-control" formControlName="customerEmail"
+                       [ngClass]="{'is-invalid': submitted && f['customerEmail'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['customerEmail'].errors?.['email']">
+                Please enter a valid email address
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Customer ID <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                <input type="text" class="form-control" formControlName="customerId"
+                       [ngClass]="{'is-invalid': submitted && f['customerId'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['customerId'].errors?.['required']">
+                Customer ID is required
+              </div>
+            </div>
+            
+            <!-- Loan Details Section -->
+            <div class="col-12 mt-4">
+              <h6 class="section-title">
+                <i class="bi bi-cash-coin me-2"></i>Loan Details
+              </h6>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Loan Amount <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-cash"></i></span>
+                <input type="number" class="form-control" formControlName="amount" min="1"
+                       [ngClass]="{'is-invalid': submitted && f['amount'].errors}">
+                <select class="form-select" style="max-width: 100px;" formControlName="currency">
+                  <option *ngFor="let curr of currencies" [value]="curr">{{curr}}</option>
+                </select>
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['amount'].errors?.['required']">
+                Loan amount is required
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['amount'].errors?.['min']">
+                Amount must be greater than 0
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Interest Rate (%) <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-percent"></i></span>
+                <input type="number" class="form-control" formControlName="interestRate" step="0.1"
+                       [ngClass]="{'is-invalid': submitted && f['interestRate'].errors}">
+                <span class="input-group-text">%</span>
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['interestRate'].errors?.['required']">
+                Interest rate is required
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['interestRate'].errors?.['min']">
+                Interest rate must be greater than or equal to 0
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Issue Date <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+                <input type="date" class="form-control" formControlName="issueDate"
+                       [ngClass]="{'is-invalid': submitted && f['issueDate'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['issueDate'].errors?.['required']">
+                Issue date is required
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Due Date <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+                <input type="date" class="form-control" formControlName="dueDate"
+                       [ngClass]="{'is-invalid': submitted && f['dueDate'].errors}">
+              </div>
+              <div class="invalid-feedback" *ngIf="submitted && f['dueDate'].errors?.['required']">
+                Due date is required
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Loan Purpose</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-info-circle"></i></span>
+                <select class="form-select" formControlName="purpose">
+                  <option value="">Select Purpose</option>
+                  <option value="Business">Business</option>
+                  <option value="Education">Education</option>
+                  <option value="Home">Home</option>
+                  <option value="Vehicle">Vehicle</option>
+                  <option value="Personal">Personal</option>
+                  <option value="Medical">Medical</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Collateral</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-shield"></i></span>
+                <input type="text" class="form-control" formControlName="collateral"
+                       placeholder="Property, vehicle, etc.">
+              </div>
+            </div>
+            
+            <!-- Risk Assessment Section -->
+            <div class="col-12 mt-4">
+              <h6 class="section-title">
+                <i class="bi bi-graph-up me-2"></i>Risk Assessment
+              </h6>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Risk Score <span class="text-danger">*</span></label>
+              <div class="d-flex align-items-center">
+                <input type="range" class="form-range flex-grow-1 me-2" min="1" max="10" step="1" 
+                       formControlName="riskScore">
+                <span class="risk-score" [ngClass]="getRiskClass(loanForm.get('riskScore')?.value)">
+                  {{loanForm.get('riskScore')?.value}}
+                </span>
+              </div>
+              <div class="form-text">
+                1 = Lowest Risk, 10 = Highest Risk
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Credit Score</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-graph-up"></i></span>
+                <input type="number" class="form-control" formControlName="creditScore" min="300" max="850">
+              </div>
+              <div class="form-text">
+                Enter customer's credit score (300-850)
+              </div>
+            </div>
+            
+            <!-- Additional Information Section -->
+            <div class="col-12 mt-4">
+              <h6 class="section-title">
+                <i class="bi bi-card-text me-2"></i>Additional Information
+              </h6>
+            </div>
+            
+            <div class="col-12">
+              <label class="form-label">Notes</label>
+              <textarea class="form-control" rows="3" formControlName="notes"
+                        placeholder="Add any additional information about this loan..."></textarea>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="isConfidential" formControlName="isConfidential">
+                <label class="form-check-label" for="isConfidential">
+                  <i class="bi bi-lock me-1"></i>Mark as Confidential
+                </label>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <label class="form-label">Tags</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-tags"></i></span>
+                <input type="text" class="form-control" formControlName="tags"
+                       placeholder="Enter tags separated by commas">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveLoan()" [disabled]="loading">
+          <i class="bi" [ngClass]="loading ? 'bi-hourglass-split' : 'bi-save'"></i>
+          {{loading ? ' Saving...' : ' Save Loan'}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loan Details Modal -->
+<div class="modal fade" id="loanDetailsModal" tabindex="-1" aria-labelledby="loanDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title" id="loanDetailsModalLabel">
+          <i class="bi bi-info-circle me-2"></i>Loan Details
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedLoan">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="loan-detail-section">
+              <h6 class="detail-section-title">
+                <i class="bi bi-person me-2"></i>Customer Information
+              </h6>
+              <div class="detail-item">
+                <span class="detail-label">Name:</span>
+                <span class="detail-value">{{selectedLoan.customerName}}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">ID:</span>
+                <span class="detail-value">{{selectedLoan.customerId}}</span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.customerPhone">
+                <span class="detail-label">Phone:</span>
+                <span class="detail-value">{{selectedLoan.customerPhone}}</span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.customerEmail">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value">{{selectedLoan.customerEmail}}</span>
+              </div>
+            </div>
+            
+            <div class="loan-detail-section">
+              <h6 class="detail-section-title">
+                <i class="bi bi-cash-coin me-2"></i>Loan Information
+              </h6>
+              <div class="detail-item">
+                <span class="detail-label">Amount:</span>
+                <span class="detail-value">{{selectedLoan.amount | currency:selectedLoan.currency}}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Interest Rate:</span>
+                <span class="detail-value">{{selectedLoan.interestRate}}%</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Issue Date:</span>
+                <span class="detail-value">{{selectedLoan.issueDate | date:'longDate'}}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Due Date:</span>
+                <span class="detail-value">{{selectedLoan.dueDate | date:'longDate'}}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Status:</span>
+                <span class="detail-value">
+                  <span class="status-badge" [ngClass]="getStatusClass(selectedLoan.status)">
+                    <i class="bi" [ngClass]="getStatusIcon(selectedLoan.status)"></i>
+                    {{selectedLoan.status}}
+                  </span>
+                </span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.purpose">
+                <span class="detail-label">Purpose:</span>
+                <span class="detail-value">{{selectedLoan.purpose}}</span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.collateral">
+                <span class="detail-label">Collateral:</span>
+                <span class="detail-value">{{selectedLoan.collateral}}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="loan-detail-section">
+              <h6 class="detail-section-title">
+                <i class="bi bi-graph-up me-2"></i>Risk Assessment
+              </h6>
+              <div class="detail-item">
+                <span class="detail-label">Risk Score:</span>
+                <span class="detail-value">
+                  <div class="risk-indicator">
+                    <div class="risk-bar" [ngClass]="getRiskClass(selectedLoan.riskScore)"></div>
+                    <span>{{selectedLoan.riskScore}}</span>
+                  </div>
+                </span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.creditScore">
+                <span class="detail-label">Credit Score:</span>
+                <span class="detail-value">{{selectedLoan.creditScore}}</span>
+              </div>
+            </div>
+            
+            <div class="loan-detail-section">
+              <h6 class="detail-section-title">
+                <i class="bi bi-clock-history me-2"></i>Payment History
+              </h6>
+              <div class="timeline payment-timeline" *ngIf="selectedLoan.payments?.length; else noPayments">
+                <div class="timeline-item" *ngFor="let payment of selectedLoan.payments">
+                  <div class="timeline-point"></div>
+                  <div class="timeline-content">
+                    <div class="d-flex justify-content-between">
+                      <span class="fw-medium">{{payment.amount | currency:selectedLoan.currency}}</span>
+                      <span class="text-muted small">{{payment.date | date:'MMM d, y'}}</span>
+                    </div>
+                    <p class="mb-0 small">{{payment.notes || 'Regular payment'}}</p>
+                  </div>
+                </div>
+              </div>
+              <ng-template #noPayments>
+                <div class="text-center py-3 text-muted">
+                  <i class="bi bi-info-circle me-1"></i>No payment records found
+                </div>
+              </ng-template>
+              
+              <button class="btn btn-sm btn-outline-primary mt-2" (click)="recordPayment(selectedLoan)">
+                <i class="bi bi-plus-circle me-1"></i>Record Payment
+              </button>
+            </div>
+            
+            <div class="loan-detail-section" *ngIf="selectedLoan.notes || selectedLoan.tags">
+              <h6 class="detail-section-title">
+                <i class="bi bi-card-text me-2"></i>Additional Information
+              </h6>
+              <div class="detail-item" *ngIf="selectedLoan.notes">
+                <span class="detail-label">Notes:</span>
+                <span class="detail-value">{{selectedLoan.notes}}</span>
+              </div>
+              <div class="detail-item" *ngIf="selectedLoan.tags && selectedLoan.tags.length > 0">
+                <span class="detail-label">Tags:</span>
+                <span class="detail-value">
+                  <span class="badge bg-light text-dark me-1" *ngFor="let tag of selectedLoan.tags.split(',')">
+                    {{tag.trim()}}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>Close
+        </button>
+        <button type="button" class="btn btn-primary" (click)="editLoan(selectedLoan)" data-bs-dismiss="modal">
+          <i class="bi bi-pencil me-1"></i>Edit Loan
+        </button>
+        <button type="button" class="btn btn-success" *ngIf="selectedLoan?.status === 'Active' || selectedLoan?.status === 'Overdue'" 
+                (click)="markAsCompleted(selectedLoan)">
+          <i class="bi bi-check-lg me-1"></i>Mark as Completed
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Record Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="paymentModalLabel">
+          <i class="bi bi-cash me-2"></i>Record Payment
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="selectedLoan">
+        <form [formGroup]="paymentForm">
+          <div class="mb-3">
+            <label class="form-label">Payment Amount <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-cash"></i></span>
+              <input type="number" class="form-control" formControlName="amount" min="1"
+                     [ngClass]="{'is-invalid': paymentSubmitted && pf['amount'].errors}">
+              <span class="input-group-text">{{selectedLoan.currency}}</span>
+            </div>
+            <div class="invalid-feedback" *ngIf="paymentSubmitted && pf['amount'].errors?.['required']">
+              Payment amount is required
+            </div>
+            <div class="invalid-feedback" *ngIf="paymentSubmitted && pf['amount'].errors?.['min']">
+              Amount must be greater than 0
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Payment Date <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+              <input type="date" class="form-control" formControlName="date"
+                     [ngClass]="{'is-invalid': paymentSubmitted && pf['date'].errors}">
+            </div>
+            <div class="invalid-feedback" *ngIf="paymentSubmitted && pf['date'].errors?.['required']">
+              Payment date is required
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Payment Method <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+              <select class="form-select" formControlName="method"
+                      [ngClass]="{'is-invalid': paymentSubmitted && pf['method'].errors}">
+                <option value="">Select Method</option>
+                <option value="Cash">Cash</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Credit Card">Credit Card</option>
+                <option value="Debit Card">Debit Card</option>
+                <option value="Check">Check</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="invalid-feedback" *ngIf="paymentSubmitted && pf['method'].errors?.['required']">
+              Payment method is required
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" rows="2" formControlName="notes"
+                      placeholder="Add any additional information about this payment..."></textarea>
+          </div>
+          
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="markCompleted" formControlName="markCompleted">
+            <label class="form-check-label" for="markCompleted">
+              Mark loan as completed if this is the final payment
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>Cancel
+        </button>
+        <button type="button" class="btn btn-success" (click)="savePayment()">
+          <i class="bi bi-check-lg me-1"></i>Save Payment
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Tag Modal -->
+<div class="modal fade" id="tagModal" tabindex="-1" aria-labelledby="tagModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tagModalLabel">
+          <i class="bi bi-tag me-2"></i>Add Tags
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Tags (comma separated)</label>
+          <input type="text" class="form-control" [(ngModel)]="currentTags"
+                 placeholder="e.g., vip, priority, follow-up">
+        </div>
+        <div class="tag-suggestions mb-3">
+          <span class="tag-suggestion" (click)="addSuggestedTag('vip')">vip</span>
+          <span class="tag-suggestion" (click)="addSuggestedTag('priority')">priority</span>
+          <span class="tag-suggestion" (click)="addSuggestedTag('follow-up')">follow-up</span>
+          <span class="tag-suggestion" (click)="addSuggestedTag('special-rate')">special-rate</span>
+          <span class="tag-suggestion" (click)="addSuggestedTag('repeat-customer')">repeat-customer</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveTags()">Save Tags</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Note Modal -->
+<div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="noteModalLabel">
+          <i class="bi bi-sticky me-2"></i>Add Note
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Note</label>
+          <textarea class="form-control" rows="4" [(ngModel)]="currentNote"
+                    placeholder="Enter your note here..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveNote()">Save Note</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exportModalLabel">
+          <i class="bi bi-download me-2"></i>Export Loans Data
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Export Format</label>
+          <select class="form-select" [(ngModel)]="exportFormat">
+            <option value="excel">Excel (.xlsx)</option>
+            <option value="csv">CSV (.csv)</option>
+            <option value="pdf">PDF (.pdf)</option>
+          </select>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Data to Include</label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="includeCustomerDetails" [(ngModel)]="exportOptions.includeCustomerDetails">
+            <label class="form-check-label" for="includeCustomerDetails">
+              Customer Details
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="includePaymentHistory" [(ngModel)]="exportOptions.includePaymentHistory">
+            <label class="form-check-label" for="includePaymentHistory">
+              Payment History
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="includeNotes" [(ngModel)]="exportOptions.includeNotes">
+            <label class="form-check-label" for="includeNotes">
+              Notes
+            </label>
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Export Scope</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exportScope" id="exportAll" [(ngModel)]="exportOptions.scope" value="all">
+            <label class="form-check-label" for="exportAll">
+              All Loans
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exportScope

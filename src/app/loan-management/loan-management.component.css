@@ -388,6 +388,91 @@ tr.table-success {
     border-right: none;
 }
 
+/* Advanced Filters Section */
+.advanced-filters {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Activity Timeline Styling */
+.activity-timeline {
+    position: relative;
+    padding: 1.5rem;
+}
+
+.timeline-item {
+    display: flex;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--light-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.timeline-icon.bg-primary {
+    background-color: rgba(94, 114, 228, 0.1);
+    color: var(--primary-color);
+}
+
+.timeline-icon.bg-success {
+    background-color: rgba(45, 206, 137, 0.1);
+    color: var(--success-color);
+}
+
+.timeline-icon.bg-danger {
+    background-color: rgba(245, 54, 92, 0.1);
+    color: var(--danger-color);
+}
+
+.timeline-icon.bg-warning {
+    background-color: rgba(251, 99, 64, 0.1);
+    color: var(--warning-color);
+}
+
+.timeline-content {
+    flex-grow: 1;
+}
+
+/* Chart Container */
+.chart-container {
+    width: 100%;
+    position: relative;
+}
+
+/* Payment Schedule Table */
+.table-sm td,
+.table-sm th {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+}
+
+/* Form Switch Enhancements */
+.form-switch .form-check-input {
+    width: 2.5em;
+    height: 1.25em;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+/* Modal title enhancements */
 .modal-title {
     font-size: 1.25rem;
     font-weight: 700;
@@ -402,6 +487,10 @@ tr.table-success {
 
     .card-body {
         padding: 1.25rem;
+    }
+
+    .chart-container {
+        height: 200px !important;
     }
 }
 
@@ -436,5 +525,9 @@ tr.table-success {
 
     .stats-card h2 {
         font-size: 2rem;
+    }
+
+    .activity-timeline {
+        padding: 1rem;
     }
 }
