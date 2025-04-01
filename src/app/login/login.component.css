@@ -1,3 +1,22 @@
+/* Font imports for improved typography */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Base styles with font settings */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Arabic text styling */
+[lang="ar"] {
+    font-family: 'Cairo', sans-serif;
+    /* Enable for full RTL support if needed */
+    /* direction: rtl; */
+}
+
+/* Container styles */
 .container {
     min-height: 100vh;
     display: flex;
@@ -5,6 +24,7 @@
     justify-content: center;
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     padding: 2rem 1rem;
+    font-family: 'Poppins', sans-serif;
 }
 
 .login-container {
@@ -23,41 +43,102 @@
     height: 100%;
 }
 
+/* Typography enhanced */
 .login-title {
     color: #1e3a8a;
     font-weight: 700;
     font-size: 2.2rem;
     margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+
+/* Logo Container */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    /* Adjust spacing as needed */
+}
+
+/* Logo Image */
+.logo-img {
+    width: 160px;
+    /* Adjust size as needed */
+    height: auto;
+    /* Maintain aspect ratio */
+    max-width: 100%;
+    /* Ensure responsiveness */
+    object-fit: contain;
+    /* Ensure the image fits nicely */
 }
 
 .login-subtitle {
     color: #64748b;
     font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* Form styling */
+.form-label {
+    font-weight: 500;
+    color: #475569;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.input-group {
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .input-group-text {
     background-color: #f1f5f9;
     border: none;
     color: #64748b;
+    padding: 0.75rem 1rem;
 }
 
 .form-control {
     border: none;
     border-left: 1px solid #e2e8f0;
     padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: inherit;
 }
 
 .form-control:focus {
     box-shadow: none;
     border-color: #1e3a8a;
+    outline: 2px solid rgba(30, 58, 138, 0.1);
 }
 
+.form-control::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.invalid-feedback {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+/* Button styling */
 .btn-primary {
     background-color: #1e3a8a;
     border-color: #1e3a8a;
     padding: 0.75rem 1.5rem;
     font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.3px;
     transition: all 0.3s ease;
+    border-radius: 8px;
 }
 
 .btn-primary:hover {
@@ -67,10 +148,15 @@
     box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
 }
 
-.invalid-feedback {
-    color: #ef4444;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
+.btn-outline-secondary {
+    border-color: #e2e8f0;
+    color: #64748b;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f1f5f9;
+    color: #1e3a8a;
+    border-color: #e2e8f0;
 }
 
 /* Support section styling */
@@ -85,6 +171,7 @@
     font-weight: 600;
     color: #1e3a8a;
     font-size: 1.1rem;
+    margin-bottom: 0.75rem;
 }
 
 .support-header i {
@@ -105,11 +192,14 @@
     background-color: #f8fafc;
     border-radius: 8px;
     transition: all 0.3s ease;
+    flex: 1;
+    min-width: 200px;
 }
 
 .support-item:hover {
     background-color: #f1f5f9;
     transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
 }
 
 .support-item i {
@@ -128,12 +218,13 @@
 
 .support-title {
     font-weight: 600;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     color: #475569;
+    margin-bottom: 0.25rem;
 }
 
 .support-subtitle {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     color: #64748b;
 }
 
@@ -146,28 +237,6 @@
     justify-content: center;
 }
 
-.currency-icon-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 200px;
-    height: 200px;
-    background: #f1f5f9;
-    border-radius: 50%;
-    align-items: center;
-    position: relative;
-}
-
-.currency-icon {
-    font-size: 48px;
-    margin: 15px;
-    color: #1e3a8a;
-}
-
-.currency-icon:nth-child(even) {
-    color: #3b82f6;
-}
-
 .tagline-container {
     width: 80%;
 }
@@ -177,6 +246,7 @@
     font-weight: 700;
     color: #1e3a8a;
     margin-bottom: 1rem;
+    letter-spacing: -0.5px;
 }
 
 .tagline-text {
@@ -200,6 +270,7 @@
     justify-content: space-between;
     align-items: center;
     font-size: 14px;
+    font-weight: 500;
     box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
     border-radius: 8px;
     animation: slideInFromRight 0.3s ease-in-out;
@@ -237,6 +308,13 @@
     }
 }
 
+/* Add smooth text rendering */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    box-sizing: border-box;
+}
+
 /* Responsive adjustments */
 @media (max-width: 767.98px) {
     .login-card {
@@ -245,6 +323,11 @@
 
     .login-title {
         font-size: 1.8rem;
+    }
+    
+    .support-contacts {
+        flex-direction: column;
+        gap: 0.75rem;
     }
 }
 

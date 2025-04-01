@@ -6,9 +6,12 @@
 <div class="sidebar-overlay" [ngClass]="{'show': isSidebarVisible}" (click)="closeSidebar()"></div>
 
 <div class="sidebar" [ngClass]="{'show': isSidebarVisible}">
-    <div class="sidebar-header">
-        <h2>Al Jazira</h2>
+    <!-- <div class="sidebar-header">
+        <h2>{{nameCompany}}</h2>
         <p>Currency Exchange</p>
+    </div> -->
+    <div class="logo-container">
+        <img src="https://cdn.discordapp.com/attachments/1257637095380484137/1356645390845477017/ChatGPT_Image_Apr_1__2025__02_54_43_PM-removebg-preview.png?ex=67ed51fa&is=67ec007a&hm=11ca50f665d0a6ee467efc90f7feb3cc0473a045317d9ba6922ab69bc7128920&" alt="Currency Exchange Logo" class="logo-img">
     </div>
     <div class="sidebar-menu">
         <div class="menu-category">
@@ -16,22 +19,22 @@
             <a routerLink="/dashboard" class="menu-item" [ngClass]="{'active': isActive('/dashboard')}"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-chart-line"></i>
-                <span>Dashboard</span>
+                <span>{{ 'nav.dashboard' | translate }}</span>
             </a>
             <a routerLink="/exchange" class="menu-item" [ngClass]="{'active': isActive('/exchange')}"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-exchange-alt"></i>
-                <span>New Exchange</span>
+                <span>{{ 'nav.exchange' | translate }}</span>
             </a>
             <a routerLink="/transactions" class="menu-item" [ngClass]="{'active': isActive('/transactions')}"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-history"></i>
-                <span>Transactions</span>
+                <span>{{ 'nav.transactions' | translate }}</span>
             </a>
             <a routerLink="/currencies" class="menu-item" [ngClass]="{'active': isActive('/currencies')}"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-coins"></i>
-                <span>Currencies</span>
+                <span>{{ 'nav.rates' | translate }}</span>
             </a>
         </div>
         <div class="menu-category">
@@ -39,27 +42,27 @@
             <a routerLink="/customers" class="menu-item" [ngClass]="{'active': isActive('/customers')}"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-users"></i>
-                <span>Customers</span>
+                <span>{{ 'nav.customers' | translate }}</span>
             </a>
             <a routerLink="/funds-management" class="menu-item" [ngClass]="{'active': isActive('/funds-management')}"
                 (click)="onMenuItemClick()">
                 <i class="fa-regular fa-money-bill-transfer"></i>
-                <span>Funds Management</span>
+                <span>{{ 'nav.funds' | translate }}</span>
             </a>
             <a routerLink="/loans" class="menu-item" [ngClass]="{'active': isActive('/loans')}"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-hand-holding-usd"></i>
-                <span>Loans</span>
+                <span>{{ 'nav.loans' | translate }}</span>
             </a>
             <a routerLink="/reports" class="menu-item" [ngClass]="{'active': isActive('/reports')}"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-file-invoice-dollar"></i>
-                <span>Reports</span>
+                <span>{{ 'nav.reports' | translate }}</span>
             </a>
             <a routerLink="/settings" class="menu-item" [ngClass]="{'active': isActive('/settings')}"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-cog"></i>
-                <span>Settings</span>
+                <span>{{ 'nav.settings' | translate }}</span>
             </a>
         </div>
     </div>

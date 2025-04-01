@@ -7,6 +7,7 @@ import { AlertService } from '../services/alert.service';
 import { finalize } from 'rxjs/operators';
 import { ReportsService } from '../reports.service';
 import { recentReports } from '../models/recentReports';
+import { TokenService } from '../services/token.service';
 
 @Component({
   selector: 'app-reports',
@@ -41,13 +42,15 @@ export class ReportsComponent implements OnInit {
 
   // Selected report configuration
   selectedReport: any = null;
+  nameCompany: string = '';
 
   constructor(
     private fb: FormBuilder,
     private transactionService: TransactionService,
     private currencyService: CurrencyService,
     private reportsService: ReportsService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private token: TokenService
   ) {
     this.reportForm = this.fb.group({
       reportType: ['transactions'],
@@ -62,10 +65,16 @@ export class ReportsComponent implements OnInit {
     });
   }
 
+  getNameCompany(): string {
+    const company = this.token.getCompanyWithToken();
+    return company?.name ?? '';
+  }
+
   ngOnInit(): void {
     this.loadCurrencies();
     this.onReportTypeChange();
     this.loadRecentReports();
+    this.nameCompany = this.getNameCompany();
   }
 
   loadRecentReports(): void {

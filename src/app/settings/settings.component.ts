@@ -132,6 +132,10 @@ export class SettingsComponent implements OnInit {
         this.passwordStrengthText = '';
       }
     });
+
+    this.languageForm = this.fb.group({
+      language: [this.getSavedLanguage(), Validators.required]
+    });
   }
 
   loadSettings(): void {
@@ -561,32 +565,45 @@ export class SettingsComponent implements OnInit {
     if (this.languageForm.valid) {
       this.loading = true;
       this.loadingMessage = 'Updating language & region settings';
-
+  
+      // Get the selected language value
+      const selectedLanguage = this.languageForm.get('language')?.value;
+      
+      // Save language preference to localStorage
+      localStorage.setItem('userLanguage', selectedLanguage);
+  
+      // Update language on the server
       this.settingsService.updateLanguageAndRegion(this.languageForm.value).subscribe({
         next: () => {
           this.alertService.success('Language & region settings updated successfully.');
           this.loading = false;
+          
+          // Optionally reload the page to apply language changes
+          // window.location.reload();
         },
         error: (error) => {
           console.error('Failed to update language & region settings:', error);
-          // this.alertService.failure('Failed to update language & region settings. Please try again.');
+          // Even on API failure, keep the language preference in localStorage
+          // this.alertService.failure('Changes saved locally. Server update failed.');
           this.loading = false;
         }
       });
     }
   }
-
+  
+  // Helper method to get saved language
+  getSavedLanguage(): string {
+    const savedLanguage = localStorage.getItem('userLanguage');
+    return savedLanguage || 'en-US'; // Default to English (US) if not found
+  }
+  
+  // Reset language form
   resetLanguageForm(): void {
-    // Reset to default language & region settings
-    this.languageForm.reset({
-      language: 'en-US',
-      dateFormat: 'MM/DD/YYYY',
-      timeFormat: '12',
-      currency: 'USD',
-      firstDayOfWeek: '0',
-      timezone: 'auto',
-      numberFormat: '1,000.00'
+    this.languageForm.patchValue({
+      language: 'en-US' // Default language
     });
+    // Optionally clear from localStorage
+    localStorage.removeItem('userLanguage');
   }
 
   getCurrentDateFormatSample(): string {

@@ -1,9 +1,9 @@
+
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../models/funds.mode';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { TokenService } from './token.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,28 +11,33 @@ import { TokenService } from './token.service';
 export class AuthService {
   private apiUrl = environment.apiUrl + '/rest/auth/';
 
-  private loggedIn = false;
-
-  constructor(private http : HttpClient, private tokenService : TokenService) { }
-
-
-
-  isLoggedIn(): boolean {
-    if(this.tokenService.getToken()) {
-      this.loggedIn = true;
-    }
-    return this.loggedIn;
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
+  
+  constructor(private http : HttpClient) {}
+  
+  // Vérifier si l'utilisateur est authentifié
+  public isAuthenticated(): Observable<boolean> {
+    return this.isAuthenticatedSubject.asObservable();
+  }
+  
+  // Mettre à jour l'état d'authentification
+  public checkAuthState(): void {
+    this.isAuthenticatedSubject.next(this.hasToken());
+  }
+  
+  // Vérifier si un token existe
+  private hasToken(): boolean {
+    const token = localStorage.getItem('token');
+    return !!token && token.length > 0;
   }
 
   login1(user : User): Observable<{ message: string, result: any, errors: string, errorMap: string[] }> {
     return this.http.post<{ message: string, result: any, errors: string, errorMap: string[]}>(this.apiUrl + 'login', user);
   }
-
-  Islogin(): void {
-  }
-
-  logout(): void {
-    this.tokenService.removeToken();
-    this.loggedIn = false;
+  
+  // Méthode de déconnexion
+  public logout(): void {
+    localStorage.removeItem('token');
+    this.isAuthenticatedSubject.next(false);
   }
 }

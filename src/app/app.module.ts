@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { CountUpModule } from 'ngx-countup';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -28,6 +29,8 @@ import { ReportsComponent } from './reports/reports.component';
 import { CustomersComponent } from './customers/customers.component';
 import { SettingsComponent } from './settings/settings.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { WelcomeComponent } from './welcome/welcome.component';
+import { TranslatePipe } from './pipe/translate.pipe';
 
 
 @NgModule({
@@ -35,7 +38,6 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     AppComponent,
     // SidebarComponent,
     HeaderComponent,
-    DashboardComponent,
     // ExchangeCalculatorComponent,
     TransactionHistoryComponent,
     CurrencyRatesComponent,
@@ -46,9 +48,11 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     ReportsComponent,
     CustomersComponent,
     SettingsComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    WelcomeComponent,
   ],
   imports: [
+    CountUpModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
@@ -61,6 +65,8 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     CommonModule,
     FundsManagementComponent,
     LoginComponent,
+    TranslatePipe,
+    DashboardComponent,
   ],
   providers: [
     AlertService,

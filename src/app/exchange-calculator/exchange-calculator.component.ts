@@ -6,6 +6,9 @@ import { TransactionService } from '../services/transaction.service';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { CurrencyService } from '../services/currency.service';
+import { TokenService } from '../services/token.service';
+import { TranslatePipe } from '../pipe/translate.pipe';
+import { LanguageService } from '../services/language.service';
 
 @Component({
   selector: 'app-exchange-calculator',
@@ -17,6 +20,7 @@ import { CurrencyService } from '../services/currency.service';
     DecimalPipe,
     CurrencyPipe,
     DatePipe,
+    TranslatePipe,
     NgbDropdownModule
   ],
   templateUrl: './exchange-calculator.component.html',
@@ -50,6 +54,8 @@ export class ExchangeCalculatorComponent implements OnInit {
   loading = true;
   isEditingRate = false;
   showError = false;
+  nameCompany: string = '';
+  addressCompany: string = '';
 
   // Currency data
   currencies: Currency[] = [];
@@ -68,11 +74,15 @@ export class ExchangeCalculatorComponent implements OnInit {
   displayRates: any[] = [];
   messageResponse = '';
   errorMessage = '';
+  phoneCompany: string = '';
+  emailCompany: string = '';
 
   constructor(
     private fb: FormBuilder,
     private transactionService: TransactionService,
-    private currencyService: CurrencyService
+    private currencyService: CurrencyService,
+    private token: TokenService,
+    public languageService: LanguageService
   ) {
     // Define explicit default objects instead of using this.currencies array
     this.fromCurrency = {
@@ -96,9 +106,38 @@ export class ExchangeCalculatorComponent implements OnInit {
     this.initializeForms();
   }
 
+  getNameCompany(): string {
+    const company = this.token.getCompanyWithToken();
+    return company?.name ?? '';
+  }
+
+  getAddressCompany(): string {
+    const company = this.token.getCompanyWithToken();
+    return company?.address ?? '';
+  }
+
+
+
+  getPhoneCompany(): string {
+    const company = this.token.getCompanyWithToken();
+    return company?.phone ?? '';
+  }
+
+  getEmail(): string {
+    const company = this.token.getCompanyWithToken();
+    return company?.email ?? '';
+  }
+
   ngOnInit(): void {
     this.getCurrencies();
     this.generateMockRecentExchanges();
+    this.nameCompany = this.getNameCompany();
+    this.addressCompany = this.getAddressCompany();
+    this.phoneCompany = this.getPhoneCompany();
+    this.emailCompany = this.getEmail();
+
+    const savedLanguage = this.languageService.getCurrentLanguage();
+    this.languageService.setLanguage(savedLanguage);
   }
 
   /**

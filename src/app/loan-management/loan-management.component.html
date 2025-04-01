@@ -6,9 +6,6 @@
             <p class="text-muted">Manage all loan operations and customer accounts</p>
         </div>
         <div class="d-flex">
-            <button class="btn btn-outline-secondary me-2" (click)="exportLoans()">
-                <i class="fas fa-file-export me-1"></i> Export
-            </button>
             <div class="dropdown me-2">
                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="showMenu"
                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -38,118 +35,6 @@
             </button>
         </div>
     </div>
-
-    <!-- Analytics Dashboard Section -->
-    <div class="row mb-4">
-        <div class="col-lg-8">
-            <!-- Stats Cards -->
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="card stats-card">
-                        <div class="card-body d-flex flex-column">
-                            <h6 class="card-title text-primary">Active Loans</h6>
-                            <div class="d-flex align-items-center mt-auto">
-                                <h2 class="mb-0">{{ activeLoansCount }}</h2>
-                            </div>
-                            <p class="mb-0 small text-muted">Currently outstanding</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card">
-                        <div class="card-body d-flex flex-column">
-                            <h6 class="card-title text-danger">Overdue Loans</h6>
-                            <div class="d-flex align-items-center mt-auto">
-                                <h2 class="mb-0">{{ overdueLoansCount }}</h2>
-                            </div>
-                            <p class="mb-0 small text-muted">Past due date</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card">
-                        <div class="card-body d-flex flex-column">
-                            <h6 class="card-title text-success">Repaid Loans</h6>
-                            <div class="d-flex align-items-center mt-auto">
-                                <h2 class="mb-0">{{ repaidLoansCount }}</h2>
-                            </div>
-                            <p class="mb-0 small text-muted">Successfully closed</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stats-card">
-                        <div class="card-body d-flex flex-column">
-                            <h6 class="card-title" style="color: #5e72e4;">Total Amount</h6>
-                            <div class="d-flex align-items-center mt-auto">
-                                <h2 class="mb-0">${{ totalLoansAmount | number:'1.0-0' }}</h2>
-                            </div>
-                            <p class="mb-0 small text-muted">Outstanding loans</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Performance Chart -->
-            <div class="card mt-3">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0">Monthly Loan Performance</h6>
-                    <div class="btn-group btn-group-sm">
-                        <button type="button" class="btn btn-outline-primary" (click)="updateChartPeriod('monthly')">
-                            Monthly
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" (click)="updateChartPeriod('quarterly')">
-                            Quarterly
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" (click)="updateChartPeriod('yearly')">
-                            Yearly
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container" style="position: relative; height:250px;">
-                        <canvas id="loanPerformanceChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <!-- Activity Log -->
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0">Recent Activity</h6>
-                    <button class="btn btn-sm btn-outline-primary" (click)="refreshActivityLog()">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                </div>
-                <div class="card-body p-0">
-                    <div class="activity-timeline">
-                        <div class="timeline-item" *ngFor="let activity of activityLog">
-                            <div class="timeline-icon" [ngClass]="getActivityIconClass(activity.type)">
-                                <i class="fas" [ngClass]="getActivityIcon(activity.type)"></i>
-                            </div>
-                            <div class="timeline-content">
-                                <p class="mb-0 fw-medium">{{ activity.description }}</p>
-                                <small class="text-muted">{{ activity.timestamp | date:'MMM d, h:mm a' }}</small>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item" *ngIf="activityLog.length === 0">
-                            <div class="timeline-content text-center py-3">
-                                <p class="text-muted mb-0">No recent activity</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer text-center">
-                    <a href="#" class="text-primary">View All Activity</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Search and Filter Card -->
     <div class="card search-filter-card mb-4">
         <div class="card-body p-3">
             <div class="row g-3">
@@ -186,22 +71,6 @@
                 <div class="col-12">
                     <div class="advanced-filters" [ngClass]="{'d-none': !showAdvancedFilters}">
                         <div class="row g-3">
-                            <div class="col-md-3">
-                                <label class="form-label">Issue Date Range</label>
-                                <div class="input-group">
-                                    <input type="date" class="form-control" [(ngModel)]="issueDateStart">
-                                    <span class="input-group-text">to</span>
-                                    <input type="date" class="form-control" [(ngModel)]="issueDateEnd">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Due Date Range</label>
-                                <div class="input-group">
-                                    <input type="date" class="form-control" [(ngModel)]="dueDateStart">
-                                    <span class="input-group-text">to</span>
-                                    <input type="date" class="form-control" [(ngModel)]="dueDateEnd">
-                                </div>
-                            </div>
                             <div class="col-md-2">
                                 <label class="form-label">Amount Range</label>
                                 <div class="input-group">
@@ -499,94 +368,11 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
-                                <div class="form-group mt-2">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" formControlName="isConfidential"
-                                            id="isConfidential">
-                                        <label class="form-check-label" for="isConfidential">
-                                            <i class="fas fa-user-secret me-1"></i> Mark as Confidential Record
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="col-12">
                                 <div class="form-group">
                                     <label class="form-label">Notes</label>
                                     <textarea class="form-control" rows="3" formControlName="notes"
                                         placeholder="Add any additional information about this loan..."></textarea>
-                                </div>
-                            </div>
-
-                            <!-- Payment Schedule Section -->
-                            <div class="col-12 mt-2">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <h6 class="mb-0">Payment Schedule</h6>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox"
-                                                    [(ngModel)]="enablePaymentSchedule"
-                                                    [ngModelOptions]="{standalone: true}" id="enableSchedule">
-                                                <label class="form-check-label" for="enableSchedule">Enable</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body" *ngIf="enablePaymentSchedule">
-                                        <div class="row mb-3">
-                                            <div class="col-md-4">
-                                                <label class="form-label">Payment Frequency</label>
-                                                <select class="form-select" [(ngModel)]="paymentFrequency"
-                                                    [ngModelOptions]="{standalone: true}"
-                                                    (change)="generatePaymentSchedule()">
-                                                    <option value="monthly">Monthly</option>
-                                                    <option value="bi-weekly">Bi-Weekly</option>
-                                                    <option value="weekly">Weekly</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label class="form-label">First Payment Date</label>
-                                                <input type="date" class="form-control" [(ngModel)]="firstPaymentDate"
-                                                    [ngModelOptions]="{standalone: true}"
-                                                    (change)="generatePaymentSchedule()">
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label class="form-label">Number of Payments</label>
-                                                <input type="number" class="form-control" [(ngModel)]="numberOfPayments"
-                                                    [ngModelOptions]="{standalone: true}" min="1"
-                                                    (change)="generatePaymentSchedule()">
-                                            </div>
-                                        </div>
-                                        <div class="table-responsive" *ngIf="paymentSchedule.length > 0">
-                                            <table class="table table-sm table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th>Date</th>
-                                                        <th>Amount</th>
-                                                        <th>Principal</th>
-                                                        <th>Interest</th>
-                                                        <th>Balance</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr *ngFor="let payment of paymentSchedule; let i = index">
-                                                        <td>{{ i + 1 }}</td>
-                                                        <td>{{ payment.date | date:'MMM d, y' }}</td>
-                                                        <td>{{ formatAmount(payment.amount,
-                                                            loanForm.get('currency')?.value) }}</td>
-                                                        <td>{{ formatAmount(payment.principal,
-                                                            loanForm.get('currency')?.value) }}</td>
-                                                        <td>{{ formatAmount(payment.interest,
-                                                            loanForm.get('currency')?.value) }}</td>
-                                                        <td>{{ formatAmount(payment.remainingBalance,
-                                                            loanForm.get('currency')?.value) }}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -834,6 +620,41 @@
             </div>
             <div class="toast-body">
                 {{ toastMessage }}
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-lg-4">
+        <!-- Activity Log -->
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">Recent Activity</h6>
+                <button class="btn btn-sm btn-outline-primary" (click)="refreshActivityLog()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="activity-timeline">
+                    <div class="timeline-item" *ngFor="let activity of activityLog">
+                        <div class="timeline-icon" [ngClass]="getActivityIconClass(activity.type)">
+                            <i class="fas" [ngClass]="getActivityIcon(activity.type)"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <p class="mb-0 fw-medium">{{ activity.description }}</p>
+                            <small class="text-muted">{{ activity.timestamp | date:'MMM d, h:mm a' }}</small>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item" *ngIf="activityLog.length === 0">
+                        <div class="timeline-content text-center py-3">
+                            <p class="text-muted mb-0">No recent activity</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a href="#" class="text-primary">View All Activity</a>
             </div>
         </div>
     </div>

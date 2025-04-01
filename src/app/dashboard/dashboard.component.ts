@@ -3,17 +3,28 @@ import { DashboardStats } from '../models/DashboardStats.model';
 import { Transaction } from '../models/transaction.model';
 import { Currency } from '../models/currency.model';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
+import { BaseChartDirective, NgChartsModule } from 'ng2-charts';
 import { interval } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
 import { CurrencyService } from '../services/currency.service';
 import { DashboardService } from '../services/dashboard.service';
 import { TransactionService } from '../services/transaction.service';
 import { TokenService } from '../services/token.service';
+import { TranslatePipe } from '../pipe/translate.pipe';
+import { LanguageService } from '../services/language.service';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
-  standalone: false,
+  standalone: true,
+  imports: [
+    RouterModule, 
+    CommonModule,
+    FormsModule, 
+    TranslatePipe,
+    NgChartsModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -24,6 +35,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     fundsTrend: 0,
     totalExchanges: 0,
     exchangesTrend: 0,
+    completedTransactions: 0,
     activeLoans: 0,
     loansTrend: 0,
     todayProfit: 0,
@@ -34,7 +46,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   loading: boolean = true;
   refreshInterval: any;
   fullName?: string;
-  constructor(private dashboardService: DashboardService, private currencyService: CurrencyService, private transactionService: TransactionService, private tokenService: TokenService) { }
+  constructor(private dashboardService: DashboardService, private currencyService: CurrencyService, private transactionService: TransactionService, private tokenService: TokenService,  public languageService: LanguageService) { }
 
   ngOnInit(): void {
     this.loading = true;
@@ -56,6 +68,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.refreshInterval = setInterval(() => {
       this.refreshRates();
     }, 300000);
+
+
+    const savedLanguage = this.languageService.getCurrentLanguage();
+    this.languageService.setLanguage(savedLanguage);
   }
 
   // User greeting based on time of day
@@ -70,6 +86,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     activeLoans: 0,
     loansTrend: 0,
     todayProfit: 0,
+    completedTransactions: 0,
     profitTrend: 0
   };
 

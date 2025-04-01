@@ -1,5 +1,3 @@
-<!-- here model -->
-
 <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
     aria-hidden="true">
@@ -9,22 +7,23 @@
                 [ngClass]="confirmationOptions?.type ? ('bg-' + confirmationOptions?.type + ' text-white') : 'bg-primary text-white'">
                 <h5 class="modal-title" id="confirmationModalLabel">
                     <i class="fas" [ngClass]="getConfirmationIcon()"></i>
-                    {{ confirmationOptions?.title || 'Confirmation' }}
+                    {{ confirmationOptions?.title || ('common.confirmation' | translate) }}
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>{{ confirmationOptions?.message || 'Are you sure you want to proceed?' }}</p>
+                <p>{{ confirmationOptions?.message || ('common.proceed-confirmation' | translate) }}</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" (click)="onCancel()">
-                    <i class="fas fa-times me-1"></i> {{ confirmationOptions?.cancelText || 'Cancel' }}
+                    <i class="fas fa-times me-1"></i> {{ confirmationOptions?.cancelText || ('common.cancel' |
+                    translate) }}
                 </button>
                 <button type="button" class="btn" [ngClass]="'btn-' + (confirmationOptions?.type || 'primary')"
                     (click)="onConfirm()">
                     <i class="fas" [ngClass]="getConfirmButtonIcon()"></i> {{ confirmationOptions?.confirmText ||
-                    'Confirm' }}
+                    ('common.confirm' | translate) }}
                 </button>
             </div>
         </div>
@@ -37,7 +36,7 @@
     <div class="loading-overlay" *ngIf="loading">
         <div class="spinner-container">
             <div class="spinner"></div>
-            <p>Processing your request...</p>
+            <p>{{ 'customers.processing-request' | translate }}</p>
         </div>
     </div>
 
@@ -45,30 +44,16 @@
     <div class="row mb-4">
         <div class="col-md-6">
             <h2 class="section-title">
-                <i class="fas fa-users me-2"></i> Customer Management
+                <i class="fas fa-users me-2"></i> {{ 'customers.management-title' | translate }}
             </h2>
-            <p class="text-muted">Manage users and their roles in the system</p>
+            <p class="text-muted">{{ 'customers.management-subtitle' | translate }}</p>
         </div>
         <div class="col-md-6 d-flex justify-content-md-end align-items-center">
             <button class="btn btn-outline-primary me-2 d-flex align-items-center" (click)="loadCustomers()">
-                <i class="fas fa-sync-alt me-2"></i> Refresh
+                <i class="fas fa-sync-alt me-2"></i> {{ 'common.refresh' | translate }}
             </button>
-            <!-- <div class="dropdown me-2">
-                <button class="btn btn-primary dropdown-toggle d-flex align-items-center" type="button"
-                    id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-download me-2"></i> Export
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
-                    <li><a class="dropdown-item" (click)="bulkAction('export')"><i
-                                class="fas fa-file-csv me-2"></i> CSV</a></li>
-                    <li><a class="dropdown-item" (click)="bulkAction('export')"><i
-                                class="fas fa-file-excel me-2"></i> Excel</a></li>
-                    <li><a class="dropdown-item" (click)="bulkAction('export')"><i
-                                class="fas fa-file-pdf me-2"></i> PDF</a></li>
-                </ul>
-            </div> -->
             <button class="btn btn-success d-flex align-items-center" (click)="showAddCustomerModal()">
-                <i class="fas fa-user-plus me-2"></i> Add User
+                <i class="fas fa-user-plus me-2"></i> {{ 'customers.add-user' | translate }}
             </button>
         </div>
     </div>
@@ -83,7 +68,7 @@
                             <i class="fas fa-users"></i>
                         </div>
                         <div class="statistic-info">
-                            <h6 class="statistic-label">Total Users</h6>
+                            <h6 class="statistic-label">{{ 'customers.total-users' | translate }}</h6>
                             <h3 class="statistic-value">{{ totalCustomers | number }}</h3>
                         </div>
                     </div>
@@ -98,7 +83,7 @@
                             <i class="fas fa-user-check"></i>
                         </div>
                         <div class="statistic-info">
-                            <h6 class="statistic-label">Active Users</h6>
+                            <h6 class="statistic-label">{{ 'customers.active-users' | translate }}</h6>
                             <h3 class="statistic-value">{{ activeCustomers | number }}</h3>
                         </div>
                     </div>
@@ -113,7 +98,7 @@
                             <i class="fas fa-user-shield"></i>
                         </div>
                         <div class="statistic-info">
-                            <h6 class="statistic-label">Administrators</h6>
+                            <h6 class="statistic-label">{{ 'customers.administrators' | translate }}</h6>
                             <h3 class="statistic-value">{{ adminUsers | number }}</h3>
                         </div>
                     </div>
@@ -128,7 +113,7 @@
                             <i class="fas fa-user"></i>
                         </div>
                         <div class="statistic-info">
-                            <h6 class="statistic-label">Manager</h6>
+                            <h6 class="statistic-label">{{ 'customers.managers' | translate }}</h6>
                             <h3 class="statistic-value">{{ regularUsers | number }}</h3>
                         </div>
                     </div>
@@ -140,35 +125,37 @@
     <!-- Search and Filter Card -->
     <div class="card filter-card mb-4">
         <div class="card-body">
-            <h5 class="card-title mb-3"><i class="fas fa-filter me-2"></i>Search and Filter</h5>
+            <h5 class="card-title mb-3"><i class="fas fa-filter me-2"></i>{{ 'customers.search-filter' | translate }}
+            </h5>
             <div class="row g-3">
                 <div class="col-lg-6">
                     <div class="input-group">
                         <span class="input-group-text bg-light">
                             <i class="fas fa-search"></i>
                         </span>
-                        <input type="text" class="form-control" placeholder="Search by name, email, phone..."
-                            [(ngModel)]="searchTerm" (keyup.enter)="onSearch()">
+                        <input type="text" class="form-control"
+                            [placeholder]="'customers.search-placeholder' | translate" [(ngModel)]="searchTerm"
+                            (keyup.enter)="onSearch()">
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-4">
                     <select class="form-select" [(ngModel)]="roleFilter" (change)="onRoleChange(roleFilter)">
-                        <option value="all">All Roles</option>
-                        <option value="ADMIN">Administrator</option>
-                        <option value="MANAGER">Manager</option>
+                        <option value="all">{{ 'customers.all-roles' | translate }}</option>
+                        <option value="ADMIN">{{ 'customers.role-administrator' | translate }}</option>
+                        <option value="MANAGER">{{ 'customers.role-manager' | translate }}</option>
                     </select>
                 </div>
                 <div class="col-lg-2 col-md-4">
                     <select class="form-select" [(ngModel)]="statusFilter" (change)="onStatusChange(statusFilter)">
-                        <option value="all">All Status</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
+                        <option value="all">{{ 'customers.all-status' | translate }}</option>
+                        <option value="active">{{ 'customers.status-active' | translate }}</option>
+                        <option value="inactive">{{ 'customers.status-inactive' | translate }}</option>
                     </select>
                 </div>
                 <div class="col-lg-2 col-md-4">
                     <div class="d-grid">
                         <button class="btn btn-secondary" (click)="resetFilters()">
-                            <i class="fas fa-redo-alt me-2"></i> Reset
+                            <i class="fas fa-redo-alt me-2"></i> {{ 'common.reset' | translate }}
                         </button>
                     </div>
                 </div>
@@ -180,19 +167,21 @@
     <div class="card table-card mb-4">
         <div class="card-body">
             <div class="table-toolbar d-flex justify-content-between align-items-center mb-3">
-                <h5 class="card-title mb-0"><i class="fas fa-list me-2"></i>Users List</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-list me-2"></i>{{ 'customers.users-list' | translate }}
+                </h5>
                 <div class="btn-group">
-                    <button class="btn btn-sm btn-outline-success me-1" (click)="bulkAction('activate')"
-                        [disabled]="selectedCustomers.length === 0">
-                        <i class="fas fa-check-circle me-1"></i> Activate
+                    <button class="btn btn-sm btn-outline-success me-1"
+                        (click)="bulkAction('activate'); $event.stopPropagation()"
+                        [disabled]="selectedUserIds.length === 0">
+                        <i class="fas fa-check-circle me-1"></i> {{ 'customers.activate' | translate }}
                     </button>
                     <button class="btn btn-sm btn-outline-warning me-1" (click)="bulkAction('deactivate')"
-                        [disabled]="selectedCustomers.length === 0">
-                        <i class="fas fa-ban me-1"></i> Deactivate
+                        [disabled]="selectedUserIds.length === 0">
+                        <i class="fas fa-ban me-1"></i> {{ 'customers.deactivate' | translate }}
                     </button>
                     <button class="btn btn-sm btn-outline-danger" (click)="bulkAction('delete')"
-                        [disabled]="selectedCustomers.length === 0">
-                        <i class="fas fa-trash me-1"></i> Delete
+                        [disabled]="selectedUserIds.length === 0">
+                        <i class="fas fa-trash me-1"></i> {{ 'common.delete' | translate }}
                     </button>
                 </div>
             </div>
@@ -206,13 +195,13 @@
                                         [checked]="areAllSelected()" (change)="toggleSelectAll()">
                                 </div>
                             </th>
-                            <th>User <i class="fas fa-sort ms-1"></i></th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Last Active</th>
-                            <th>Created Date</th>
-                            <th class="text-center">Actions</th>
+                            <th>{{ 'customers.user' | translate }} <i class="fas fa-sort ms-1"></i></th>
+                            <th>{{ 'customers.email' | translate }}</th>
+                            <th>{{ 'customers.role' | translate }}</th>
+                            <th>{{ 'customers.status' | translate }}</th>
+                            <th>{{ 'customers.last-active' | translate }}</th>
+                            <th>{{ 'customers.created-date' | translate }}</th>
+                            <th class="text-center">{{ 'common.actions' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -242,10 +231,10 @@
                             </td>
                             <td>
                                 <span class="badge ms-2 bg-success" *ngIf="customer.active === true">
-                                    Active
+                                    {{ 'customers.status-active' | translate }}
                                 </span>
                                 <span class="badge ms-2 bg-warning" *ngIf="customer.locked === true">
-                                    Inactive
+                                    {{ 'customers.status-inactive' | translate }}
                                 </span>
                             </td>
                             <td>{{ customer.lastActive | date:'MMM d, y' }}</td>
@@ -253,30 +242,15 @@
                             <td>
                                 <div class="d-flex justify-content-center action-buttons">
                                     <button class="btn btn-icon btn-sm btn-light"
-                                        (click)="viewCustomerDetails(customer)" title="View Details">
+                                        (click)="viewCustomerDetails(customer)"
+                                        [title]="'customers.view-details' | translate">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     <button class="btn btn-icon btn-sm btn-light"
-                                        (click)="showEditCustomerModal(customer)" title="Edit User">
+                                        (click)="showEditCustomerModal(customer)"
+                                        [title]="'customers.edit-user' | translate">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <!-- <div class="dropdown action-dropdown">
-                                        <button class="btn btn-icon btn-sm btn-light" type="button"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-h"></i>
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-end shadow-sm action-menu">
-                                            <a class="dropdown-item d-flex align-items-center"
-                                                (click)="resetPassword(customer); $event.preventDefault()">
-                                                <span class="icon-wrapper text-warning">
-                                                    <i class="fas fa-key"></i>
-                                                </span>
-                                                <span>Reset Password</span>
-                                            </a>
-
-                                            <div class="dropdown-divider"></div>
-                                        </div>
-                                    </div> -->
                                 </div>
                             </td>
                         </tr>
@@ -284,10 +258,11 @@
                             <td colspan="8" class="text-center py-4">
                                 <div class="empty-state">
                                     <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                                    <h6>No users found</h6>
-                                    <p class="text-muted">Try changing your search criteria or clear filters</p>
-                                    <button class="btn btn-sm btn-primary" (click)="resetFilters()">Clear
-                                        Filters</button>
+                                    <h6>{{ 'customers.no-users-found' | translate }}</h6>
+                                    <p class="text-muted">{{ 'customers.try-changing-search' | translate }}</p>
+                                    <button class="btn btn-sm btn-primary" (click)="resetFilters()">
+                                        {{ 'customers.clear-filters' | translate }}
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -297,9 +272,10 @@
 
             <div class="d-flex justify-content-between align-items-center flex-wrap mt-3">
                 <div class="pagination-info mb-2">
-                    Showing <span class="fw-medium">{{ paginationInfo.from }}</span> to
-                    <span class="fw-medium">{{ paginationInfo.to }}</span> of
-                    <span class="fw-medium">{{ paginationInfo.total }}</span> users
+                    {{ 'common.showing' | translate }} <span class="fw-medium">{{ paginationInfo.from }}</span>
+                    {{ 'common.to' | translate }} <span class="fw-medium">{{ paginationInfo.to }}</span>
+                    {{ 'common.of' | translate }} <span class="fw-medium">{{ paginationInfo.total }}</span>
+                    {{ 'customers.users' | translate }}
                 </div>
 
                 <!-- Pagination -->
@@ -346,7 +322,8 @@
         <div class="col-lg-6 mb-4">
             <div class="card activity-card h-100">
                 <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i class="fas fa-history me-2"></i>Recent Activities</h5>
+                    <h5 class="card-title mb-0"><i class="fas fa-history me-2"></i>{{ 'customers.recent-activities' |
+                        translate }}</h5>
                 </div>
                 <div class="card-body p-0">
                     <div class="list-group list-group-flush">
@@ -378,7 +355,8 @@
                     [ngClass]="formMode === 'add' ? 'bg-success text-white' : 'bg-primary text-white'">
                     <h5 class="modal-title" id="customerModalLabel">
                         <i class="fas" [ngClass]="formMode === 'add' ? 'fa-user-plus' : 'fa-user-edit'"></i>
-                        {{ formMode === 'add' ? 'Add New User' : 'Edit User' }}
+                        {{ formMode === 'add' ? ('customers.add-new-user' | translate) : ('customers.edit-user' |
+                        translate) }}
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
@@ -389,7 +367,8 @@
                             <!-- Basic Info -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                    <label class="form-label">{{ 'customers.full-name' | translate }} <span
+                                            class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                                         <input type="text" class="form-control" formControlName="fullName"
@@ -397,14 +376,15 @@
                                     </div>
                                     <div *ngIf="customerForm.get('fullName')?.touched && customerForm.get('fullName')?.errors?.['required']"
                                         class="text-danger small mt-1">
-                                        Full name is required
+                                        {{ 'customers.error-full-name-required' | translate }}
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                                    <label class="form-label">{{ 'customers.email' | translate }} <span
+                                            class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                         <input type="email" class="form-control" formControlName="email"
@@ -412,19 +392,19 @@
                                     </div>
                                     <div *ngIf="customerForm.get('email')?.touched && customerForm.get('email')?.errors?.['required']"
                                         class="text-danger small mt-1">
-                                        Email is required
+                                        {{ 'customers.error-email-required' | translate }}
                                     </div>
                                     <div *ngIf="customerForm.get('email')?.touched && customerForm.get('email')?.errors?.['email']"
                                         class="text-danger small mt-1">
-                                        Invalid email format
+                                        {{ 'customers.error-email-invalid' | translate }}
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Password <span class="text-danger"
-                                            *ngIf="formMode === 'add'">*</span></label>
+                                    <label class="form-label">{{ 'customers.password' | translate }} <span
+                                            class="text-danger" *ngIf="formMode === 'add'">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                         <input type="password" class="form-control" formControlName="password"
@@ -432,21 +412,21 @@
                                     </div>
                                     <div *ngIf="customerForm.get('password')?.touched && customerForm.get('password')?.errors?.['required']"
                                         class="text-danger small mt-1">
-                                        Password is required
+                                        {{ 'customers.error-password-required' | translate }}
                                     </div>
                                     <div *ngIf="customerForm.get('password')?.touched && customerForm.get('password')?.errors?.['minlength']"
                                         class="text-danger small mt-1">
-                                        Password must be at least 6 characters
+                                        {{ 'customers.error-password-length' | translate }}
                                     </div>
                                     <div *ngIf="formMode === 'edit'" class="text-muted small mt-1">
-                                        Leave blank to keep current password
+                                        {{ 'customers.password-keep-current' | translate }}
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Phone Number</label>
+                                    <label class="form-label">{{ 'customers.phone-number' | translate }}</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                         <input type="text" class="form-control" formControlName="phoneNumber"
@@ -454,7 +434,7 @@
                                     </div>
                                     <div *ngIf="customerForm.get('phoneNumber')?.touched && customerForm.get('phoneNumber')?.errors?.['pattern']"
                                         class="text-danger small mt-1">
-                                        Please enter a valid phone number
+                                        {{ 'customers.error-phone-invalid' | translate }}
                                     </div>
                                 </div>
                             </div>
@@ -462,7 +442,8 @@
                             <!-- Role and Status -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Role <span class="text-danger">*</span></label>
+                                    <label class="form-label">{{ 'customers.role' | translate }} <span
+                                            class="text-danger">*</span></label>
                                     <select class="form-select" formControlName="role">
                                         <option *ngFor="let role of availableRoles" [value]="role.id">{{ role.name }}
                                         </option>
@@ -472,13 +453,14 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Status</label>
+                                    <label class="form-label">{{ 'customers.status' | translate }}</label>
                                     <div class="d-flex mt-2">
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" formControlName="status"
                                                 id="statusSwitch">
                                             <label class="form-check-label" for="statusSwitch">
-                                                {{ customerForm.get('status')?.value ? 'Active' : 'Inactive' }}
+                                                {{ customerForm.get('status')?.value ? ('customers.status-active' |
+                                                translate) : ('customers.status-inactive' | translate) }}
                                             </label>
                                         </div>
                                     </div>
@@ -486,7 +468,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="form-label">Address</label>
+                                    <label class="form-label">{{ 'customers.address' | translate }}</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
                                         <input type="text" class="form-control" formControlName="address">
@@ -496,9 +478,9 @@
 
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="form-label">Notes</label>
+                                    <label class="form-label">{{ 'customers.notes' | translate }}</label>
                                     <textarea class="form-control" formControlName="notes" rows="3"
-                                        placeholder="Additional notes about this user..."></textarea>
+                                        [placeholder]="'customers.notes-placeholder' | translate"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -506,13 +488,14 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i> Cancel
+                        <i class="fas fa-times me-1"></i> {{ 'common.cancel' | translate }}
                     </button>
                     <button type="button" class="btn" [ngClass]="formMode === 'add' ? 'btn-success' : 'btn-primary'"
                         (click)="saveCustomer()" [disabled]="loading">
                         <i class="fas"
                             [ngClass]="loading ? 'fa-spinner fa-spin' : (formMode === 'add' ? 'fa-user-plus' : 'fa-save')"></i>
-                        {{ loading ? ' Saving...' : (formMode === 'add' ? ' Add User' : ' Save Changes') }}
+                        {{ loading ? ('customers.saving' | translate) : (formMode === 'add' ? ('customers.add-user' |
+                        translate) : ('customers.save-changes' | translate)) }}
                     </button>
                 </div>
             </div>
@@ -526,7 +509,7 @@
             <div class="modal-content" *ngIf="selectedCustomer">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="viewCustomerModalLabel">
-                        <i class="fas fa-user me-2"></i> User Details
+                        <i class="fas fa-user me-2"></i> {{ 'customers.user-details' | translate }}
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
@@ -547,11 +530,11 @@
                                             </span>
                                             <span class="badge ms-2 bg-success"
                                                 *ngIf="selectedCustomer.active === true">
-                                                Active
+                                                {{ 'customers.status-active' | translate }}
                                             </span>
                                             <span class="badge ms-2 bg-secondary"
                                                 *ngIf="selectedCustomer.active != true">
-                                                Inactive
+                                                {{ 'customers.status-inactive' | translate }}
                                             </span>
                                         </div>
                                     </div>
@@ -559,17 +542,20 @@
                             </div>
 
                             <div class="user-details-section mb-4">
-                                <h6 class="details-section-title">Contact Information</h6>
+                                <h6 class="details-section-title">{{ 'customers.contact-information' | translate }}</h6>
                                 <div class="detail-item">
-                                    <div class="detail-label"><i class="fas fa-envelope me-2"></i> Email:</div>
+                                    <div class="detail-label"><i class="fas fa-envelope me-2"></i> {{ 'customers.email'
+                                        | translate }}:</div>
                                     <div class="detail-value">{{ selectedCustomer.email }}</div>
                                 </div>
                                 <div class="detail-item" *ngIf="selectedCustomer.phoneNumber">
-                                    <div class="detail-label"><i class="fas fa-phone me-2"></i> Phone:</div>
+                                    <div class="detail-label"><i class="fas fa-phone me-2"></i> {{ 'customers.phone' |
+                                        translate }}:</div>
                                     <div class="detail-value">{{ selectedCustomer.phoneNumber }}</div>
                                 </div>
                                 <div class="detail-item" *ngIf="selectedCustomer.address">
-                                    <div class="detail-label"><i class="fas fa-map-marker-alt me-2"></i> Address:</div>
+                                    <div class="detail-label"><i class="fas fa-map-marker-alt me-2"></i> {{
+                                        'customers.address' | translate }}:</div>
                                     <div class="detail-value">{{ selectedCustomer.address }}</div>
                                 </div>
                             </div>
@@ -577,24 +563,27 @@
 
                         <div class="col-md-6">
                             <div class="account-details-section mb-4">
-                                <h6 class="details-section-title">Account Information</h6>
+                                <h6 class="details-section-title">{{ 'customers.account-information' | translate }}</h6>
                                 <div class="detail-item">
-                                    <div class="detail-label"><i class="fas fa-id-card me-2"></i> User ID:</div>
+                                    <div class="detail-label"><i class="fas fa-id-card me-2"></i> {{ 'customers.user-id'
+                                        | translate }}:</div>
                                     <div class="detail-value">{{ selectedCustomer.id }}</div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="detail-label"><i class="fas fa-calendar-alt me-2"></i> Created Date:
+                                    <div class="detail-label"><i class="fas fa-calendar-alt me-2"></i> {{
+                                        'customers.created-date' | translate }}:
                                     </div>
                                     <div class="detail-value">{{ selectedCustomer.createdAt | date:'medium' }}</div>
                                 </div>
                                 <div class="detail-item">
-                                    <div class="detail-label"><i class="fas fa-clock me-2"></i> Last Active:</div>
+                                    <div class="detail-label"><i class="fas fa-clock me-2"></i> {{
+                                        'customers.last-active' | translate }}:</div>
                                     <div class="detail-value">{{ selectedCustomer.lastActive | date:'medium' }}</div>
                                 </div>
                             </div>
 
                             <div class="notes-section mb-4" *ngIf="selectedCustomer.notes">
-                                <h6 class="details-section-title">Notes</h6>
+                                <h6 class="details-section-title">{{ 'customers.notes' | translate }}</h6>
                                 <div class="p-3 bg-light rounded">
                                     {{ selectedCustomer.notes }}
                                 </div>
@@ -604,12 +593,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i> Close
+                        <i class="fas fa-times me-1"></i> {{ 'common.close' | translate }}
                     </button>
-                    <!-- <button type="button" class="btn btn-primary"
-                        (click)="showEditCustomerModal(selectedCustomer); document.getElementById('viewCustomerModal')?.querySelector('.btn-close')?.dispatchEvent(new Event('click'));">
-                        <i class="fas fa-edit me-1"></i> Edit
-                    </button> -->
                 </div>
             </div>
         </div>

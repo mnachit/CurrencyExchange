@@ -4,7 +4,7 @@
 <div class="loading-overlay" *ngIf="loading">
     <div class="spinner-container">
         <div class="spinner"></div>
-        <p>Loading transaction history data...</p>
+        <p>{{ 'transactions.loading' | translate }}</p>
     </div>
 </div>
 <div class="container-fluid transaction-container">
@@ -12,36 +12,22 @@
     <div class="row mb-4">
         <div class="col-md-6">
             <h2 class="section-title">
-                <i class="fas fa-history me-2"></i> Transaction History
+                <i class="fas fa-history me-2"></i> {{ 'transactions.history-title' | translate }}
             </h2>
-            <p class="text-muted">View and manage all currency exchange transactions</p>
+            <p class="text-muted">{{ 'transactions.subtitle' | translate }}</p>
         </div>
         <!-- Add this to your HTML template -->
         <div class="col-md-6 d-flex justify-content-md-end align-items-center">
             <button class="btn btn-outline-success me-2 d-flex align-items-center" (click)="openImportModal()">
-                <i class="fas fa-file-upload me-2"></i> Import
+                <i class="fas fa-file-upload me-2"></i> {{ 'transactions.import' | translate }}
             </button>
             <a href="assets/pdf/import transaction.xlsx" download
                 class="btn btn-outline-info me-2 d-flex align-items-center">
-                <i class="fas fa-download me-2"></i> Download Template
+                <i class="fas fa-download me-2"></i> {{ 'transactions.download-template' | translate }}
             </a>
             <button class="btn btn-outline-primary me-2 d-flex align-items-center" (click)="refreshTransactions()">
-                <i class="fas fa-sync-alt me-2"></i> Refresh
+                <i class="fas fa-sync-alt me-2"></i> {{ 'transactions.refresh' | translate }}
             </button>
-            <!-- <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle d-flex align-items-center" type="button"
-                    id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-download me-2"></i> Export
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
-                    <li><a class="dropdown-item" href="#" (click)="exportTransactions('csv')"><i
-                                class="fas fa-file-csv me-2"></i> CSV</a></li>
-                    <li><a class="dropdown-item" href="#" (click)="exportTransactions('excel')"><i
-                                class="fas fa-file-excel me-2"></i> Excel</a></li>
-                    <li><a class="dropdown-item" href="#" (click)="exportTransactions('pdf')"><i
-                                class="fas fa-file-pdf me-2"></i> PDF</a></li>
-                </ul>
-            </div> -->
         </div>
 
         <!-- Import Modal - Add #importModal template reference variable -->
@@ -50,12 +36,14 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="importModalLabel">Import Transactions</h5>
+                        <h5 class="modal-title" id="importModalLabel">{{ 'transactions.import-transactions' | translate
+                            }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="excelFile" class="form-label">Select Excel File</label>
+                            <label for="excelFile" class="form-label">{{ 'transactions.select-excel-file' | translate
+                                }}</label>
                             <input class="form-control" type="file" id="excelFile" (change)="onFileSelected($event)"
                                 accept=".xlsx, .xls">
                         </div>
@@ -73,12 +61,13 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'common.close' |
+                            translate }}</button>
                         <button type="button" class="btn btn-primary" [disabled]="!selectedFile || importing"
                             (click)="importTransactions()">
                             <span *ngIf="importing" class="spinner-border spinner-border-sm me-2" role="status"
                                 aria-hidden="true"></span>
-                            Import
+                            {{ 'transactions.import' | translate }}
                         </button>
                     </div>
                 </div>
@@ -96,7 +85,7 @@
                             <i class="fas fa-exchange-alt"></i>
                         </div>
                         <div class="statistic-info">
-                            <h6 class="statistic-label">Total Transactions</h6>
+                            <h6 class="statistic-label">{{ 'transactions.total-transactions' | translate }}</h6>
                             <h3 class="statistic-value">{{ statics.totalExchanges | number }}</h3>
                         </div>
                     </div>
@@ -111,7 +100,7 @@
                             <i class="fas fa-check-circle"></i>
                         </div>
                         <div class="statistic-info">
-                            <h6 class="statistic-label">Completed</h6>
+                            <h6 class="statistic-label">{{ 'transactions.completed' | translate }}</h6>
                             <h3 class="statistic-value">{{ statics.completedTransactions | number }}</h3>
                         </div>
                     </div>
@@ -126,28 +115,13 @@
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="statistic-info">
-                            <h6 class="statistic-label">Pending</h6>
+                            <h6 class="statistic-label">{{ 'transactions.pending' | translate }}</h6>
                             <h3 class="statistic-value">{{ statics.pendingTransactions | number }}</h3>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- <div class="col-xl-3 col-md-6 mb-3">
-            <div class="statistic-card bg-light">
-                <div class="statistic-card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="statistic-icon bg-info">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <div class="statistic-info">
-                            <h6 class="statistic-label">Today's Volume</h6>
-                            <h3 class="statistic-value">{{ todayVolume | currency:'USD':'symbol':'1.0-0' }}</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="statistic-card bg-light">
                 <div class="statistic-card-body">
@@ -156,7 +130,7 @@
                             <i class="fas fa-times-circle"></i>
                         </div>
                         <div class="statistic-info">
-                            <h6 class="statistic-label">Canceled</h6>
+                            <h6 class="statistic-label">{{ 'transactions.canceled' | translate }}</h6>
                             <h3 class="statistic-value">{{ statics.canceledTransactions }}</h3>
                         </div>
                     </div>
@@ -168,23 +142,25 @@
     <!-- Search and Filter Card -->
     <div class="card filter-card mb-4">
         <div class="card-body">
-            <h5 class="card-title mb-3"><i class="fas fa-filter me-2"></i>Search and Filter</h5>
+            <h5 class="card-title mb-3"><i class="fas fa-filter me-2"></i>{{ 'transactions.search-filter' | translate }}
+            </h5>
             <div class="row g-3">
                 <div class="col-lg-4">
                     <div class="input-group">
                         <span class="input-group-text bg-light">
                             <i class="fas fa-search"></i>
                         </span>
-                        <input type="text" class="form-control" placeholder="Search by ID, customer, currency..."
-                            [(ngModel)]="searchTerm" (keyup.enter)="onSearch()">
+                        <input type="text" class="form-control"
+                            [placeholder]="'transactions.search-placeholder' | translate" [(ngModel)]="searchTerm"
+                            (keyup.enter)="onSearch()">
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-4">
                     <select class="form-select" [(ngModel)]="statusFilter" (change)="onStatusChange(statusFilter)">
-                        <option value="all">All Statuses</option>
-                        <option value="COMPLETED">Completed</option>
-                        <option value="PENDING">Pending</option>
-                        <option value="CANCELED">Canceled</option>
+                        <option value="all">{{ 'transactions.all-statuses' | translate }}</option>
+                        <option value="COMPLETED">{{ 'transactions.status-completed' | translate }}</option>
+                        <option value="PENDING">{{ 'transactions.status-pending' | translate }}</option>
+                        <option value="CANCELED">{{ 'transactions.status-canceled' | translate }}</option>
                     </select>
                 </div>
                 <div class="col-lg-2 col-md-4">
@@ -192,7 +168,7 @@
                 </div>
                 <div class="col-lg-2 col-md-4">
                     <select class="form-select" [(ngModel)]="currencyFilter" (change)="onCurrencyChange()">
-                        <option value="all">All Currencies</option>
+                        <option value="all">{{ 'transactions.all-currencies' | translate }}</option>
                         <option value="USD">USD</option>
                         <option value="EUR">EUR</option>
                         <option value="GBP">GBP</option>
@@ -203,7 +179,7 @@
                 <div class="col-lg-2 col-md-4">
                     <div class="d-grid">
                         <button class="btn btn-secondary" (click)="resetFilters()">
-                            <i class="fas fa-redo-alt me-2"></i> Reset
+                            <i class="fas fa-redo-alt me-2"></i> {{ 'transactions.reset' | translate }}
                         </button>
                     </div>
                 </div>
@@ -215,19 +191,16 @@
     <div class="card table-card mb-4">
         <div class="card-body">
             <div class="table-toolbar d-flex justify-content-between align-items-center mb-3">
-                <h5 class="card-title mb-0"><i class="fas fa-list me-2"></i>Transaction List</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-list me-2"></i>{{ 'transactions.transaction-list' |
+                    translate }}</h5>
                 <div class="btn-group">
-                    <!-- <button class="btn btn-sm btn-outline-primary" (click)="bulkAction('print')"
-                        [disabled]="selectedTransactions.length === 0">
-                        <i class="fas fa-print me-1"></i> Print
-                    </button> -->
                     <button class="btn btn-sm btn-outline-success" (click)="bulkAction('export')"
                         [disabled]="selectedTransactions.length === 0">
-                        <i class="fas fa-file-export me-1"></i> Export
+                        <i class="fas fa-file-export me-1"></i> {{ 'transactions.export' | translate }}
                     </button>
                     <button class="btn btn-sm btn-outline-danger" (click)="bulkAction('delete')"
                         [disabled]="selectedTransactions.length === 0">
-                        <i class="fas fa-trash me-1"></i> Delete
+                        <i class="fas fa-trash me-1"></i> {{ 'transactions.delete' | translate }}
                     </button>
                 </div>
             </div>
@@ -241,14 +214,14 @@
                                         [checked]="areAllSelected()" (change)="toggleSelectAll()">
                                 </div>
                             </th>
-                            <th>ID <i class="fas fa-sort ms-1"></i></th>
-                            <th>Date & Time <i class="fas fa-sort ms-1"></i></th>
-                            <th>Customer</th>
-                            <th>Source</th>
-                            <th>Destination</th>
-                            <th>Amount <i class="fas fa-sort ms-1"></i></th>
-                            <th>Status</th>
-                            <th class="text-center">Actions</th>
+                            <th>{{ 'transactions.id' | translate }} <i class="fas fa-sort ms-1"></i></th>
+                            <th>{{ 'transactions.date-time' | translate }} <i class="fas fa-sort ms-1"></i></th>
+                            <th>{{ 'transactions.customer' | translate }}</th>
+                            <th>{{ 'transactions.source' | translate }}</th>
+                            <th>{{ 'transactions.destination' | translate }}</th>
+                            <th>{{ 'transactions.amount' | translate }} <i class="fas fa-sort ms-1"></i></th>
+                            <th>{{ 'transactions.status' | translate }}</th>
+                            <th class="text-center">{{ 'transactions.actions' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -299,39 +272,9 @@
                             <td>
                                 <div class="d-flex justify-content-center action-buttons">
                                     <button class="btn btn-icon btn-sm btn-light" (click)="viewTransaction(transaction)"
-                                        title="View Details">
+                                        [title]="'transactions.view-details' | translate">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <!-- <button class="btn btn-icon btn-sm btn-light" (click)="printReceipt(transaction)"
-                                        title="Print Receipt">
-                                        <i class="fas fa-print"></i>
-                                    </button> -->
-                                    <!-- <div class="dropdown action-dropdown">
-                                        <button class="btn btn-icon btn-sm btn-light dropdown-toggle no-caret"
-                                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li><a class="dropdown-item" href="#"
-                                                    (click)="editTransaction(transaction)">
-                                                    <i class="fas fa-edit me-2 text-primary"></i> Edit
-                                                </a></li>
-                                            <li><a class="dropdown-item" href="#"
-                                                    (click)="sendNotification(transaction)">
-                                                    <i class="fas fa-envelope me-2 text-info"></i> Send Notification
-                                                </a></li>
-                                            <li><a class="dropdown-item" href="#" (click)="markAsFavorite(transaction)">
-                                                    <i class="fas fa-star me-2 text-warning"></i> Mark as Favorite
-                                                </a></li>
-                                            <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-                                            <li><a class="dropdown-item text-danger" href="#"
-                                                    (click)="deleteTransaction(transaction)">
-                                                    <i class="fas fa-trash me-2"></i> Delete
-                                                </a></li>
-                                        </ul>
-                                    </div> -->
                                 </div>
                             </td>
                         </tr>
@@ -339,10 +282,11 @@
                             <td colspan="9" class="text-center py-4">
                                 <div class="empty-state">
                                     <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                                    <h6>No transactions found</h6>
-                                    <p class="text-muted">Try changing your search criteria or clear filters</p>
-                                    <button class="btn btn-sm btn-primary" (click)="resetFilters()">Clear
-                                        Filters</button>
+                                    <h6>{{ 'transactions.no-transactions-found' | translate }}</h6>
+                                    <p class="text-muted">{{ 'transactions.try-changing-search' | translate }}</p>
+                                    <button class="btn btn-sm btn-primary" (click)="resetFilters()">
+                                        {{ 'transactions.clear-filters' | translate }}
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -352,9 +296,11 @@
 
             <div class="d-flex justify-content-between align-items-center flex-wrap mt-3">
                 <div class="pagination-info mb-2">
-                    Showing <span class="fw-medium">{{ paginationInfo.from }}</span> to
-                    <span class="fw-medium">{{ paginationInfo.to }}</span> of
-                    <span class="fw-medium">{{ paginationInfo.total }}</span> transactions
+                    {{ 'transactions.showing' | translate }} <span class="fw-medium">{{ paginationInfo.from }}</span> {{
+                    'transactions.to' | translate }}
+                    <span class="fw-medium">{{ paginationInfo.to }}</span> {{ 'transactions.of' | translate }}
+                    <span class="fw-medium">{{ paginationInfo.total }}</span> {{ 'transactions.transactions' | translate
+                    }}
                 </div>
 
                 <!-- Pagination -->
@@ -398,8 +344,9 @@
     <!-- Recent Activities Card -->
     <div class="card activity-card">
         <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0"><i class="fas fa-bolt me-2"></i>Recent Activities</h5>
-            <button class="btn btn-sm btn-link text-primary">View All</button>
+            <h5 class="card-title mb-0"><i class="fas fa-bolt me-2"></i>{{ 'transactions.recent-activities' | translate
+                }}</h5>
+            <button class="btn btn-sm btn-link text-primary">{{ 'transactions.view-all' | translate }}</button>
         </div>
         <div class="card-body p-0">
             <div class="list-group list-group-flush">
@@ -429,7 +376,7 @@
         <div class="modal-content" *ngIf="selectedTransaction">
             <div class="modal-header">
                 <h5 class="modal-title" id="transactionDetailModalLabel">
-                    Transaction Details: {{ selectedTransaction.id }}
+                    {{ 'transactions.transaction-details' | translate }}: {{ selectedTransaction.id }}
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -437,17 +384,17 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="transaction-detail-section">
-                            <h6 class="section-title">General Information</h6>
+                            <h6 class="section-title">{{ 'transactions.general-information' | translate }}</h6>
                             <div class="detail-item">
-                                <span class="detail-label">Transaction ID:</span>
+                                <span class="detail-label">{{ 'transactions.transaction-id' | translate }}:</span>
                                 <span class="detail-value">{{ selectedTransaction.id }}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Date & Time:</span>
+                                <span class="detail-label">{{ 'transactions.date-time' | translate }}:</span>
                                 <span class="detail-value">{{ selectedTransaction.createdAt }}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Status:</span>
+                                <span class="detail-label">{{ 'transactions.status' | translate }}:</span>
                                 <span class="detail-value">
                                     <span class="status-badge"
                                         [ngClass]="getStatusBadgeClass(selectedTransaction.status)">
@@ -456,19 +403,19 @@
                                 </span>
                             </div>
                             <div class="detail-item" *ngIf="selectedTransaction.notes">
-                                <span class="detail-label">Notes:</span>
+                                <span class="detail-label">{{ 'transactions.notes' | translate }}:</span>
                                 <span class="detail-value">{{ selectedTransaction.notes }}</span>
                             </div>
                         </div>
 
                         <div class="transaction-detail-section">
-                            <h6 class="section-title">Customer Information</h6>
+                            <h6 class="section-title">{{ 'transactions.customer-information' | translate }}</h6>
                             <div class="detail-item">
-                                <span class="detail-label">Name:</span>
+                                <span class="detail-label">{{ 'transactions.name' | translate }}:</span>
                                 <span class="detail-value">{{ selectedTransaction.customerName }}</span>
                             </div>
                             <div class="detail-item" *ngIf="selectedTransaction.customerID">
-                                <span class="detail-label">Customer ID:</span>
+                                <span class="detail-label">{{ 'transactions.customer-id' | translate }}:</span>
                                 <span class="detail-value">{{ selectedTransaction.customerID }}</span>
                             </div>
                         </div>
@@ -476,7 +423,7 @@
 
                     <div class="col-md-6">
                         <div class="transaction-detail-section">
-                            <h6 class="section-title">Exchange Details</h6>
+                            <h6 class="section-title">{{ 'transactions.exchange-details' | translate }}</h6>
                             <div class="transaction-exchange-details">
                                 <div class="from-currency">
                                     <div class="exchange-currency-code">{{ selectedTransaction.fromCurrency }}</div>
@@ -494,7 +441,7 @@
                             </div>
 
                             <div class="detail-item">
-                                <span class="detail-label">Exchange Rate:</span>
+                                <span class="detail-label">{{ 'transactions.exchange-rate' | translate }}:</span>
                                 <span class="detail-value">
                                     1 {{ selectedTransaction.fromCurrency }} =
                                     {{ selectedTransaction.exchangeRate | number:'1.4-4' }} {{
@@ -502,7 +449,7 @@
                                 </span>
                             </div>
                             <div class="detail-item" *ngIf="selectedTransaction.fee !== undefined">
-                                <span class="detail-label">Commission Fee:</span>
+                                <span class="detail-label">{{ 'transactions.commission-fee' | translate }}:</span>
                                 <span class="detail-value">
                                     {{ formatAmount(selectedTransaction.fee, selectedTransaction.fromCurrency) }}
                                 </span>
@@ -510,14 +457,15 @@
                         </div>
 
                         <div class="transaction-detail-section">
-                            <h6 class="section-title">Activity Log</h6>
+                            <h6 class="section-title">{{ 'transactions.activity-log' | translate }}</h6>
                             <div class="detail-timeline">
                                 <div class="timeline-item">
                                     <div class="timeline-indicator bg-primary"></div>
                                     <div class="timeline-content">
                                         <span class="timeline-time">{{ selectedTransaction.date | date:'shortTime'
                                             }}</span>
-                                        <span class="timeline-title">Transaction Created</span>
+                                        <span class="timeline-title">{{ 'transactions.transaction-created' | translate
+                                            }}</span>
                                     </div>
                                 </div>
                                 <div class="timeline-item">
@@ -526,8 +474,8 @@
                                     <div class="timeline-content">
                                         <span class="timeline-time">{{ selectedTransaction.date | date:'shortTime'
                                             }}</span>
-                                        <span class="timeline-title">Status: {{ selectedTransaction.status | titlecase
-                                            }}</span>
+                                        <span class="timeline-title">{{ 'transactions.status' | translate }}: {{
+                                            selectedTransaction.status | titlecase }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -536,13 +484,14 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'common.close' | translate
+                    }}</button>
                 <button type="button" class="btn btn-primary" (click)="printReceipt(selectedTransaction)">
-                    <i class="fas fa-print me-2"></i> Print Receipt
+                    <i class="fas fa-print me-2"></i> {{ 'transactions.print-receipt' | translate }}
                 </button>
                 <button type="button" class="btn btn-success" *ngIf="selectedTransaction.status === 'pending'"
                     (click)="changeStatus(selectedTransaction, 'completed')">
-                    <i class="fas fa-check me-2"></i> Mark as Completed
+                    <i class="fas fa-check me-2"></i> {{ 'transactions.mark-completed' | translate }}
                 </button>
             </div>
         </div>
@@ -554,74 +503,74 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-receipt me-2"></i>Transaction Receipt</h5>
+                    <h5 class="modal-title"><i class="fas fa-receipt me-2"></i>{{ 'transactions.transaction-receipt' |
+                        translate }}</h5>
                     <button type="button" class="btn-close" (click)="closeReceipt()" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="receipt" *ngIf="receiptData">
                         <div class="receipt-header text-center mb-4 pb-3 border-bottom border-dashed">
-                            <div class="receipt-logo fs-4 fw-bold">Bureau de Change</div>
-                            <div class="receipt-address text-muted small">King Fahd Road, Riyadh, Saudi Arabia</div>
-                            <div class="receipt-contact text-muted small">+966 11 123 4567 |
-                                info&#64;bureau-exchange.com
+                            <div class="receipt-logo fs-4 fw-bold">{{nameCompany}}</div>
+                            <div class="receipt-address text-muted small">{{addressCompany}}</div>
+                            <div class="receipt-contact text-muted small">{{phoneCompany}} | {{emailCompany}}
                             </div>
                         </div>
 
                         <div class="receipt-info mb-4">
                             <div class="row mb-2">
-                                <div class="col-5 text-muted">Receipt No:</div>
+                                <div class="col-5 text-muted">{{ 'transactions.receipt-no' | translate }}:</div>
                                 <div class="col-7 text-end fw-bold">{{ receiptData.receiptId }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-5 text-muted">Date & Time:</div>
+                                <div class="col-5 text-muted">{{ 'transactions.date-time' | translate }}:</div>
                                 <div class="col-7 text-end">{{ receiptData.date | date:'medium' }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-5 text-muted">Customer:</div>
+                                <div class="col-5 text-muted">{{ 'transactions.customer' | translate }}:</div>
                                 <div class="col-7 text-end">{{ receiptData.customerName }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-5 text-muted">ID Number:</div>
+                                <div class="col-5 text-muted">{{ 'transactions.id-number' | translate }}:</div>
                                 <div class="col-7 text-end">{{ receiptData.idNumber }}</div>
                             </div>
                         </div>
 
                         <div class="receipt-calculation p-3 rounded mb-4">
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">From Currency:</div>
+                                <div class="col-6 text-muted">{{ 'transactions.from-currency' | translate }}:</div>
                                 <div class="col-6 text-end fw-bold">{{ receiptData.fromCurrency }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">To Currency:</div>
+                                <div class="col-6 text-muted">{{ 'transactions.to-currency' | translate }}:</div>
                                 <div class="col-6 text-end fw-bold">{{ receiptData.toCurrency }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">Exchange Rate:</div>
+                                <div class="col-6 text-muted">{{ 'transactions.exchange-rate' | translate }}:</div>
                                 <div class="col-6 text-end">1 {{ receiptData.fromCurrency }} = {{
                                     receiptData.exchangeRate | number:'1.4-4' }} {{ receiptData.toCurrency }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">Amount:</div>
+                                <div class="col-6 text-muted">{{ 'transactions.amount' | translate }}:</div>
                                 <div class="col-6 text-end">{{ receiptData.fromAmount |
                                     currency:receiptData.fromCurrency:'symbol':'1.2-2' }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">Exchange Fee:</div>
+                                <div class="col-6 text-muted">{{ 'transactions.exchange-fee' | translate }}:</div>
                                 <div class="col-6 text-end">{{ receiptData.fee |
                                     currency:receiptData.fromCurrency:'symbol':'1.2-2' }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">Service Charge:</div>
+                                <div class="col-6 text-muted">{{ 'transactions.service-charge' | translate }}:</div>
                                 <div class="col-6 text-end">{{ receiptData.serviceCharge |
                                     currency:receiptData.fromCurrency:'symbol':'1.2-2' }}</div>
                             </div>
                             <div class="row mt-3 pt-3 border-top">
-                                <div class="col-6 fw-bold">Total Paid:</div>
+                                <div class="col-6 fw-bold">{{ 'transactions.total-paid' | translate }}:</div>
                                 <div class="col-6 text-end fw-bold">{{ receiptData.totalPaid |
                                     currency:receiptData.fromCurrency:'symbol':'1.2-2' }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 fw-bold">Total Received:</div>
+                                <div class="col-6 fw-bold">{{ 'transactions.total-received' | translate }}:</div>
                                 <div class="col-6 text-end fw-bold fs-5">{{ receiptData.toAmount |
                                     currency:receiptData.toCurrency:'symbol':'1.2-2' }}</div>
                             </div>
@@ -632,18 +581,18 @@
                                 style="width: 80px; height: 80px;">
                                 <i class="fas fa-qrcode fa-3x text-secondary"></i>
                             </div>
-                            <div class="receipt-thanks fw-bold mb-2">Thank you for your business!</div>
-                            <div class="receipt-terms text-muted small">This receipt is your proof of transaction. Keep
-                                it safe for future reference.</div>
+                            <div class="receipt-thanks fw-bold mb-2">{{ 'transactions.thank-you' | translate }}</div>
+                            <div class="receipt-terms text-muted small">{{ 'transactions.receipt-terms' | translate }}
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="closeReceipt()">
-                        <i class="fas fa-times me-2"></i>Close
+                        <i class="fas fa-times me-2"></i>{{ 'common.close' | translate }}
                     </button>
                     <button type="button" class="btn btn-primary" (click)="printReceiptDocument()">
-                        <i class="fas fa-print me-2"></i>Print
+                        <i class="fas fa-print me-2"></i>{{ 'common.print' | translate }}
                     </button>
                 </div>
             </div>

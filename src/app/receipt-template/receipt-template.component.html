@@ -1,9 +1,9 @@
 <div class="receipt-container">
     <div class="receipt" *ngIf="receiptData">
         <div class="receipt-header text-center mb-4 pb-3 border-bottom border-dashed">
-            <div class="receipt-logo fs-4 fw-bold text-primary">Bureau de Change Al Jazira</div>
-            <div class="receipt-address text-muted small">King Fahd Road, Riyadh, Saudi Arabia</div>
-            <div class="receipt-contact text-muted small">+966 11 123 4567 | info&#64;aljazira-exchange.com</div>
+            <div class="receipt-logo fs-4 fw-bold text-primary">Bureau de Change {{nameCompany}}</div>
+            <div class="receipt-address text-muted small">{{addressCompany}}</div>
+            <div class="receipt-contact text-muted small">{{phoneCompany}} | {{addressCompany}}</div>
         </div>
 
         <div class="receipt-info mb-4">

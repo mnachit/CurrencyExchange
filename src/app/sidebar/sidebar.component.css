@@ -25,6 +25,27 @@
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
+/* Logo Container */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    /* Adjust spacing as needed */
+}
+
+/* Logo Image */
+.logo-img {
+    width: 150px;
+    /* Adjust size as needed */
+    height: auto;
+    /* Maintain aspect ratio */
+    max-width: 100%;
+    /* Ensure responsiveness */
+    object-fit: contain;
+    /* Ensure the image fits nicely */
+}
+
 .sidebar::-webkit-scrollbar {
     width: 6px;
 }

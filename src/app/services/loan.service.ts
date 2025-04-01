@@ -286,7 +286,7 @@ export class LoanService {
    */
   updateLoan(loan: Loan): Observable<ApiResponse<Loan>> {
     // In a production environment:
-    return this.http.put<ApiResponse<Loan>>(`${this.apiUrl}/update/${loan.id}`, loan);
+    return this.http.post<ApiResponse<Loan>>(`${this.apiUrl}/update/${loan.id}`, loan);
 
     // For development, mock the response:
     // const index = this.mockLoans.findIndex(l => l.id === loan.id);
@@ -336,7 +336,7 @@ export class LoanService {
    */
   changeStatus(id: number, status: string): Observable<ApiResponse<Loan>> {
     // In a production environment:
-    return this.http.post<ApiResponse<Loan>>(`${this.apiUrl}/status/${id}/${status}`, null);
+    return this.http.post<ApiResponse<Loan>>(`${this.apiUrl}/updateStatus/${id}/${status}`, null);
 
     // For development, mock the response:
     // const index = this.mockLoans.findIndex(l => l.id === id);
@@ -382,5 +382,10 @@ export class LoanService {
     //   message: 'Statistics retrieved successfully',
     //   result: stats
     // }).pipe(delay(500)); // Simulate network delay
+  }
+
+  updateStatus(id: number, status : string): Observable<any> {
+    // In a production environment:
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/updateStatus/${id}/${status}`, null);
   }
 }

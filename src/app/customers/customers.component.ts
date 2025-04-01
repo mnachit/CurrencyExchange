@@ -32,6 +32,7 @@ export class CustomersComponent implements OnInit {
   filteredCustomers: User[] = [];
   selectedCustomer: User | null = null;
   selectedCustomers: User[] = [];
+  selectedUserIds: number[] = [];
 
   // Pagination
   currentPage: number = 1;
@@ -198,12 +199,35 @@ export class CustomersComponent implements OnInit {
   // Show confirmation modal and return promise
   showConfirmationModal(options: ConfirmationOptions): Promise<boolean> {
     this.confirmationOptions = options;
-
-    // Show modal
-    if (this.confirmationModal) {
+  
+    // Create a fresh modal instance each time
+    const modalElement = document.getElementById('confirmationModal');
+    if (modalElement) {
+      // Dispose any existing modal to prevent memory leaks
+      const existingModal = bootstrap.Modal.getInstance(modalElement);
+      if (existingModal) {
+        existingModal.dispose();
+      }
+      
+      // Create a new modal instance
+      this.confirmationModal = new bootstrap.Modal(modalElement);
+      
+      // Listen for modal hidden event to handle cancel action
+      const handleHidden = () => {
+        if (this.confirmationResolve) {
+          this.confirmationResolve(false);
+          this.confirmationResolve = null;
+        }
+        // Remove the event listener to prevent memory leaks
+        modalElement.removeEventListener('hidden.bs.modal', handleHidden);
+      };
+      
+      modalElement.addEventListener('hidden.bs.modal', handleHidden);
+      
+      // Show the modal
       this.confirmationModal.show();
     }
-
+  
     // Return promise that resolves when user makes a choice
     return new Promise<boolean>((resolve) => {
       this.confirmationResolve = resolve;
@@ -215,17 +239,25 @@ export class CustomersComponent implements OnInit {
     if (this.confirmationModal) {
       this.confirmationModal.hide();
     }
-
+  
     if (this.confirmationResolve) {
-      this.confirmationResolve(true);
-      this.confirmationResolve = null;
+      setTimeout(() => {
+        if (this.confirmationResolve) {
+          this.confirmationResolve(true);
+          this.confirmationResolve = null;
+        }
+      }, 100);
     }
   }
-
+  
   onCancel(): void {
     if (this.confirmationResolve) {
-      this.confirmationResolve(false);
-      this.confirmationResolve = null;
+      setTimeout(() => {
+        if (this.confirmationResolve) {
+          this.confirmationResolve(false);
+          this.confirmationResolve = null;
+        }
+      }, 100);
     }
   }
 
@@ -706,34 +738,52 @@ export class CustomersComponent implements OnInit {
   }
 
   // Selection methods
+  // Replace these methods in your component
+
   toggleSelect(customer: User): void {
+    if (!customer.id) return;
+
+    const id = typeof customer.id === 'string' ? parseInt(customer.id, 10) : customer.id;
+
     if (this.isSelected(customer)) {
-      this.selectedCustomers = this.selectedCustomers.filter(c => c.id !== customer.id);
+      this.selectedUserIds = this.selectedUserIds.filter(userId => userId !== id);
     } else {
-      this.selectedCustomers.push(customer);
+      this.selectedUserIds.push(id);
     }
   }
 
   isSelected(customer: User): boolean {
-    return this.selectedCustomers.some(c => c.id === customer.id);
+    return customer.id ? this.selectedUserIds.includes(customer.id) : false;
   }
 
   toggleSelectAll(): void {
     if (this.areAllSelected()) {
-      this.selectedCustomers = [];
+      this.selectedUserIds = [];
     } else {
-      this.selectedCustomers = [...this.filteredCustomers];
+      // Get all valid IDs from the current filtered customers
+      const validIds = this.filteredCustomers
+        .map(c => c.id)
+        .filter((id): id is number => id !== undefined);
+      this.selectedUserIds = validIds;
     }
   }
 
   areAllSelected(): boolean {
-    return this.filteredCustomers.length > 0 &&
-      this.selectedCustomers.length === this.filteredCustomers.length;
+    if (this.filteredCustomers.length === 0) return false;
+
+    const validFilteredIds = this.filteredCustomers
+      .map(c => c.id)
+      .filter((id): id is number => id !== undefined);
+
+    return validFilteredIds.length > 0 &&
+      validFilteredIds.every(id => this.selectedUserIds.includes(id));
   }
 
   // Bulk actions
   async bulkAction(action: string): Promise<void> {
-    if (this.selectedCustomers.length === 0) {
+    console.log('Bulk action called:', action);
+    console.log('Selected IDs:', this.selectedUserIds);
+    if (this.selectedUserIds.length === 0) {
       return;
     }
 
@@ -742,13 +792,13 @@ export class CustomersComponent implements OnInit {
     switch (action) {
       case 'export':
         // In a real app, this would generate a CSV/Excel file
-        alert(`Exporting ${this.selectedCustomers.length} users...`);
+        alert(`Exporting ${this.selectedUserIds.length} users...`);
         break;
 
       case 'delete':
         confirmed = await this.showConfirmationModal({
           title: 'Delete Users',
-          message: `Are you sure you want to delete ${this.selectedCustomers.length} users?`,
+          message: `Are you sure you want to delete ${this.selectedUserIds.length} users?`,
           confirmText: 'Delete',
           cancelText: 'Cancel',
           type: 'danger',
@@ -759,22 +809,17 @@ export class CustomersComponent implements OnInit {
           this.loading = true;
 
           try {
-            // Get the IDs, filtering out any undefined values
-            const userIds = this.selectedCustomers
-              .map(c => c.id)
-              .filter((id): id is number => id !== undefined);
-
             // Call the service and wait for it to complete
-            await this.userService.deleteUser(userIds).toPromise();
+            await this.userService.deleteUser([...this.selectedUserIds]).toPromise();
 
             // Reload the user list from server
             await this.getListUserAsync();
 
             // Show success message
-            this.alertService.success(`${this.selectedCustomers.length} users deleted successfully`);
+            this.alertService.success(`${this.selectedUserIds.length} users deleted successfully`);
 
             // Clear selection after successful operation
-            this.selectedCustomers = [];
+            this.selectedUserIds = [];
           } catch (err) {
             console.error(err);
             this.alertService.error('Failed to delete users');
@@ -787,7 +832,7 @@ export class CustomersComponent implements OnInit {
       case 'activate':
         confirmed = await this.showConfirmationModal({
           title: 'Activate Users',
-          message: `Are you sure you want to activate ${this.selectedCustomers.length} users?`,
+          message: `Are you sure you want to activate ${this.selectedUserIds.length} users?`,
           confirmText: 'Activate',
           cancelText: 'Cancel',
           type: 'success',
@@ -798,21 +843,17 @@ export class CustomersComponent implements OnInit {
           this.loading = true;
 
           try {
-            const userIds = this.selectedCustomers
-              .map(c => c.id)
-              .filter((id): id is number => id !== undefined);
-
             // Call the service and wait for it to complete
-            await this.userService.changeStatus(userIds, "active").toPromise();
+            await this.userService.changeStatus([...this.selectedUserIds], "active").toPromise();
 
             // Reload the user list from server
             await this.getListUserAsync();
 
             // Show success message
-            this.alertService.success(`${this.selectedCustomers.length} users activated successfully`);
+            this.alertService.success(`${this.selectedUserIds.length} users activated successfully`);
 
             // Clear selection after successful operation
-            this.selectedCustomers = [];
+            this.selectedUserIds = [];
           } catch (err) {
             console.error(err);
             this.alertService.error('Failed to activate users');
@@ -825,7 +866,7 @@ export class CustomersComponent implements OnInit {
       case 'deactivate':
         confirmed = await this.showConfirmationModal({
           title: 'Deactivate Users',
-          message: `Are you sure you want to deactivate ${this.selectedCustomers.length} users?`,
+          message: `Are you sure you want to deactivate ${this.selectedUserIds.length} users?`,
           confirmText: 'Deactivate',
           cancelText: 'Cancel',
           type: 'warning',
@@ -836,30 +877,24 @@ export class CustomersComponent implements OnInit {
           this.loading = true;
 
           try {
-            const userIds = this.selectedCustomers
-              .map(c => c.id)
-              .filter((id): id is number => id !== undefined);
-
             // Call the service and wait for it to complete
-            await this.userService.changeStatus(userIds, "locked").toPromise();
+            await this.userService.changeStatus([...this.selectedUserIds], "locked").toPromise();
 
             // Reload the user list from server
             await this.getListUserAsync();
 
             // Show success message
-            this.alertService.success(`${this.selectedCustomers.length} users activated successfully`);
+            this.alertService.success(`${this.selectedUserIds.length} users deactivated successfully`);
 
             // Clear selection after successful operation
-            this.selectedCustomers = [];
+            this.selectedUserIds = [];
           } catch (err) {
             console.error(err);
-            this.alertService.error('Failed to activate users');
+            this.alertService.error('Failed to deactivate users');
           } finally {
             this.loading = false;
           }
         }
-        break;
-
         break;
     }
   }

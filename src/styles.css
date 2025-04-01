@@ -1,6 +1,8 @@
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
-
+/* Font imports for improved typography */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 :root {
     --primary-color: #1e3a8a;
     --secondary-color: #0f766e;
@@ -19,9 +21,13 @@
 body {
     background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
     color: var(--dark-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
     min-height: 100vh;
     position: relative;
+
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 body:before {

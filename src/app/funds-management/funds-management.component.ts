@@ -5,6 +5,8 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { FundsManagementService } from '../services/funds-management.service';
 import { finalize } from 'rxjs/operators';
 import { Currency, Funds, OperationFunds, User } from '../models/funds.mode';
+import { TranslatePipe } from '../pipe/translate.pipe';
+import { LanguageService } from '../services/language.service';
 
 // Define currency type to fix index signature errors
 type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'MAD' | 'SAR' | 'AED';
@@ -33,6 +35,7 @@ interface ConfirmationData {
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    TranslatePipe,
     NgbDropdownModule
   ],
   templateUrl: './funds-management.component.html',
@@ -92,7 +95,7 @@ export class FundsManagementComponent implements OnInit {
   chartLabels: string[] = [];
   sparklineHeights: string[] = []; // Added to store pre-calculated heights
 
-  constructor(private fb: FormBuilder, private fundsService: FundsManagementService) {
+  constructor(private fb: FormBuilder, private fundsService: FundsManagementService, public languageService: LanguageService) {
     this.fundsForm = this.fb.group({
       operationFunds: [OperationFunds.ADD, Validators.required],
       amount: [0, [Validators.required, Validators.min(0.01)]],
@@ -111,6 +114,8 @@ export class FundsManagementComponent implements OnInit {
 
     // Fetch fund operations
     this.loadFundOperations();
+    const savedLanguage = this.languageService.getCurrentLanguage();
+    this.languageService.setLanguage(savedLanguage);
   }
 
   /**

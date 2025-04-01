@@ -99,6 +99,7 @@ export class LoanManagementComponent implements OnInit, AfterViewInit, OnDestroy
   overdueLoansCount: number = 0;
   repaidLoansCount: number = 0;
 
+
   // Forms
   loanForm: FormGroup;
   savedSearchForm: FormGroup;
@@ -183,6 +184,8 @@ export class LoanManagementComponent implements OnInit, AfterViewInit, OnDestroy
     nextMonth.setMonth(nextMonth.getMonth() + 1);
     this.firstPaymentDate = nextMonth.toISOString().split('T')[0];
   }
+
+
 
   ngOnInit(): void {
     this.loadLoans();
@@ -801,10 +804,9 @@ export class LoanManagementComponent implements OnInit, AfterViewInit, OnDestroy
               next: (response) => {
                 // Response contains result property
                 this.loadLoans();
-                this.loanModal?.hide();
+                // this.loanModal?.hide();
                 this.showToast('Loan created successfully!', 'success');
 
-                // Add to activity log
                 this.addToActivityLog(`Created new loan for ${newLoan.customerName}`, 'create');
               },
               error: (error) => {
@@ -925,11 +927,14 @@ export class LoanManagementComponent implements OnInit, AfterViewInit, OnDestroy
       this.loading = true;
 
       this.subscriptions.add(
-        this.loanService.deleteLoan(Number(this.editingLoanId)) // Convert to number for API call
-          .pipe(finalize(() => this.loading = false))
-          .subscribe({
-            // Rest of the code...
-          })
+        this.loanService.deleteLoan(Number(this.editingLoanId)).subscribe(
+          (res) => {
+
+            this.loadLoans();
+            this.loadSavedSearches();
+            this.loadActivityLog();
+          }
+        )
       );
     }
 
@@ -937,12 +942,16 @@ export class LoanManagementComponent implements OnInit, AfterViewInit, OnDestroy
       this.loading = true;
 
       this.subscriptions.add(
-        this.loanService.changeStatus(Number(this.editingLoanId), 'REPAID') // Match Java enum
-          .pipe(finalize(() => this.loading = false))
-          .subscribe({
-            // Rest of the code...
-          })
-      );
+        this.loanService.changeStatus(Number(this.editingLoanId), 'REPAID').subscribe(
+          (res) => {
+            this.loadLoans();
+            this.loadSavedSearches();
+            this.loadActivityLog();
+          },
+          (err) => {
+            console.error(err);
+          },
+        ));
     }
   }
 
@@ -958,7 +967,8 @@ export class LoanManagementComponent implements OnInit, AfterViewInit, OnDestroy
     this.modalConfirmText = 'Confirm';
     this.modalCancelText = 'Cancel';
     this.modalAction = 'change';
-    this.editingLoanId = (loan.id); // Convert number to string for component use
+    this.editingLoanId = (loan.id);
+
 
     const modal = new bootstrap.Modal(document.getElementById('genericModal'));
     modal.show();

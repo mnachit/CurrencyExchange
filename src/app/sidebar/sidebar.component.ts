@@ -3,12 +3,14 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { TokenService } from '../services/token.service';
+import { LanguageService } from '../services/language.service';
+import { TranslatePipe } from '../pipe/translate.pipe';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, TranslatePipe],
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
@@ -18,10 +20,16 @@ export class SidebarComponent implements OnInit {
 
   fullName?: string;
   role?: string;
+  nameCompany: string = '';
 
-  constructor(private router: Router, private tokenService: TokenService) {
+  constructor(private router: Router, private tokenService: TokenService, public languageService: LanguageService) {
     this.screenWidth = window.innerWidth;
     this.checkScreenSize();
+  }
+
+  getNameCompany(): string {
+    const company = this.tokenService.getCompanyWithToken();
+    return company?.name ?? '';
   }
 
   ngOnInit(): void {
@@ -35,6 +43,10 @@ export class SidebarComponent implements OnInit {
     });
     this.role = this.tokenService.getRoleUserWithToken() ?? undefined;
     this.fullName = this.tokenService.getFullNameUserWithToken() ?? undefined;
+    this.nameCompany = this.getNameCompany();
+
+    const savedLanguage = this.languageService.getCurrentLanguage();
+    this.languageService.setLanguage(savedLanguage);
   }
 
   @HostListener('window:resize', ['$event'])

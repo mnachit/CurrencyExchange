@@ -3,7 +3,7 @@
     <div class="loading-overlay" *ngIf="loading">
         <div class="spinner-container">
             <div class="spinner"></div>
-            <p>Processing your request...</p>
+            <p>{{ 'funds.processing-request' | translate }}</p>
         </div>
     </div>
 
@@ -13,9 +13,9 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h2 class="section-title">
-                        <i class="fas fa-wallet"></i> Funds Management
+                        <i class="fas fa-wallet"></i> {{ 'funds.management-title' | translate }}
                     </h2>
-                    <p class="text-muted">Manage and track your bureau's available funds</p>
+                    <p class="text-muted">{{ 'funds.management-subtitle' | translate }}</p>
                 </div>
                 <div class="d-flex gap-2">
                     <!-- Currency Display Selector -->
@@ -36,7 +36,7 @@
                     <div ngbDropdown>
                         <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button"
                             id="exportDropdown" ngbDropdownToggle>
-                            <i class="fas fa-download"></i> Export
+                            <i class="fas fa-download"></i> {{ 'common.export' | translate }}
                         </button>
                         <ul ngbDropdownMenu aria-labelledby="exportDropdown">
                             <li><a ngbDropdownItem href="javascript:void(0)" (click)="exportOperations('csv')"><i
@@ -64,7 +64,7 @@
                             <div class="card-body">
                                 <div class="row align-items-center">
                                     <div class="col-md-6">
-                                        <h5 class="funds-title">Available Funds</h5>
+                                        <h5 class="funds-title">{{ 'funds.available-funds' | translate }}</h5>
                                         <div class="funds-amount"
                                             [ngClass]="'currency-text-' + selectedCurrency.toLowerCase()">
                                             {{ formatCurrency(currencyBalances[selectedCurrency], selectedCurrency) }}
@@ -72,11 +72,13 @@
                                         <div class="funds-stats">
                                             <div class="stat-item text-success">
                                                 <i class="fas fa-arrow-up"></i> {{
-                                                formatCurrency(fundsStats.totalAdded, selectedCurrency) }} added
+                                                formatCurrency(fundsStats.totalAdded, selectedCurrency) }} {{
+                                                'funds.added' | translate }}
                                             </div>
                                             <div class="stat-item text-warning">
                                                 <i class="fas fa-arrow-down"></i> {{
-                                                formatCurrency(fundsStats.totalWithdrawn, selectedCurrency) }} withdrawn
+                                                formatCurrency(fundsStats.totalWithdrawn, selectedCurrency) }} {{
+                                                'funds.withdrawn' | translate }}
                                             </div>
                                         </div>
                                     </div>
@@ -101,19 +103,21 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="card-title"><i class="fas fa-coins"></i> Fund Operation</h5>
+                                <h5 class="card-title"><i class="fas fa-coins"></i> {{ 'funds.fund-operation' |
+                                    translate }}</h5>
                             </div>
                             <div class="card-body">
                                 <form [formGroup]="fundsForm" (ngSubmit)="processFundOperation()">
                                     <div class="row g-4">
                                         <div class="col-md-12">
-                                            <label class="form-label">Operation Type</label>
+                                            <label class="form-label">{{ 'funds.operation-type' | translate }}</label>
                                             <div class="operation-type-selector">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio"
                                                         formControlName="operationFunds" id="typeAdd" value="add">
                                                     <label class="form-check-label" for="typeAdd">
-                                                        <i class="fas fa-plus-circle text-success"></i> Add Funds
+                                                        <i class="fas fa-plus-circle text-success"></i> {{
+                                                        'funds.add-funds' | translate }}
                                                     </label>
                                                 </div>
                                                 <div class="form-check">
@@ -121,58 +125,66 @@
                                                         formControlName="operationFunds" id="typeWithdraw"
                                                         value="withdraw">
                                                     <label class="form-check-label" for="typeWithdraw">
-                                                        <i class="fas fa-minus-circle text-warning"></i> Withdraw Funds
+                                                        <i class="fas fa-minus-circle text-warning"></i> {{
+                                                        'funds.withdraw-funds' | translate }}
                                                     </label>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 col-lg-4">
-                                            <label class="form-label">Currency</label>
+                                            <label class="form-label">{{ 'funds.currency' | translate }}</label>
                                             <select class="form-select" formControlName="currency"
                                                 (change)="updateSelectedCurrency()">
-                                                <option value="USD">USD - US Dollar</option>
-                                                <option value="EUR">EUR - Euro</option>
-                                                <option value="GBP">GBP - British Pound</option>
-                                                <option value="MAD">MAD - Moroccan Dirham</option>
-                                                <option value="SAR">SAR - Saudi Riyal</option>
-                                                <option value="AED">AED - UAE Dirham</option>
+                                                <option value="USD">USD - {{ 'funds.currency-usd' | translate }}
+                                                </option>
+                                                <option value="EUR">EUR - {{ 'funds.currency-eur' | translate }}
+                                                </option>
+                                                <option value="GBP">GBP - {{ 'funds.currency-gbp' | translate }}
+                                                </option>
+                                                <option value="MAD">MAD - {{ 'funds.currency-mad' | translate }}
+                                                </option>
+                                                <option value="SAR">SAR - {{ 'funds.currency-sar' | translate }}
+                                                </option>
+                                                <option value="AED">AED - {{ 'funds.currency-aed' | translate }}
+                                                </option>
                                             </select>
                                         </div>
 
                                         <div class="col-md-6 col-lg-4">
-                                            <label class="form-label">Amount</label>
+                                            <label class="form-label">{{ 'funds.amount' | translate }}</label>
                                             <div class="input-group">
                                                 <span class="input-group-text">{{ getCurrencySymbol(selectedCurrency)
                                                     }}</span>
                                                 <input type="number" class="form-control" formControlName="amount"
-                                                    step="0.01" min="0.01" placeholder="Enter amount">
+                                                    step="0.01" min="0.01"
+                                                    [placeholder]="'funds.enter-amount' | translate">
                                             </div>
                                             <div *ngIf="fundsForm.get('amount')?.touched && fundsForm.get('amount')?.errors?.['required']"
                                                 class="text-danger">
-                                                Amount is required
+                                                {{ 'funds.error-amount-required' | translate }}
                                             </div>
                                             <div *ngIf="fundsForm.get('amount')?.touched && fundsForm.get('amount')?.errors?.['min']"
                                                 class="text-danger">
-                                                Amount must be greater than zero
+                                                {{ 'funds.error-amount-greater-zero' | translate }}
                                             </div>
                                         </div>
 
                                         <div class="col-md-6 col-lg-4">
-                                            <label class="form-label">Date</label>
+                                            <label class="form-label">{{ 'funds.date' | translate }}</label>
                                             <input type="date" class="form-control" formControlName="date">
                                         </div>
 
                                         <div class="col-12">
-                                            <label class="form-label">Notes</label>
+                                            <label class="form-label">{{ 'funds.notes' | translate }}</label>
                                             <textarea class="form-control" formControlName="notes"
-                                                placeholder="Add notes about this operation..."></textarea>
+                                                [placeholder]="'funds.notes-placeholder' | translate"></textarea>
                                         </div>
 
                                         <div class="col-12 text-end">
                                             <button type="submit" class="btn btn-primary"
                                                 [disabled]="fundsForm.invalid">
-                                                <i class="fas fa-save"></i> Process Operation
+                                                <i class="fas fa-save"></i> {{ 'funds.process-operation' | translate }}
                                             </button>
                                         </div>
                                     </div>
@@ -187,7 +199,8 @@
             <div class="col-lg-4">
                 <div class="card h-100">
                     <div class="card-header">
-                        <h5 class="card-title"><i class="fas fa-history"></i> Recent Fund Operations</h5>
+                        <h5 class="card-title"><i class="fas fa-history"></i> {{ 'funds.recent-operations' | translate
+                            }}</h5>
                     </div>
                     <div class="card-body p-0">
                         <div class="date-filter">
@@ -195,11 +208,11 @@
                                 <div class="col-md-6">
                                     <select class="form-select form-select-sm" [(ngModel)]="dateFilter"
                                         (change)="applyDateFilter()">
-                                        <option value="all">All Time</option>
-                                        <option value="today">Today</option>
-                                        <option value="week">This Week</option>
-                                        <option value="month">This Month</option>
-                                        <option value="custom">Custom Range</option>
+                                        <option value="all">{{ 'funds.filter-all-time' | translate }}</option>
+                                        <option value="today">{{ 'funds.filter-today' | translate }}</option>
+                                        <option value="week">{{ 'funds.filter-this-week' | translate }}</option>
+                                        <option value="month">{{ 'funds.filter-this-month' | translate }}</option>
+                                        <option value="custom">{{ 'funds.filter-custom-range' | translate }}</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6" *ngIf="dateFilter === 'custom'">
@@ -228,7 +241,7 @@
                                         </span>
                                     </div>
                                     <div class="operation-id">
-                                        ID: {{ operation.id }}
+                                        {{ 'funds.id' | translate }}: {{ operation.id }}
                                     </div>
                                     <div class="operation-note" *ngIf="operation.notes">
                                         {{ operation.notes }}
@@ -243,7 +256,7 @@
                                 </div>
                             </div>
                             <div class="text-center py-4" *ngIf="fundOperations.length === 0">
-                                <p class="text-muted mb-0">No fund operations found</p>
+                                <p class="text-muted mb-0">{{ 'funds.no-operations-found' | translate }}</p>
                             </div>
                         </div>
                     </div>
@@ -261,48 +274,46 @@
                     <h5 class="modal-title">
                         <i class="fas"
                             [ngClass]="confirmationData.operationFunds === 'add' ? 'fa-plus-circle' : 'fa-minus-circle'"></i>
-                        Confirm {{ confirmationData.operationFunds === 'add' ? 'Addition' : 'Withdrawal' }}
+                        {{ 'funds.confirm' | translate }} {{ confirmationData.operationFunds === 'add' ?
+                        ('funds.addition' | translate) : ('funds.withdrawal' | translate) }}
                     </h5>
                     <button type="button" class="btn-close" (click)="cancelConfirmation()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="confirmation-details">
-                        <h5 class="text-center mb-4">Are you sure you want to {{ confirmationData.operationFunds ===
-                            'add' ? 'add' : 'withdraw' }} funds?</h5>
+                        <h5 class="text-center mb-4">{{ 'funds.confirm-operation-question' | translate }} {{
+                            confirmationData.operationFunds ===
+                            'add' ? ('funds.add' | translate) : ('funds.withdraw' | translate) }} {{ 'funds.funds' |
+                            translate }}?</h5>
 
                         <div class="operation-summary">
                             <div class="row mb-3">
-                                <div class="col-5 text-muted">Operation:</div>
+                                <div class="col-5 text-muted">{{ 'funds.operation' | translate }}:</div>
                                 <div class="col-7 fw-bold">
-                                    {{ confirmationData.operationFunds === 'add' ? 'Add Funds' : 'Withdraw Funds' }}
+                                    {{ confirmationData.operationFunds === 'add' ? ('funds.add-funds' | translate) :
+                                    ('funds.withdraw-funds' | translate) }}
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-5 text-muted">Currency:</div>
+                                <div class="col-5 text-muted">{{ 'funds.currency' | translate }}:</div>
                                 <div class="col-7 fw-bold">
                                     {{ confirmationData.currency }}
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-5 text-muted">Amount:</div>
+                                <div class="col-5 text-muted">{{ 'funds.amount' | translate }}:</div>
                                 <div class="col-7 fw-bold">
                                     {{ formatCurrency(confirmationData.amount, confirmationData.currency) }}
                                 </div>
                             </div>
-                            <!-- <div class="row mb-3">
-                                <div class="col-5 text-muted">Date:</div>
-                                <div class="col-7">
-                                    {{ confirmationData.date | date:'mediumDate' }}
-                                </div>
-                            </div> -->
                             <div class="row mb-3" *ngIf="confirmationData.notes">
-                                <div class="col-5 text-muted">Notes:</div>
+                                <div class="col-5 text-muted">{{ 'funds.notes' | translate }}:</div>
                                 <div class="col-7">
                                     {{ confirmationData.notes }}
                                 </div>
                             </div>
                             <div class="row pt-3 border-top mt-2">
-                                <div class="col-5 text-muted fw-bold">New Balance:</div>
+                                <div class="col-5 text-muted fw-bold">{{ 'funds.new-balance' | translate }}:</div>
                                 <div class="col-7 fw-bold fs-5">
                                     {{ formatCurrency(currencyBalances[confirmationData.currency] +
                                     (confirmationData.operationFunds === 'add' ?
@@ -314,14 +325,14 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" (click)="cancelConfirmation()">
-                        <i class="fas fa-times"></i> Cancel
+                        <i class="fas fa-times"></i> {{ 'common.cancel' | translate }}
                     </button>
                     <button type="button"
                         [ngClass]="confirmationData.operationFunds === 'add' ? 'btn-success' : 'btn-warning'"
                         class="btn" (click)="confirmOperation()">
                         <i class="fas"
                             [ngClass]="confirmationData.operationFunds === 'add' ? 'fa-plus' : 'fa-minus'"></i>
-                        Confirm
+                        {{ 'common.confirm' | translate }}
                     </button>
                 </div>
             </div>

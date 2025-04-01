@@ -4,7 +4,7 @@
     <div class="loading-overlay" *ngIf="loading">
         <div class="spinner-container">
             <div class="spinner"></div>
-            <p>Loading dashboard data...</p>
+            <p>{{ 'dashboard.loading' | translate }}</p>
         </div>
     </div>
 
@@ -13,7 +13,7 @@
         <div class="row align-items-center">
             <div class="col-md-6">
                 <h1 class="welcome-title">{{ greeting }}, {{fullName}}</h1>
-                <p class="welcome-subtitle">Here's what's happening with your exchange bureau today</p>
+                <p class="welcome-subtitle">{{ 'dashboard.subtitle' | translate }}</p>
             </div>
             <div class="col-md-6 d-flex justify-content-md-end mt-3 mt-md-0">
                 <div class="date-display">
@@ -30,14 +30,14 @@
         <div class="stats-card available-funds">
             <div class="card-content">
                 <div class="card-header">
-                    <h3 class="card-title">Available Funds</h3>
+                    <h3 class="card-title">{{ 'dashboard.card-title' | translate }}</h3>
                     <div class="card-icon">
                         <i class="fas fa-wallet"></i>
                     </div>
                 </div>
                 <div class="mt-2">
                     <a routerLink="/funds-management" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-cog me-1"></i> Manage Funds
+                        <i class="fas fa-cog me-1"></i> {{ 'dashboard.fa-cog' | translate }}
                     </a>
                 </div>
             </div>
@@ -53,7 +53,7 @@
         <div class="stats-card total-exchanges">
             <div class="card-content">
                 <div class="card-header">
-                    <h3 class="card-title">Total Exchanges</h3>
+                    <h3 class="card-title">{{ 'dashboard.card-Total' | translate }}</h3>
                     <div class="card-icon">
                         <i class="fas fa-exchange-alt"></i>
                     </div>
@@ -64,7 +64,7 @@
                         [ngClass]="{'positive': dashboardStats.exchangesTrend > 0, 'negative': dashboardStats.exchangesTrend < 0}">
                         <i class="fas"
                             [ngClass]="dashboardStats.exchangesTrend > 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
-                        {{ dashboardStats.exchangesTrend }}% from last month
+                        {{ dashboardStats.exchangesTrend }}% {{ 'dashboard.last-month' | translate }}
                     </div>
                 </div>
             </div>
@@ -80,7 +80,7 @@
         <div class="stats-card active-loans">
             <div class="card-content">
                 <div class="card-header">
-                    <h3 class="card-title">Active Loans</h3>
+                    <h3 class="card-title">{{ 'dashboard.card-Loans' | translate }}</h3>
                     <div class="card-icon">
                         <i class="fas fa-hand-holding-usd"></i>
                     </div>
@@ -88,7 +88,7 @@
 
                 <div class="mt-2">
                     <a routerLink="/loans" class="btn btn-sm btn-outline-warning">
-                        <i class="fas fa-cog me-1"></i> Manage Loans
+                        <i class="fas fa-cog me-1"></i> {{ 'dashboard.card-Manage' | translate }}
                     </a>
                 </div>
                 <!-- <div class="card-value-wrapper">
@@ -112,7 +112,7 @@
         <div class="stats-card today-profit">
             <div class="card-content">
                 <div class="card-header">
-                    <h3 class="card-title">Today's Profit</h3>
+                    <h3 class="card-title">{{ 'dashboard.card-Profit' | translate }}</h3>
                     <div class="card-icon">
                         <i class="fas fa-chart-line"></i>
                     </div>
@@ -128,7 +128,7 @@
 
                 <div class="mt-2">
                     <a routerLink="/funds-management" class="btn btn-sm btn-outline-danger">
-                        <i class="fas fa-cog me-1"></i> Manage Funds
+                        <i class="fas fa-cog me-1"></i> {{ 'dashboard.card-Funds' | translate }}
                     </a>
                 </div>
             </div>
@@ -149,8 +149,9 @@
                 <div class="chart-header">
                     <div class="d-flex justify-content-between align-items-center flex-wrap">
                         <div>
-                            <h3 class="chart-title">Transaction Statistics</h3>
-                            <p class="chart-subtitle">Performance overview for {{ getTimeFilterLabel() }}</p>
+                            <h3 class="chart-title">{{ 'dashboard.card-Statistics' | translate }}</h3>
+                            <p class="chart-subtitle">{{ 'dashboard.card-subtitle' | translate }} {{
+                                getTimeFilterLabel() }}</p>
                         </div>
                         <div class="d-flex gap-2 mt-2 mt-md-0">
                             <div class="btn-group chart-type-selector">
@@ -162,10 +163,10 @@
                             </div>
                             <select class="form-select form-select-sm chart-filter" [(ngModel)]="timeFilter"
                                 (change)="onTimeFilterChange(timeFilter)">
-                                <option value="last7Days">Last 7 Days</option>
-                                <option value="last30Days">Last 30 Days</option>
-                                <option value="last90Days">Last 90 Days</option>
-                                <option value="thisYear">This Year</option>
+                                <option value="last7Days">{{ 'dashboard.card-last7Days' | translate }}</option>
+                                <option value="last30Days">{{ 'dashboard.card-last30Days' | translate }}</option>
+                                <option value="last90Days">{{ 'dashboard.card-last90Days' | translate }}</option>
+                                <option value="thisYear">{{ 'dashboard.card-thisYear' | translate }}</option>
                             </select>
                         </div>
                     </div>
@@ -178,15 +179,15 @@
                     <div class="chart-metrics">
                         <div class="metric-item">
                             <div class="metric-value">{{ dashboardStats.totalExchanges | number }}</div>
-                            <div class="metric-label">Total Transactions</div>
+                            <div class="metric-label">{{ 'dashboard.metric-Total' | translate }}</div>
                         </div>
                         <div class="metric-item">
                             <div class="metric-value">{{ averageTransactionValue | currency }}</div>
-                            <div class="metric-label">Average Value</div>
+                            <div class="metric-label">{{ 'dashboard.card-Average' | translate }}</div>
                         </div>
                         <div class="metric-item">
                             <div class="metric-value">{{ peakDay }}</div>
-                            <div class="metric-label">Peak Day</div>
+                            <div class="metric-label">{{ 'dashboard.card-Peak' | translate }}</div>
                         </div>
                     </div>
                 </div>
@@ -197,9 +198,9 @@
         <div class="col-lg-4 mb-4">
             <div class="transactions-card fade-in">
                 <div class="transactions-header">
-                    <h3 class="transactions-title">Recent Transactions</h3>
+                    <h3 class="transactions-title">{{ 'dashboard.card-Recent' | translate }}</h3>
                     <a routerLink="/transactions" class="view-all-link">
-                        View All <i class="fas fa-arrow-right ms-1"></i>
+                        {{ 'dashboard.card-View' | translate }} <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
                 <div class="transactions-content">
@@ -226,7 +227,7 @@
                     </div>
                     <div class="new-transaction-btn">
                         <a routerLink="/exchange" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i> New Exchange
+                            <i class="fas fa-plus me-2"></i> {{ 'dashboard.card-New' | translate }}
                         </a>
                     </div>
                 </div>
@@ -240,15 +241,15 @@
         <div class="col-lg-8 mb-4">
             <div class="rates-card fade-in">
                 <div class="rates-header">
-                    <h3 class="rates-title">Current Exchange Rates</h3>
+                    <h3 class="rates-title">{{ 'dashboard.card-Current' | translate }}</h3>
                     <div class="rates-update">
                         <span class="update-time">
                             <i class="fas fa-clock me-1"></i>
-                            Last update: {{ lastRateUpdate | date:'medium' }}
+                            {{ 'dashboard.card-Last' | translate }} {{ lastRateUpdate | date:'medium' }}
                         </span>
                         <button class="btn btn-sm btn-outline-primary ms-2" (click)="refreshRates()"
                             [disabled]="loading">
-                            <i class="fas fa-sync-alt me-1"></i> Update
+                            <i class="fas fa-sync-alt me-1"></i> {{ 'dashboard.card-Update' | translate }}
                         </button>
                     </div>
                 </div>
@@ -264,11 +265,11 @@
                             </div>
                             <div class="rate-values">
                                 <div class="buy-rate">
-                                    <span class="rate-label">Buy:</span>
+                                    <span class="rate-label">{{ 'dashboard.card-Buy' | translate }}</span>
                                     <span class="rate-value">{{ currency.buyRate | number:'1.4-4' }}</span>
                                 </div>
                                 <div class="sell-rate">
-                                    <span class="rate-label">Sell:</span>
+                                    <span class="rate-label">{{ 'dashboard.card-Sell' | translate }}</span>
                                     <span class="rate-value">{{ currency.sellRate | number:'1.4-4' }}</span>
                                 </div>
                             </div>
@@ -282,39 +283,39 @@
         <div class="col-lg-4 mb-4">
             <div class="status-card fade-in">
                 <div class="status-header">
-                    <h3 class="status-title">System Status</h3>
+                    <h3 class="status-title">{{ 'dashboard.status-title' | translate }}</h3>
                     <button class="btn btn-sm btn-outline-primary export-btn" (click)="exportSummary()">
-                        <i class="fas fa-file-export me-1"></i> Export Summary
+                        <i class="fas fa-file-export me-1"></i> {{ 'dashboard.card-Export' | translate }}
                     </button>
                 </div>
                 <div class="status-content">
                     <div class="status-grid">
                         <div class="status-item">
-                            <div class="status-item-title">Server Status</div>
+                            <div class="status-item-title">{{ 'dashboard.card-Server' | translate }}</div>
                             <div class="status-item-value" [ngClass]="getStatusClass(systemStatus.server)">
                                 <i class="fas fa-circle me-1"></i> {{ systemStatus.server | titlecase }}
                             </div>
                         </div>
                         <div class="status-item">
-                            <div class="status-item-title">Database</div>
+                            <div class="status-item-title">{{ 'dashboard.card-Database' | translate }}</div>
                             <div class="status-item-value" [ngClass]="getStatusClass(systemStatus.database)">
                                 <i class="fas fa-circle me-1"></i> {{ systemStatus.database | titlecase }}
                             </div>
                         </div>
                         <div class="status-item">
-                            <div class="status-item-title">API</div>
+                            <div class="status-item-title">{{ 'dashboard.card-API' | translate }}</div>
                             <div class="status-item-value" [ngClass]="getStatusClass(systemStatus.api)">
                                 <i class="fas fa-circle me-1"></i> {{ systemStatus.api | titlecase }}
                             </div>
                         </div>
                         <div class="status-item">
-                            <div class="status-item-title">Last Check</div>
+                            <div class="status-item-title">{{ 'dashboard.card-Check' | translate }}</div>
                             <div class="status-item-value">{{ systemStatus.lastCheck | date:'short' }}</div>
                         </div>
                     </div>
 
                     <div class="alerts-section">
-                        <h4 class="alerts-title">Recent Alerts</h4>
+                        <h4 class="alerts-title">{{ 'dashboard.Alerts' | translate }}</h4>
                         <div class="alerts-list">
                             <div class="alert-item" *ngFor="let alert of recentAlerts">
                                 <div class="alert-icon">
@@ -329,10 +330,10 @@
                     </div>
 
                     <div class="currency-performance">
-                        <h4 class="performance-title">Currency Performance</h4>
+                        <h4 class="performance-title">{{ 'dashboard.card-Currency' | translate }}</h4>
                         <div class="performance-stats">
                             <div class="performance-item">
-                                <div class="performance-label">Best Performing</div>
+                                <div class="performance-label">{{ 'dashboard.card-Best' | translate }}</div>
                                 <div class="performance-value text-success">
                                     {{ currencyPerformance.bestPerforming.code }}
                                     <i class="fas fa-arrow-up ms-1"></i>
@@ -340,7 +341,7 @@
                                 </div>
                             </div>
                             <div class="performance-item">
-                                <div class="performance-label">Worst Performing</div>
+                                <div class="performance-label">{{ 'dashboard.card-Worst' | translate }}</div>
                                 <div class="performance-value text-danger">
                                     {{ currencyPerformance.worstPerforming.code }}
                                     <i class="fas fa-arrow-down ms-1"></i>

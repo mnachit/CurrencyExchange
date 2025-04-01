@@ -1,16 +1,20 @@
-<div class="app-container" *ngIf="authService.isLoggedIn(); else loginTemplate">
-  <app-sidebar></app-sidebar>
-  <div class="main-content">
-    <app-header></app-header>
-    <div class="content-container">
-      <router-outlet></router-outlet>
+<!-- app.component.html -->
+<!-- Structure de base pour les utilisateurs non authentifiés ou sur la page d'accueil -->
+<ng-container *ngIf="!isAuthenticated || isWelcomePage">
+  <router-outlet></router-outlet>
+</ng-container>
 
-      <app-confirmation-dialog></app-confirmation-dialog>
+<!-- Structure complète pour les utilisateurs authentifiés sur les pages protégées -->
+<ng-container *ngIf="isAuthenticated && !isWelcomePage">
+  <div class="app-container">
+    <app-sidebar></app-sidebar>
+    <div class="main-content">
+      <app-header></app-header>
+      <div class="content-container">
+        <router-outlet></router-outlet>
+        <app-confirmation-dialog></app-confirmation-dialog>
+      </div>
     </div>
+    <app-calculator></app-calculator>
   </div>
-  <app-calculator></app-calculator>
-  <!-- <app-confirmation-dialog></app-confirmation-dialog> -->
-</div>
-<ng-template #loginTemplate>
-  <app-login></app-login>
-</ng-template>
+</ng-container>

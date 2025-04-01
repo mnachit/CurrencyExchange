@@ -7,4 +7,5 @@ export interface DashboardStats {
     exchangesTrend: number;
     loansTrend: number;
     profitTrend: number;
+    completedTransactions: number;
 }

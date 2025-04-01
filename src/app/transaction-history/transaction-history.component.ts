@@ -11,6 +11,7 @@ import { ConfirmationService } from '../services/confirmation.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { finalize as rxjsFinalize } from 'rxjs/operators';
 import { ReportsService } from '../reports.service';
+import { TokenService } from '../services/token.service';
 declare var bootstrap: any;
 
 interface Statistics {
@@ -55,6 +56,10 @@ export class TransactionHistoryComponent implements OnInit {
   pendingTransactions: number = 0;
   canceledTransactions: number = 0;
   todayVolume: number = 0;
+  nameCompany: string = '';
+  addressCompany: string = '';
+  phoneCompany: string = '';
+  emailCompany: string = '';
 
   // Currencies
   currencies: Currency[] = [];
@@ -80,8 +85,29 @@ export class TransactionHistoryComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private alertService: AlertService,
     private modalService: NgbModal,
-    private reportsService: ReportsService
+    private reportsService: ReportsService,
+    private token: TokenService
   ) { }
+
+  getNameCompany(): string {
+    const company = this.token.getCompanyWithToken();
+    return company?.name ?? '';
+  }
+
+  getAddressCompany(): string {
+    const company = this.token.getCompanyWithToken();
+    return company?.address ?? '';
+  }
+
+  getPhoneCompany(): string {
+    const company = this.token.getCompanyWithToken();
+    return company?.phone ?? '';
+  }
+
+  getEmail(): string{
+    const company = this.token.getCompanyWithToken();
+    return company?.email ?? '';
+  }
 
   showSuccess: boolean = false;
   showReceipt: boolean = false;
@@ -96,6 +122,11 @@ export class TransactionHistoryComponent implements OnInit {
     this.loadTransactions();
     this.loadCurrencies();
     this.recentReportsWithType();
+
+    this.nameCompany = this.getNameCompany();
+    this.addressCompany = this.getAddressCompany();
+    this.phoneCompany = this.getPhoneCompany();
+    this.emailCompany = this.getEmail();
 
     // For opening modals when viewing transaction details
     document.addEventListener('DOMContentLoaded', () => {

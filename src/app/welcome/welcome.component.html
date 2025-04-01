@@ -1,0 +1,478 @@
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <!-- <a class="navbar-brand" href="#">
+                <span>Nachit</span> Exchange
+            </a> -->
+            <div class="logo-container">
+                <img src="https://cdn.discordapp.com/attachments/1257637095380484137/1356625995289067661/2a17e84c-95a9-476b-8dbf-4af5debbde60.png?ex=67ed3fea&is=67ebee6a&hm=1bd740e4691063e1740c2b014c29f831781d545bf45c27fed18bfcf73351b3bb&" alt="Currency Exchange Logo" class="logo-img">
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Fonctionnalités</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">Tarifs</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="#testimonials">Témoignages</a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#demo">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary nav-btn" [routerLink]="['/login']">Se connecter</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 hero-content" data-aos="fade-right">
+                    <h1 class="hero-heading">Simplifiez vos <span class="highlight">opérations de change</span></h1>
+                    <p class="hero-subheading">Une solution moderne qui remplace efficacement les méthodes
+                        traditionnelles. Obtenez des analyses en temps réel et une gestion simplifiée de toutes vos
+                        opérations.</p>
+                    <div class="hero-buttons">
+                        <a href="#pricing" class="btn btn-primary btn-lg">Découvrir nos offres</a>
+                        <a href="#features" class="btn btn-outline-light btn-lg">En savoir plus</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 hero-image" data-aos="fade-left" data-aos-delay="200">
+                    <img src="https://cdn.discordapp.com/attachments/1257637095380484137/1355552333617954857/ChatGPT_Image_Mar_29__2025__01_08_34_PM-removebg-preview.png?ex=67e957fd&is=67e8067d&hm=02dcdf432525d500fc62e75efee93468cc47c07db1996a3051a3ae20b8ddca59&"
+                        alt="Nachit Exchange vs Excel" class="img-fluid">
+                </div>
+            </div>
+        </div>
+        <div class="hero-wave">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                <path fill="#ffffff" fill-opacity="1"
+                    d="M0,192L48,197.3C96,203,192,213,288,192C384,171,480,117,576,117.3C672,117,768,171,864,197.3C960,224,1056,224,1152,202.7C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
+                </path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="counter">5000</h3>
+                            <p>Transactions quotidiennes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="counter">150</h3>
+                            <p>Entreprises clientes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="counter">30</h3>
+                            <p>Devises supportées</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="section-header text-center" data-aos="fade-up">
+                <h2>Pourquoi choisir <span class="highlight">Nachit Exchange</span>?</h2>
+                <p>Notre plateforme offre de nombreux avantages par rapport aux méthodes traditionnelles</p>
+            </div>
+            <div class="row mt-5">
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Sécurité maximale</h3>
+                        <p>Vos données sont protégées par des protocoles de sécurité avancés et des technologies de
+                            chiffrement modernes.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>Rapidité d'exécution</h3>
+                        <p>Effectuez vos opérations de change en quelques clics et obtenez des confirmations
+                            instantanées.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Analyses en temps réel</h3>
+                        <p>Suivez l'évolution des taux de change et analysez vos performances avec des tableaux de bord
+                            interactifs.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h3>Mises à jour automatiques</h3>
+                        <p>Les taux de change sont mis à jour automatiquement pour vous assurer d'avoir toujours les
+                            informations les plus récentes.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3>Rapports détaillés</h3>
+                        <p>Générez des rapports complets sur vos activités de change pour faciliter votre comptabilité
+                            et vos décisions.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="zoom-in" data-aos-delay="600">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3>Support dédié</h3>
+                        <p>Notre équipe de support technique est disponible pour vous aider à tout moment et répondre à
+                            vos questions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VS Section -->
+    <section class="vs-section">
+        <div class="container">
+            <div class="section-header text-center" data-aos="fade-up">
+                <h2>Nachit Exchange <span class="highlight">vs</span> Méthodes traditionnelles</h2>
+                <p>Découvrez pourquoi notre solution est bien supérieure à Excel</p>
+            </div>
+            <div class="row mt-5 align-items-center">
+                <div class="col-lg-5" data-aos="fade-right">
+                    <div class="vs-card nachit">
+                        <h3>Nachit Exchange</h3>
+                        <ul class="check-list">
+                            <li><i class="fas fa-check-circle"></i> Interface moderne et dynamique</li>
+                            <li><i class="fas fa-check-circle"></i> Mises à jour en temps réel</li>
+                            <li><i class="fas fa-check-circle"></i> Sécurité des données avancée</li>
+                            <li><i class="fas fa-check-circle"></i> Historique complet des transactions</li>
+                            <li><i class="fas fa-check-circle"></i> Rapports automatisés</li>
+                            <li><i class="fas fa-check-circle"></i> Accessibilité multiplateforme</li>
+                            <li><i class="fas fa-check-circle"></i> Support technique dédié</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-2 text-center d-none d-lg-block" data-aos="zoom-in">
+                    <div class="vs-divider">
+                        <span>VS</span>
+                    </div>
+                </div>
+                <div class="col-lg-5" data-aos="fade-left">
+                    <div class="vs-card excel">
+                        <h3>Excel</h3>
+                        <ul class="cross-list">
+                            <li><i class="fas fa-times-circle"></i> Interface statique et limitée</li>
+                            <li><i class="fas fa-times-circle"></i> Mises à jour manuelles</li>
+                            <li><i class="fas fa-times-circle"></i> Vulnérabilités de sécurité</li>
+                            <li><i class="fas fa-times-circle"></i> Suivi manuel des transactions</li>
+                            <li><i class="fas fa-times-circle"></i> Rapports créés manuellement</li>
+                            <li><i class="fas fa-times-circle"></i> Accessibilité limitée</li>
+                            <li><i class="fas fa-times-circle"></i> Pas de support technique</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="container">
+            <div class="section-header text-center" data-aos="fade-up">
+                <h2>Une tarification simple et <span class="highlight">transparente</span></h2>
+                <p>Pas de frais cachés, juste une solution complète pour tous vos besoins</p>
+            </div>
+            <div class="row justify-content-center mt-5">
+                <div class="col-lg-8" data-aos="flip-up">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Solution complète</h3>
+                            <div class="badge">Recommandé</div>
+                        </div>
+                        <div class="pricing-body">
+                            <div class="pricing-main">
+                                <div class="price">
+                                    <span class="currency">DH</span>
+                                    <span class="amount" id="main-price">0</span>
+                                </div>
+                                <div class="price-label">Accès complet à la plateforme</div>
+                            </div>
+                            <div class="subscription">
+                                <span class="plus">+</span>
+                                <span class="sub-amount" id="sub-price">0</span>
+                                <span class="sub-period">DH / an</span>
+                            </div>
+                            <div class="pricing-features">
+                                <ul class="check-list">
+                                    <li><i class="fas fa-check-circle"></i> Accès à toutes les fonctionnalités</li>
+                                    <li><i class="fas fa-check-circle"></i> Support technique prioritaire</li>
+                                    <li><i class="fas fa-check-circle"></i> Mises à jour gratuites</li>
+                                    <li><i class="fas fa-check-circle"></i> Formation initiale incluse</li>
+                                    <li><i class="fas fa-check-circle"></i> Rapports personnalisés</li>
+                                    <li><i class="fas fa-check-circle"></i> Interface multi-utilisateurs</li>
+                                    <li><i class="fas fa-check-circle"></i> Sauvegarde quotidienne des données</li>
+                                </ul>
+                            </div>
+                            <div class="pricing-action">
+                                <a href="#demo" class="btn btn-primary btn-lg w-100">Obtenir un devis personnalisé</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <!-- <section class="testimonials-section" id="testimonials">
+        <div class="container">
+            <div class="section-header text-center" data-aos="fade-up">
+                <h2>Ce que disent nos <span class="highlight">clients</span></h2>
+                <p>Des professionnels qui ont abandonné Excel pour notre solution</p>
+            </div>
+            <div class="row mt-5">
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Depuis que nous utilisons Nachit Exchange, nos opérations de change sont beaucoup plus efficaces. Fini les erreurs dans les tableaux Excel!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <span>MM</span>
+                            </div>
+                            <div class="author-info">
+                                <h4>Mohammed Mekkaoui</h4>
+                                <p>Directeur Financier, Société XYZ</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"La plateforme est intuitive et les rapports générés automatiquement nous font gagner un temps précieux chaque jour."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <span>SA</span>
+                            </div>
+                            <div class="author-info">
+                                <h4>Samira Alami</h4>
+                                <p>Responsable Trésorerie, Entreprise ABC</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Le support technique est exceptionnel et les mises à jour régulières améliorent constamment notre expérience utilisateur."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <span>KO</span>
+                            </div>
+                            <div class="author-info">
+                                <h4>Karim Ouazzani</h4>
+                                <p>PDG, Groupe International</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- Demonstration Section -->
+    <section class="demo-section" id="demo">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <div class="demo-content">
+                        <h2>Prêt à <span class="highlight">simplifier</span> vos opérations de change?</h2>
+                        <p>Contactez-nous dès aujourd'hui pour une démonstration gratuite de notre plateforme. Notre
+                            équipe est à votre disposition pour répondre à toutes vos questions.</p>
+                        <div class="contact-methods">
+                            <div class="contact-method">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <h4>Email</h4>
+                                    <p>contactnachit-exchange.com</p>
+                                </div>
+                            </div>
+                            <div class="contact-method">
+                                <i class="fas fa-phone-alt"></i>
+                                <div>
+                                    <h4>Téléphone</h4>
+                                    <p>+212 5XX XX XX XX</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="contact-form-card">
+                        <h3>Demander une démonstration</h3>
+                        <form id="demo-form">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Nom complet</label>
+                                <input type="text" class="form-control" id="name" placeholder="Votre nom complet"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="company" class="form-label">Entreprise</label>
+                                <input type="text" class="form-control" id="company"
+                                    placeholder="Nom de votre entreprise" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email professionnel</label>
+                                <input type="email" class="form-control" id="email" placeholder="votre@email.com"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Téléphone</label>
+                                <input type="tel" class="form-control" id="phone" placeholder="+212 XXXXXXXXX" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Message (optionnel)</label>
+                                <textarea class="form-control" id="message" rows="3"
+                                    placeholder="Vos besoins spécifiques..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100">Réserver ma
+                                démonstration</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <!-- <footer class="footer-section">
+        <div class="container">
+            <div class="footer-content">
+                <div class="row">
+                    <div class="col-lg-4 mb-4 mb-lg-0">
+                        <div class="footer-info">
+                            <h3>Nachit Exchange Systems</h3>
+                            <p>Votre solution professionnelle pour simplifier toutes vos opérations de change. Sécurité, rapidité et efficacité garanties.</p>
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6 mb-4 mb-md-0">
+                        <div class="footer-links">
+                            <h4>Navigation</h4>
+                            <ul>
+                                <li><a href="#home">Accueil</a></li>
+                                <li><a href="#features">Fonctionnalités</a></li>
+                                <li><a href="#pricing">Tarifs</a></li>
+                                <li><a href="#testimonials">Témoignages</a></li>
+                                <li><a href="#demo">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6 mb-4 mb-md-0">
+                        <div class="footer-links">
+                            <h4>Solutions</h4>
+                            <ul>
+                                <li><a href="#">Pour les banques</a></li>
+                                <li><a href="#">Pour les bureaux de change</a></li>
+                                <li><a href="#">Pour les entreprises</a></li>
+                                <li><a href="#">API d'intégration</a></li>
+                                <li><a href="#">Solutions sur mesure</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6 mb-4 mb-md-0">
+                        <div class="footer-links">
+                            <h4>Ressources</h4>
+                            <ul>
+                                <li><a href="#">Documentation</a></li>
+                                <li><a href="#">Centre d'aide</a></li>
+                                <li><a href="#">Tutoriels vidéo</a></li>
+                                <li><a href="#">Blog</a></li>
+                                <li><a href="#">FAQ</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <div class="footer-links">
+                            <h4>Légal</h4>
+                            <ul>
+                                <li><a href="#">Mentions légales</a></li>
+                                <li><a href="#">Politique de confidentialité</a></li>
+                                <li><a href="#">Conditions d'utilisation</a></li>
+                                <li><a href="#">Sécurité</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="copyright">
+                    <p>&copy; 2023 Nachit Exchange Systems. Tous droits réservés.</p>
+                </div>
+            </div>
+        </div>
+    </footer> -->
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>

@@ -1,3 +1,4 @@
+<!-- Login Component HTML -->
 <div class="global-error-banner float-end" *ngIf="showError">
     <div class="error-content">
         <i class="fas fa-exclamation-circle"></i>
@@ -12,8 +13,11 @@
             <div class="login-card">
                 <div class="card-body">
                     <div class="text-center mb-4">
-                        <h2 class="login-title">Bureau de Change</h2>
-                        <p class="login-subtitle">Connectez-vous à votre compte</p>
+                        <!-- <h2 class="login-title">Nachit Exchange Systems</h2> -->
+                        <div class="logo-container">
+                            <img src="https://cdn.discordapp.com/attachments/1257637095380484137/1356625995289067661/2a17e84c-95a9-476b-8dbf-4af5debbde60.png?ex=67ed3fea&is=67ebee6a&hm=1bd740e4691063e1740c2b014c29f831781d545bf45c27fed18bfcf73351b3bb&" alt="Currency Exchange Logo" class="logo-img">
+                        </div>
+                        <p class="login-subtitle" lang="ar">Connectez-vous à votre compte</p>
                     </div>
 
                     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -49,7 +53,7 @@
 
                         <div class="d-grid mt-4">
                             <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-sign-in-alt me-2"></i> Sign In
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
                             </button>
                         </div>
                     </form>
@@ -59,20 +63,20 @@
                 <div class="support-section mt-4">
                     <div class="support-header">
                         <i class="fas fa-headset text-primary me-2"></i>
-                        <span>Besoin d'aide ? Contactez-nous</span>
+                        <span lang="ar">Besoin d'aide ? Contactez-nous</span>
                     </div>
                     <div class="support-contacts mt-2">
                         <div class="support-item">
                             <i class="fas fa-phone-alt text-primary"></i>
                             <div class="support-text">
-                                <span class="support-title">Téléphone</span>
+                                <span class="support-title" lang="ar">Téléphone</span>
                                 <span class="support-subtitle">{{number}}</span>
                             </div>
                         </div>
                         <div class="support-item">
                             <i class="fas fa-envelope text-purple"></i>
                             <div class="support-text">
-                                <span class="support-title">E-mail</span>
+                                <span class="support-title" lang="ar">E-mail</span>
                                 <span class="support-subtitle">{{email}}</span>
                             </div>
                         </div>
@@ -84,16 +88,11 @@
         <!-- Right side with image and tagline -->
         <div class="col-md-6 d-none d-md-flex flex-column justify-content-center align-items-center">
             <div class="currency-image-container">
-                <div class="currency-icon-container">
-                    <i class="fas fa-dollar-sign currency-icon"></i>
-                    <i class="fas fa-euro-sign currency-icon"></i>
-                    <i class="fas fa-pound-sign currency-icon"></i>
-                    <i class="fas fa-yen-sign currency-icon"></i>
-                </div>
+                <img src="https://cdn.discordapp.com/attachments/1257637095380484137/1355544239810936862/ChatGPT_Image_Mar_29__2025__01_28_04_PM-removebg-preview.png?ex=67e95073&is=67e7fef3&hm=cfc76b8aab5143065f1e86ce44101401171adcd15bcb61f3895a8f13a582d29a&" alt="Currency Exchange" class="img-fluid" />
             </div>
             <div class="tagline-container mt-4 text-center">
-                <h3 class="tagline-title">Service de change</h3>
-                <p class="tagline-text">Tableau de bord personnalisé pour gérer efficacement les décaissements.</p>
+                <h3 class="tagline-title" lang="ar">Service de change</h3>
+                <p class="tagline-text" lang="ar">Tableau de bord personnalisé pour gérer efficacement les décaissements.</p>
             </div>
         </div>
     </div>

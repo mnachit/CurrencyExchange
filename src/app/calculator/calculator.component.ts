@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TokenService } from '../services/token.service';
 
 @Component({
   selector: 'app-calculator',
@@ -17,10 +18,20 @@ export class CalculatorComponent implements OnInit {
   waitingForOperand = false;
   memory = '0';
   history: string[] = [];
+  nameCompany: string = '';
 
-  constructor() { }
+  constructor(private token: TokenService) { }
+
+  getNameCompany(): string {
+    const company = this.token.getCompanyWithToken();
+    return company?.name ?? '';
+  }
+
+  
 
   ngOnInit(): void {
+    this.nameCompany = this.getNameCompany();
+    
   }
 
   toggleCalculator(): void {

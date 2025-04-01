@@ -13,9 +13,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="section-title">
-                <i class="fas fa-cog me-2"></i> Settings
+                <i class="fas fa-cog me-2"></i> {{ 'settings.title' | translate }}
             </h2>
-            <p class="text-muted">Manage your account settings and preferences</p>
+            <p class="text-muted">{{ 'settings.subtitle' | translate }}</p>
         </div>
     </div>
 
@@ -27,32 +27,22 @@
                     <a href="javascript:void(0)"
                         class="list-group-item list-group-item-action d-flex align-items-center"
                         [ngClass]="{'active': activeTab === 'profile'}" (click)="setActiveTab('profile')">
-                        <i class="fas fa-user me-3"></i> Profile
+                        <i class="fas fa-user me-3"></i> {{ 'settings.nav.profile' | translate }}
                     </a>
                     <a href="javascript:void(0)"
                         class="list-group-item list-group-item-action d-flex align-items-center"
                         [ngClass]="{'active': activeTab === 'security'}" (click)="setActiveTab('security')">
-                        <i class="fas fa-shield-alt me-3"></i> Security
+                        <i class="fas fa-shield-alt me-3"></i> {{ 'settings.nav.security' | translate }}
                     </a>
-                    <!-- <a href="javascript:void(0)"
-                        class="list-group-item list-group-item-action d-flex align-items-center"
-                        [ngClass]="{'active': activeTab === 'appearance'}" (click)="setActiveTab('appearance')">
-                        <i class="fas fa-paint-brush me-3"></i> Appearance
-                    </a>
-                    <a href="javascript:void(0)"
-                        class="list-group-item list-group-item-action d-flex align-items-center"
-                        [ngClass]="{'active': activeTab === 'notifications'}" (click)="setActiveTab('notifications')">
-                        <i class="fas fa-bell me-3"></i> Notifications
-                    </a> -->
                     <a href="javascript:void(0)"
                         class="list-group-item list-group-item-action d-flex align-items-center"
                         [ngClass]="{'active': activeTab === 'languages'}" (click)="setActiveTab('languages')">
-                        <i class="fas fa-globe me-3"></i> Language & Region
+                        <i class="fas fa-globe me-3"></i> {{ 'settings.nav.language-region' | translate }}
                     </a>
                     <a href="javascript:void(0)"
                         class="list-group-item list-group-item-action d-flex align-items-center"
                         [ngClass]="{'active': activeTab === 'backup'}" (click)="setActiveTab('backup')">
-                        <i class="fas fa-database me-3"></i> Backup & Export
+                        <i class="fas fa-database me-3"></i> {{ 'settings.nav.backup-export' | translate }}
                     </a>
                 </div>
             </div>
@@ -63,7 +53,7 @@
             <div class="card" *ngIf="activeTab === 'profile'">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-user-circle me-2"></i> Profile Information
+                        <i class="fas fa-user-circle me-2"></i> {{ 'settings.profile.info' | translate }}
                     </h5>
                 </div>
                 <div class="card-body">
@@ -74,25 +64,15 @@
                                     <img src="{{avatarUrl || 'assets/images/default-avatar.png'}}" alt="User Avatar"
                                         *ngIf="!isUploading">
                                     <div class="spinner-border text-primary" role="status" *ngIf="isUploading">
-                                        <span class="visually-hidden">Loading...</span>
+                                        <span class="visually-hidden">{{ 'exchange.loading' | translate}}</span>
                                     </div>
                                 </div>
-                                <!-- <div class="mt-2">
-                                    <button type="button" class="btn btn-sm btn-outline-primary me-2"
-                                        (click)="uploadAvatar()">
-                                        <i class="fas fa-upload me-2"></i> Upload
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger"
-                                        (click)="removeAvatar()">
-                                        <i class="fas fa-trash me-2"></i> Remove
-                                    </button>
-                                </div> -->
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Full Name</label>
+                                <label class="form-label">{{ 'settings.profile.full-name' | translate }}</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-user"></i></span>
                                     <input type="text" class="form-control" formControlName="fullName"
@@ -100,11 +80,11 @@
                                 </div>
                                 <div *ngIf="profileForm.get('fullName')?.touched && profileForm.get('fullName')?.errors?.['required']"
                                     class="text-danger small mt-1">
-                                    Full name is required
+                                    {{ 'settings.profile.errors.name-required' | translate }}
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Username</label>
+                                <label class="form-label">{{ 'settings.profile.username' | translate }}</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-at"></i></span>
                                     <input type="text" class="form-control" formControlName="username"
@@ -112,14 +92,14 @@
                                 </div>
                                 <div *ngIf="profileForm.get('username')?.touched && profileForm.get('username')?.errors?.['required']"
                                     class="text-danger small mt-1">
-                                    Username is required
+                                    {{ 'settings.profile.errors.username-required' | translate}}
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Email Address</label>
+                                <label class="form-label">{{ 'settings.profile.email' | translate }}</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                     <input type="email" class="form-control" formControlName="email"
@@ -127,15 +107,15 @@
                                 </div>
                                 <div *ngIf="profileForm.get('email')?.touched && profileForm.get('email')?.errors?.['required']"
                                     class="text-danger small mt-1">
-                                    Email is required
+                                    {{ 'settings.profile.errors.email-required' | translate }}
                                 </div>
                                 <div *ngIf="profileForm.get('email')?.touched && profileForm.get('email')?.errors?.['email']"
                                     class="text-danger small mt-1">
-                                    Please enter a valid email address
+                                    {{ 'settings.profile.errors.email-invalid' | translate }}
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Phone Number</label>
+                                <label class="form-label">{{ 'settings.profile.phone' | translate }}</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                     <input type="tel" class="form-control" formControlName="phone"
@@ -146,14 +126,15 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Role</label>
+                                <label class="form-label">{{ 'settings.profile.role' | translate }}</label>
                                 <div class="input-group">
-                                  <span class="input-group-text"><i class="fas fa-building"></i></span>
-                                  <input type="text" class="form-control" formControlName="role" [disabled]="true" required>
+                                    <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                    <input type="text" class="form-control" formControlName="role" [disabled]="true"
+                                        required>
                                 </div>
-                              </div>
+                            </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Position</label>
+                                <label class="form-label">{{ 'settings.profile.position' | translate }}</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
                                     <input type="text" class="form-control" formControlName="position"
@@ -162,21 +143,12 @@
                             </div>
                         </div>
 
-                        <!-- <div class="mb-3">
-                            <label class="form-label">Bio</label>
-                            <textarea class="form-control" rows="3" formControlName="bio"
-                                placeholder="Tell us about yourself..."></textarea>
-                        </div>
-
-                        <hr class="my-4"> -->
-
                         <div class="text-end">
                             <button type="button" class="btn btn-outline-secondary me-2" (click)="resetProfileForm()">
-                                Cancel
+                                {{ 'common.cancel' | translate }}
                             </button>
-                            <button type="submit" class="btn btn-primary"
-                                >
-                                <i class="fas fa-save me-2"></i> Save Changes
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i> {{ 'common.save-changes' | translate }}
                             </button>
                         </div>
                     </form>
@@ -187,15 +159,15 @@
             <div class="card" *ngIf="activeTab === 'security'">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-shield-alt me-2"></i> Security Settings
+                        <i class="fas fa-shield-alt me-2"></i> {{ 'settings.security.title' | translate}}
                     </h5>
                 </div>
                 <div class="card-body">
                     <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
-                        <h6 class="text-primary mb-4">Change Password</h6>
+                        <h6 class="text-primary mb-4">{{ 'settings.security.change-password' | translate}}</h6>
 
                         <div class="mb-3">
-                            <label class="form-label">Current Password</label>
+                            <label class="form-label">{{ 'settings.security.current-password' | translate}}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                 <input [type]="showCurrentPassword ? 'text' : 'password'" class="form-control"
@@ -207,12 +179,12 @@
                             </div>
                             <div *ngIf="passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.errors?.['required']"
                                 class="text-danger small mt-1">
-                                Current password is required
+                                {{ 'settings.security.errors.current-required' | translate }}
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">New Password</label>
+                            <label class="form-label">{{ 'settings.security.new-password' | translate}}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-key"></i></span>
                                 <input [type]="showNewPassword ? 'text' : 'password'" class="form-control"
@@ -224,21 +196,20 @@
                             </div>
                             <div *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['required']"
                                 class="text-danger small mt-1">
-                                New password is required
+                                {{ 'settings.security.errors.new-required' | translate }}
                             </div>
                             <div *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['minlength']"
                                 class="text-danger small mt-1">
-                                Password must be at least 8 characters
+                                {{ 'settings.security.errors.min-length' | translate }}
                             </div>
                             <div *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['pattern']"
                                 class="text-danger small mt-1">
-                                Password must contain at least one uppercase letter, one lowercase letter, one number,
-                                and one special character
+                                {{ 'settings.security.errors.pattern' | translate}}
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label">Confirm New Password</label>
+                            <label class="form-label">{{ 'settings.security.confirm-password' | translate}}</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-check-double"></i></span>
                                 <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control"
@@ -250,16 +221,16 @@
                             </div>
                             <div *ngIf="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.errors?.['required']"
                                 class="text-danger small mt-1">
-                                Confirm password is required
+                                {{ 'settings.security.errors.confirm-required' | translate}}
                             </div>
                             <div *ngIf="passwordForm.errors?.['passwordMismatch'] && passwordForm.get('confirmPassword')?.touched"
                                 class="text-danger small mt-1">
-                                Passwords do not match
+                                {{ 'settings.security.errors.mismatch' | translate}}
                             </div>
                         </div>
 
                         <div class="password-strength mb-4" *ngIf="passwordForm.get('newPassword')?.value">
-                            <label class="form-label">Password Strength</label>
+                            <label class="form-label">{{'settings.security.password-strength' | translate}}</label>
                             <div class="progress">
                                 <div class="progress-bar" [ngClass]="passwordStrengthClass" role="progressbar"
                                     [style.width]="passwordStrength + '%'" aria-valuemin="0" aria-valuemax="100"></div>
@@ -270,7 +241,7 @@
                             </div>
                         </div>
 
-                        <hr class="my-4">
+                        <!-- <hr class="my-4">
 
                         <h6 class="text-primary mb-4">Two-Factor Authentication</h6>
 
@@ -292,7 +263,8 @@
                                     <p>Scan this QR code with your authenticator app (Google Authenticator, Authy, or
                                         similar).</p>
                                     <p class="text-muted small">If you can't scan the QR code, use this code instead:
-                                        <strong>ABCD-EFGH-IJKL-MNOP</strong></p>
+                                        <strong>ABCD-EFGH-IJKL-MNOP</strong>
+                                    </p>
                                     <button type="button" class="btn btn-sm btn-secondary mt-2">
                                         <i class="fas fa-download me-2"></i> Download Recovery Codes
                                     </button>
@@ -350,342 +322,45 @@
                                 [disabled]="passwordForm.invalid || passwordForm.pristine">
                                 <i class="fas fa-shield-alt me-2"></i> Update Security Settings
                             </button>
-                        </div>
+                        </div> -->
                     </form>
                 </div>
             </div>
-
-            <!-- Appearance Settings -->
-            <!-- <div class="card" *ngIf="activeTab === 'appearance'">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-paint-brush me-2"></i> Appearance Settings
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <form [formGroup]="appearanceForm" (ngSubmit)="updateAppearance()">
-                        <h6 class="text-primary mb-4">Theme Preferences</h6>
-
-                        <div class="mb-4">
-                            <label class="form-label">Theme Mode</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="lightMode" value="light"
-                                        formControlName="themeMode">
-                                    <label class="form-check-label" for="lightMode">
-                                        <i class="fas fa-sun me-2 text-warning"></i> Light
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="darkMode" value="dark"
-                                        formControlName="themeMode">
-                                    <label class="form-check-label" for="darkMode">
-                                        <i class="fas fa-moon me-2 text-primary"></i> Dark
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" id="systemMode" value="system"
-                                        formControlName="themeMode">
-                                    <label class="form-check-label" for="systemMode">
-                                        <i class="fas fa-desktop me-2 text-secondary"></i> Use System Preference
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">Color Scheme</label>
-                            <div class="d-flex flex-wrap gap-3">
-                                <div *ngFor="let theme of colorThemes" class="color-scheme-item"
-                                    [ngClass]="{'active': appearanceForm.get('colorScheme')?.value === theme.value}"
-                                    (click)="selectColorScheme(theme.value)">
-                                    <div class="color-sample" [style.background-color]="theme.color"></div>
-                                    <div class="color-name">{{ theme.name }}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">Font Size</label>
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="font-size-sample">A</div>
-                                <input type="range" class="form-range flex-grow-1" min="1" max="5" step="1"
-                                    formControlName="fontSize" id="fontSizeRange">
-                                <div class="font-size-sample fs-3">A</div>
-                            </div>
-                            <div class="text-center small text-muted mt-2">
-                                {{ getFontSizeLabel(appearanceForm.get('fontSize')?.value) }}
-                            </div>
-                        </div>
-
-                        <hr class="my-4">
-
-                        <h6 class="text-primary mb-4">Display Preferences</h6>
-
-                        <div class="mb-3">
-                            <label class="form-label">Default Dashboard View</label>
-                            <select class="form-select" formControlName="dashboardView">
-                                <option value="summary">Summary View</option>
-                                <option value="detailed">Detailed View</option>
-                                <option value="compact">Compact View</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Layout Density</label>
-                            <select class="form-select" formControlName="layoutDensity">
-                                <option value="comfortable">Comfortable</option>
-                                <option value="compact">Compact</option>
-                                <option value="dense">Dense</option>
-                            </select>
-                        </div>
-
-                        <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" id="enableAnimations"
-                                formControlName="enableAnimations">
-                            <label class="form-check-label" for="enableAnimations">
-                                Enable interface animations
-                            </label>
-                        </div>
-
-                        <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" id="showWelcomeScreen"
-                                formControlName="showWelcomeScreen">
-                            <label class="form-check-label" for="showWelcomeScreen">
-                                Show welcome screen on startup
-                            </label>
-                        </div>
-
-                        <div class="text-end mt-4">
-                            <button type="button" class="btn btn-outline-secondary me-2"
-                                (click)="resetAppearanceForm()">
-                                Reset to Defaults
-                            </button>
-                            <button type="submit" class="btn btn-primary" [disabled]="appearanceForm.pristine">
-                                <i class="fas fa-save me-2"></i> Save Preferences
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div> -->
-
-            <!-- Notifications Settings -->
-            <!-- <div class="card" *ngIf="activeTab === 'notifications'">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-bell me-2"></i> Notification Settings
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <form [formGroup]="notificationsForm" (ngSubmit)="updateNotifications()">
-                        <h6 class="text-primary mb-4">Email Notifications</h6>
-
-                        <div class="notification-group mb-4">
-                            <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" formControlName="transactionAlerts"
-                                    id="transactionAlerts">
-                                <label class="form-check-label" for="transactionAlerts">
-                                    Transaction Alerts
-                                </label>
-                                <div class="text-muted small mt-1">Receive email notifications for new transactions
-                                </div>
-                            </div>
-
-                            <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" formControlName="exchangeRateAlerts"
-                                    id="exchangeRateAlerts">
-                                <label class="form-check-label" for="exchangeRateAlerts">
-                                    Exchange Rate Alerts
-                                </label>
-                                <div class="text-muted small mt-1">Receive email notifications when exchange rates
-                                    change significantly</div>
-                            </div>
-
-                            <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" formControlName="securityAlerts"
-                                    id="securityAlerts">
-                                <label class="form-check-label" for="securityAlerts">
-                                    Security Alerts
-                                </label>
-                                <div class="text-muted small mt-1">Receive email notifications for suspicious activities
-                                </div>
-                            </div>
-
-                            <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" formControlName="marketingEmails"
-                                    id="marketingEmails">
-                                <label class="form-check-label" for="marketingEmails">
-                                    Marketing Emails
-                                </label>
-                                <div class="text-muted small mt-1">Receive promotional offers and newsletters</div>
-                            </div>
-                        </div>
-
-                        <hr class="my-4">
-
-                        <h6 class="text-primary mb-4">System Notifications</h6>
-
-                        <div class="notification-group mb-4">
-                            <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" formControlName="desktopNotifications"
-                                    id="desktopNotifications">
-                                <label class="form-check-label" for="desktopNotifications">
-                                    Desktop Notifications
-                                </label>
-                                <div class="text-muted small mt-1">Show notifications in your desktop</div>
-                            </div>
-
-                            <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" formControlName="soundAlerts"
-                                    id="soundAlerts">
-                                <label class="form-check-label" for="soundAlerts">
-                                    Sound Alerts
-                                </label>
-                                <div class="text-muted small mt-1">Play sound when receiving notifications</div>
-                            </div>
-                        </div>
-
-                        <hr class="my-4">
-
-                        <h6 class="text-primary mb-4">Notification Preferences</h6>
-
-                        <div class="mb-3">
-                            <label class="form-label">Notification Frequency</label>
-                            <select class="form-select" formControlName="notificationFrequency">
-                                <option value="immediate">Immediate</option>
-                                <option value="hourly">Hourly Digest</option>
-                                <option value="daily">Daily Digest</option>
-                                <option value="weekly">Weekly Digest</option>
-                            </select>
-                            <div class="text-muted small mt-1">How often you want to receive grouped notifications</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Quiet Hours</label>
-                            <div class="row">
-                                <div class="col-md-6 mb-3 mb-md-0">
-                                    <label class="form-label small">From</label>
-                                    <input type="time" class="form-control" formControlName="quietHoursStart">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small">To</label>
-                                    <input type="time" class="form-control" formControlName="quietHoursEnd">
-                                </div>
-                            </div>
-                            <div class="text-muted small mt-1">Do not send notifications during these hours</div>
-                        </div>
-
-                        <div class="text-end mt-4">
-                            <button type="button" class="btn btn-outline-secondary me-2"
-                                (click)="resetNotificationsForm()">
-                                Reset to Defaults
-                            </button>
-                            <button type="submit" class="btn btn-primary" [disabled]="notificationsForm.pristine">
-                                <i class="fas fa-save me-2"></i> Save Preferences
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div> -->
 
             <!-- Language & Region Settings -->
             <div class="card" *ngIf="activeTab === 'languages'">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-globe me-2"></i> Language & Region Settings
+                        <i class="fas fa-globe me-2"></i> {{'settings.language.title' | translate}}
                     </h5>
                 </div>
                 <div class="card-body">
                     <form [formGroup]="languageForm" (ngSubmit)="updateLanguage()">
                         <div class="mb-4">
-                            <label class="form-label">Interface Language</label>
-                            <select class="form-select" formControlName="language">
-                                <option value="en-US">English (United States)</option>
-                                <option value="en-GB">English (United Kingdom)</option>
-                                <option value="ar-SA">Arabic (Saudi Arabia)</option>
-                                <option value="ar-MA">Arabic (Morocco)</option>
-                                <option value="fr-FR">French (France)</option>
-                                <option value="es-ES">Spanish (Spain)</option>
-                                <option value="de-DE">German (Germany)</option>
+                            <label class="form-label">{{'settings.language.interface' | translate}}</label>
+                            <select id="language" class="form-select" formControlName="language">
+                                <option value="en">English</option>
+                                <option value="ar">Arabic</option>
+                                <option value="fr">French</option>
+                                <option value="es">Spanish</option>
+                                <option value="ita">Italian</option>
                             </select>
                         </div>
-
-                        <!-- <div class="mb-4">
-                            <label class="form-label">Date Format</label>
-                            <select class="form-select" formControlName="dateFormat">
-                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                            </select>
-                            <div class="text-muted small mt-1">Example: {{getCurrentDateFormatSample()}}</div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">Time Format</label>
-                            <select class="form-select" formControlName="timeFormat">
-                                <option value="12">12-hour (AM/PM)</option>
-                                <option value="24">24-hour</option>
-                            </select>
-                            <div class="text-muted small mt-1">Example: {{getCurrentTimeFormatSample()}}</div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">Currency Display</label>
-                            <select class="form-select" formControlName="currency">
-                                <option value="USD">US Dollar ($)</option>
-                                <option value="EUR">Euro (€)</option>
-                                <option value="GBP">British Pound (£)</option>
-                                <option value="SAR">Saudi Riyal (﷼)</option>
-                                <option value="MAD">Moroccan Dirham (د.م.)</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">First Day of Week</label>
-                            <select class="form-select" formControlName="firstDayOfWeek">
-                                <option value="0">Sunday</option>
-                                <option value="1">Monday</option>
-                                <option value="6">Saturday</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">Time Zone</label>
-                            <select class="form-select" formControlName="timezone">
-                                <option value="auto">Auto-detect Time Zone</option>
-                                <option value="UTC">UTC</option>
-                                <option value="GMT">GMT</option>
-                                <option value="EST">Eastern Time (US & Canada)</option>
-                                <option value="CST">Central Time (US & Canada)</option>
-                                <option value="MST">Mountain Time (US & Canada)</option>
-                                <option value="PST">Pacific Time (US & Canada)</option>
-                                <option value="AST">Arabia Standard Time</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">Number Format</label>
-                            <select class="form-select" formControlName="numberFormat">
-                                <option value="1,000.00">1,000.00</option>
-                                <option value="1.000,00">1.000,00</option>
-                                <option value="1 000,00">1 000,00</option>
-                            </select>
-                        </div>-->
 
                         <div class="text-end mt-4">
                             <button type="button" class="btn btn-outline-secondary me-2" (click)="resetLanguageForm()">
-                                Reset to Defaults
+                                {{'settings.language.reset-defaults' | translate}}
                             </button>
                             <button type="submit" class="btn btn-primary" [disabled]="languageForm.pristine">
-                                <i class="fas fa-save me-2"></i> Save Preferences
+                                <i class="fas fa-save me-2"></i> {{'settings.language.save-preferences' | translate}}
                             </button>
-                        </div> 
+                        </div>
                     </form>
                 </div>
             </div>
 
             <!-- Backup & Export Settings -->
-            <div class="card" *ngIf="activeTab === 'backup'">
+            <!-- <div class="card" *ngIf="activeTab === 'backup'">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
                         <i class="fas fa-database me-2"></i> Backup & Export
@@ -850,7 +525,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>

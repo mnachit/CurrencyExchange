@@ -4,13 +4,13 @@
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h2 class="section-title">
-                    <i class="fas fa-file-alt me-2"></i> Reports
+                    <i class="fas fa-file-alt me-2"></i> {{ 'reports.title' | translate }}
                 </h2>
-                <p class="text-muted">Generate and download reports for your exchange bureau</p>
+                <p class="text-muted">{{ 'reports.subtitle' | translate }}</p>
             </div>
             <div class="d-print-none">
                 <button class="btn btn-outline-primary me-2" (click)="printReport()">
-                    <i class="fas fa-print me-2"></i> Print Current View
+                    <i class="fas fa-print me-2"></i> {{ 'reports.print-current-view' | translate }}
                 </button>
             </div>
         </div>
@@ -22,14 +22,14 @@
             <div class="card config-card mb-4">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-cog me-2"></i> Report Configuration
+                        <i class="fas fa-cog me-2"></i> {{ 'reports.configuration' | translate }}
                     </h5>
                 </div>
                 <div class="card-body">
                     <form [formGroup]="reportForm">
                         <!-- Report Type -->
                         <div class="mb-3">
-                            <label class="form-label">Report Type</label>
+                            <label class="form-label">{{ 'reports.report-type' | translate }}</label>
                             <select class="form-select" formControlName="reportType" (change)="onReportTypeChange()">
                                 <option *ngFor="let type of reportTypes" [value]="type.id">{{ type.name }}</option>
                             </select>
@@ -37,7 +37,7 @@
 
                         <!-- Format Selection -->
                         <div class="mb-3">
-                            <label class="form-label">Format</label>
+                            <label class="form-label">{{ 'reports.format' | translate }}</label>
                             <div class="format-selector" formControlName="format">
                                 <div class="row g-2">
                                     <div class="col-4" *ngFor="let format of formats">
@@ -55,25 +55,25 @@
                         <!-- Date Range -->
                         <div class="mb-3" *ngIf="selectedReport?.showDateRange">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="form-label mb-0">Date Range</label>
+                                <label class="form-label mb-0">{{ 'reports.date-range' | translate }}</label>
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
                                         id="dateRangePresets" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-calendar-alt me-1"></i> Presets
+                                        <i class="fas fa-calendar-alt me-1"></i> {{ 'reports.presets' | translate }}
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dateRangePresets">
                                         <li><a class="dropdown-item" href="javascript:void(0)"
-                                                (click)="setPresetDateRange('today')">Today</a></li>
+                                                (click)="setPresetDateRange('today')">{{ 'common.today' | translate }}</a></li>
                                         <li><a class="dropdown-item" href="javascript:void(0)"
-                                                (click)="setPresetDateRange('yesterday')">Yesterday</a></li>
+                                                (click)="setPresetDateRange('yesterday')">{{ 'common.yesterday' | translate }}</a></li>
                                         <li><a class="dropdown-item" href="javascript:void(0)"
-                                                (click)="setPresetDateRange('last7days')">Last 7 Days</a></li>
+                                                (click)="setPresetDateRange('last7days')">{{ 'reports.last-7-days' | translate }}</a></li>
                                         <li><a class="dropdown-item" href="javascript:void(0)"
-                                                (click)="setPresetDateRange('last30days')">Last 30 Days</a></li>
+                                                (click)="setPresetDateRange('last30days')">{{ 'reports.last-30-days' | translate }}</a></li>
                                         <li><a class="dropdown-item" href="javascript:void(0)"
-                                                (click)="setPresetDateRange('thisMonth')">This Month</a></li>
+                                                (click)="setPresetDateRange('thisMonth')">{{ 'common.this-month' | translate }}</a></li>
                                         <li><a class="dropdown-item" href="javascript:void(0)"
-                                                (click)="setPresetDateRange('lastMonth')">Last Month</a></li>
+                                                (click)="setPresetDateRange('lastMonth')">{{ 'common.last-month' | translate }}</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -89,9 +89,9 @@
 
                         <!-- Currency -->
                         <div class="mb-3" *ngIf="selectedReport?.showCurrency">
-                            <label class="form-label">Currency</label>
+                            <label class="form-label">{{ 'common.currency' | translate }}</label>
                             <select class="form-select" formControlName="currency">
-                                <option value="all">All Currencies</option>
+                                <option value="all">{{ 'transactions.all-currencies' | translate }}</option>
                                 <option *ngFor="let currency of currencies" [value]="currency.code">
                                     {{ currency.code }} - {{ currency.name }}
                                 </option>
@@ -100,15 +100,15 @@
 
                         <!-- Status -->
                         <div class="mb-3" *ngIf="selectedReport?.showStatus">
-                            <label class="form-label">Status</label>
+                            <label class="form-label">{{ 'common.status' | translate }}</label>
                             <select class="form-select" formControlName="status">
-                                <option value="all">All Statuses</option>
-                                <option value="COMPLETED">Completed</option>
-                                <option value="PENDING">Pending</option>
-                                <option value="CANCELED">Canceled</option>
-                                <option value="ACTIVE">Active</option>
-                                <option value="OVERDUE">Overdue</option>
-                                <option value="REPAID">Repaid</option>
+                                <option value="all">{{ 'common.all-statuses' | translate }}</option>
+                                <option value="COMPLETED">{{ 'common.status-completed' | translate }}</option>
+                                <option value="PENDING">{{ 'common.status-pending' | translate }}</option>
+                                <option value="CANCELED">{{ 'common.status-canceled' | translate }}</option>
+                                <option value="ACTIVE">{{ 'common.status-active' | translate }}</option>
+                                <option value="OVERDUE">{{ 'common.status-overdue' | translate }}</option>
+                                <option value="REPAID">{{ 'common.status-repaid' | translate }}</option>
                             </select>
                         </div>
 
@@ -117,7 +117,7 @@
                             <input class="form-check-input" type="checkbox" id="includeDetails"
                                 formControlName="includeDetails">
                             <label class="form-check-label" for="includeDetails">
-                                Include detailed information
+                                {{ 'reports.include-detailed-information' | translate }}
                             </label>
                         </div>
 
@@ -125,7 +125,7 @@
                         <div class="d-grid gap-2">
                             <button class="btn btn-primary" [disabled]="loading" (click)="generateReport()">
                                 <i class="fas fa-file-download me-2"></i>
-                                {{ loading ? 'Generating...' : 'Generate & Download Report' }}
+                                {{ loading ? ('reports.generating' | translate) : ('reports.generate-download' | translate) }}
                             </button>
                         </div>
 
@@ -145,7 +145,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-history me-2"></i> Recent Reports
+                        <i class="fas fa-history me-2"></i> {{ 'reports.recent-reports' | translate }}
                     </h5>
                 </div>
                 <div class="card-body p-0">
@@ -159,7 +159,7 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0">{{ report.reportName }}</h6>
-                                        <small class="text-muted">Generated on {{ report.createdAt | date }}</small>
+                                        <small class="text-muted">{{ 'reports.generated-on' | translate }} {{ report.createdAt | date }}</small>
                                     </div>
                                 </div>
                                 <div>
@@ -180,14 +180,14 @@
                 <div class="card-header">
                     <h5 class="card-title mb-0">
                         <i class="fas" [ngClass]="selectedReport.icon"></i>
-                        {{ selectedReport.title }} Preview
+                        {{ selectedReport.title }} {{ 'reports.preview' | translate }}
                     </h5>
                 </div>
                 <div class="card-body">
                     <div class="report-preview-container">
                         <!-- Report Header -->
                         <div class="report-header text-center mb-4 pb-3 border-bottom">
-                            <div class="report-logo mb-2">Bureau de Change Al Jazira</div>
+                            <div class="report-logo mb-2">{{ 'reports.bureau-de-change' | translate }} {{nameCompany}}</div>
                             <h2 class="report-title">{{ selectedReport.title }}</h2>
                             <p class="report-subtitle">
                                 {{ reportForm.get('dateRange.startDate')?.value | date:'mediumDate' }} -
@@ -199,8 +199,7 @@
                         <div class="report-description mb-4">
                             <p>{{ selectedReport.description }}</p>
                             <p class="text-muted">
-                                <small>* This is a preview of the report. The actual report may contain more
-                                    data.</small>
+                                <small>* {{ 'reports.preview-disclaimer' | translate }}</small>
                             </p>
                         </div>
 
@@ -208,17 +207,17 @@
                         <div class="format-badge mb-4">
                             <span class="badge bg-light text-dark">
                                 <i class="fas" [ngClass]="getFormatIcon(reportForm.get('format')?.value)"></i>
-                                {{ reportForm.get('format')?.value | uppercase }} Format
+                                {{ reportForm.get('format')?.value | uppercase }} {{ 'reports.format' | translate }}
                             </span>
                             <span class="badge bg-light text-dark ms-2"
                                 *ngIf="reportForm.get('currency')?.value !== 'all'">
                                 <i class="fas fa-coins"></i>
-                                Currency: {{ reportForm.get('currency')?.value }}
+                                {{ 'common.currency' | translate }}: {{ reportForm.get('currency')?.value }}
                             </span>
                             <span class="badge bg-light text-dark ms-2"
                                 *ngIf="reportForm.get('status')?.value !== 'all'">
                                 <i class="fas fa-tag"></i>
-                                Status: {{ reportForm.get('status')?.value }}
+                                {{ 'common.status' | translate }}: {{ reportForm.get('status')?.value }}
                             </span>
                         </div>
 
@@ -252,13 +251,13 @@
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <div class="summary-card bg-light p-3 rounded">
-                                        <h6 class="summary-title">Total Records</h6>
+                                        <h6 class="summary-title">{{ 'reports.total-records' | translate }}</h6>
                                         <div class="summary-value">{{ selectedReport.previewData.length }}</div>
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <div class="summary-card bg-light p-3 rounded">
-                                        <h6 class="summary-title">Date Range</h6>
+                                        <h6 class="summary-title">{{ 'reports.date-range' | translate }}</h6>
                                         <div class="summary-value">{{ reportForm.get('dateRange.startDate')?.value |
                                             date:'shortDate' }} - {{ reportForm.get('dateRange.endDate')?.value |
                                             date:'shortDate' }}</div>
@@ -266,7 +265,7 @@
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <div class="summary-card bg-light p-3 rounded">
-                                        <h6 class="summary-title">Generated On</h6>
+                                        <h6 class="summary-title">{{ 'reports.generated-on' | translate }}</h6>
                                         <div class="summary-value">{{ getDefaultEndDate() | date:'medium' }}</div>
                                     </div>
                                 </div>
@@ -276,7 +275,7 @@
                         <!-- Report Footer -->
                         <div class="report-footer text-center mt-4 pt-3 border-top">
                             <p class="mb-0">
-                                <small>Report generated by Bureau de Change Al Jazira. For official use only.</small>
+                                <small>{{ 'reports.footer-text' | translate }} {{nameCompany}}. {{ 'reports.official-use-only' | translate }}</small>
                             </p>
                         </div>
                     </div>
