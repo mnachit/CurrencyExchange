@@ -11,7 +11,7 @@
         <p>Currency Exchange</p>
     </div> -->
     <div class="logo-container">
-        <img src="https://cdn.discordapp.com/attachments/1257637095380484137/1356645390845477017/ChatGPT_Image_Apr_1__2025__02_54_43_PM-removebg-preview.png?ex=67ed51fa&is=67ec007a&hm=11ca50f665d0a6ee467efc90f7feb3cc0473a045317d9ba6922ab69bc7128920&" alt="Currency Exchange Logo" class="logo-img">
+        <img src="assets/images/use/Currency_Exchange_Logo_B.png" alt="Currency Exchange Logo" class="logo-img">
     </div>
     <div class="sidebar-menu">
         <div class="menu-category">
@@ -48,6 +48,11 @@
                 (click)="onMenuItemClick()">
                 <i class="fa-regular fa-money-bill-transfer"></i>
                 <span>{{ 'nav.funds' | translate }}</span>
+            </a>
+            <a routerLink="/employee-funds" class="menu-item" [ngClass]="{'active': isActive('/employee-funds')}"
+                (click)="onMenuItemClick()">
+                <i class="fa-regular fa-money-bill-transfer"></i>
+                <span>{{ 'nav.funds-m' | translate }}</span>
             </a>
             <a routerLink="/loans" class="menu-item" [ngClass]="{'active': isActive('/loans')}"
                 (click)="onMenuItemClick()">

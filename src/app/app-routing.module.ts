@@ -13,6 +13,7 @@ import { CustomersComponent } from './customers/customers.component';
 import { SettingsComponent } from './settings/settings.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { checkNotTokenGuard } from './Guard/check-Nottoken.guard';
+import { EmployeeFundsComponent } from './employee-funds/employee-funds.component';
 
 const routes: Routes = [
   // Page d'accueil - accessible à tous
@@ -31,6 +32,7 @@ const routes: Routes = [
   { path: 'reports', component: ReportsComponent, canActivate: [checkTokenGuard] },
   { path: 'customers', component: CustomersComponent, canActivate: [checkTokenGuard] },
   { path: 'settings', component: SettingsComponent, canActivate: [checkTokenGuard] },
+  { path: 'employee-funds', component: EmployeeFundsComponent, canActivate: [checkTokenGuard] },
   
   // Redirection par défaut
   { path: '**', redirectTo: '' }

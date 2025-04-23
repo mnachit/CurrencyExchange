@@ -340,6 +340,19 @@
                             <label class="form-label">{{'settings.language.interface' | translate}}</label>
                             <select id="language" class="form-select" formControlName="language">
                                 <option value="en">English</option>
+                                <!-- <option value="ar">Arabic</option> -->
+                                <option value="fr">French</option>
+                                <option value="es">Spanish</option>
+                                <option value="ita">Italian</option>
+                            </select>
+                        </div>
+
+                        <!-- Updated Receipt Language Section -->
+                        <div class="mb-4 mt-4 pt-4 border-top">
+                            <label class="form-label">{{'settings.language.receipt' | translate}}</label>
+                            <p class="text-muted small">{{'settings.language.receipt-description' | translate}}</p>
+                            <select id="receiptLanguage" class="form-select" formControlName="receiptLanguage">
+                                <option value="en">English</option>
                                 <option value="ar">Arabic</option>
                                 <option value="fr">French</option>
                                 <option value="es">Spanish</option>

@@ -9,6 +9,8 @@ import { CurrencyService } from '../services/currency.service';
 import { TokenService } from '../services/token.service';
 import { TranslatePipe } from '../pipe/translate.pipe';
 import { LanguageService } from '../services/language.service';
+import { TicketLanguageService } from '../services/ticket-language.service';
+import { TicketTranslatePipe } from '../pipe/TicketTranslatePipe';
 
 @Component({
   selector: 'app-exchange-calculator',
@@ -21,7 +23,8 @@ import { LanguageService } from '../services/language.service';
     CurrencyPipe,
     DatePipe,
     TranslatePipe,
-    NgbDropdownModule
+    NgbDropdownModule,
+    TicketTranslatePipe
   ],
   templateUrl: './exchange-calculator.component.html',
   styleUrls: ['./exchange-calculator.component.css'],
@@ -57,10 +60,15 @@ export class ExchangeCalculatorComponent implements OnInit {
   nameCompany: string = '';
   addressCompany: string = '';
 
+  selectedTicketLanguage: string = '';
+  availableTicketLanguages: { code: string, name: string }[] = [];
+
   // Currency data
   currencies: Currency[] = [];
   fromCurrency: Currency = this.getDefaultFromCurrency();
   toCurrency: Currency = this.getDefaultToCurrency();
+
+
 
   // Exchange rate data
   exchangeRate = 0;
@@ -82,7 +90,8 @@ export class ExchangeCalculatorComponent implements OnInit {
     private transactionService: TransactionService,
     private currencyService: CurrencyService,
     private token: TokenService,
-    public languageService: LanguageService
+    public languageService: LanguageService,
+    private ticketLanguageService: TicketLanguageService
   ) {
     // Define explicit default objects instead of using this.currencies array
     this.fromCurrency = {
@@ -104,11 +113,20 @@ export class ExchangeCalculatorComponent implements OnInit {
     };
 
     this.initializeForms();
+
+    this.availableTicketLanguages = this.ticketLanguageService.getAvailableLanguages();
+
+    // Get saved ticket language
+    this.selectedTicketLanguage = this.ticketLanguageService.getTicketLanguage();
   }
 
   getNameCompany(): string {
     const company = this.token.getCompanyWithToken();
     return company?.name ?? '';
+  }
+
+  changeTicketLanguage(): void {
+    this.ticketLanguageService.setTicketLanguage(this.selectedTicketLanguage);
   }
 
   getAddressCompany(): string {

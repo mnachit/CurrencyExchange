@@ -448,7 +448,7 @@
                 <div class="modal-body">
                     <div class="receipt" *ngIf="receiptData">
                         <div class="receipt-header text-center mb-4 pb-3 border-bottom border-dashed">
-                            <div class="receipt-logo fs-4 fw-bold">Bureau de Change {{nameCompany}}</div>
+                            <div class="receipt-logo fs-4 fw-bold">{{'ticket.bureau-title' | ticketTranslate}} {{nameCompany}}</div>
                             <div class="receipt-address text-muted small">{{addressCompany}}</div>
                             <div class="receipt-contact text-muted small">{{phoneCompany}} |
                                 {{emailCompany}}
@@ -457,59 +457,59 @@
 
                         <div class="receipt-info mb-4">
                             <div class="row mb-2">
-                                <div class="col-5 text-muted">Receipt No:</div>
+                                <div class="col-5 text-muted">{{'ticket.receipt-no' | ticketTranslate}}</div>
                                 <div class="col-7 text-end fw-bold">{{ receiptData.receiptId }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-5 text-muted">Date & Time:</div>
+                                <div class="col-5 text-muted">{{'ticket.date-time' | ticketTranslate}}</div>
                                 <div class="col-7 text-end">{{ receiptData.date | date:'medium' }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-5 text-muted">Customer:</div>
+                                <div class="col-5 text-muted">{{'ticket.customer' | ticketTranslate}}</div>
                                 <div class="col-7 text-end">{{ receiptData.customerName }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-5 text-muted">ID Number:</div>
+                                <div class="col-5 text-muted">{{'ticket.id-number' | ticketTranslate}}</div>
                                 <div class="col-7 text-end">{{ receiptData.idNumber }}</div>
                             </div>
                         </div>
 
                         <div class="receipt-calculation p-3 rounded mb-4">
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">From Currency:</div>
+                                <div class="col-6 text-muted">{{'ticket.from-curr' | ticketTranslate}}</div>
                                 <div class="col-6 text-end fw-bold">{{ receiptData.fromCurrency }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">To Currency:</div>
+                                <div class="col-6 text-muted">{{'ticket.to-curr' | ticketTranslate}}</div>
                                 <div class="col-6 text-end fw-bold">{{ receiptData.toCurrency }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">Exchange Rate:</div>
+                                <div class="col-6 text-muted">{{'ticket.exch-rate' | ticketTranslate}}</div>
                                 <div class="col-6 text-end">1 {{ receiptData.fromCurrency }} = {{
                                     receiptData.exchangeRate | number:'1.4-4' }} {{ receiptData.toCurrency }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">Amount:</div>
+                                <div class="col-6 text-muted">{{'ticket.amount' | ticketTranslate}}</div>
                                 <div class="col-6 text-end">{{ receiptData.fromAmount |
                                     currency:receiptData.fromCurrency:'symbol':'1.2-2' }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">Exchange Fee:</div>
+                                <div class="col-6 text-muted">{{'ticket.exch-fee' | ticketTranslate}}</div>
                                 <div class="col-6 text-end">{{ receiptData.fee |
                                     currency:receiptData.fromCurrency:'symbol':'1.2-2' }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 text-muted">Service Charge:</div>
+                                <div class="col-6 text-muted">{{'ticket.service' | ticketTranslate}}</div>
                                 <div class="col-6 text-end">{{ receiptData.serviceCharge |
                                     currency:receiptData.fromCurrency:'symbol':'1.2-2' }}</div>
                             </div>
                             <div class="row mt-3 pt-3 border-top">
-                                <div class="col-6 fw-bold">Total Paid:</div>
+                                <div class="col-6 fw-bold">{{'ticket.total-paid' | ticketTranslate}}</div>
                                 <div class="col-6 text-end fw-bold">{{ receiptData.totalPaid |
                                     currency:receiptData.fromCurrency:'symbol':'1.2-2' }}</div>
                             </div>
                             <div class="row mb-2">
-                                <div class="col-6 fw-bold">Total Received:</div>
+                                <div class="col-6 fw-bold">{{'ticket.total-received' | ticketTranslate}}</div>
                                 <div class="col-6 text-end fw-bold fs-5">{{ receiptData.toAmount |
                                     currency:receiptData.toCurrency:'symbol':'1.2-2' }}</div>
                             </div>
@@ -520,18 +520,17 @@
                                 style="width: 80px; height: 80px;">
                                 <i class="fas fa-qrcode fa-3x text-secondary"></i>
                             </div>
-                            <div class="receipt-thanks fw-bold mb-2">Thank you for your business!</div>
-                            <div class="receipt-terms text-muted small">This receipt is your proof of transaction. Keep
-                                it safe for future reference.</div>
+                            <div class="receipt-thanks fw-bold mb-2">{{'exchange.thanks' | translate}}</div>
+                            <div class="receipt-terms text-muted small">{{'exchange.terms' | translate}}</div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="closeReceipt()">
-                        <i class="fas fa-times me-2"></i>Close
+                        <i class="fas fa-times me-2"></i>{{'exchange.close' | translate}}
                     </button>
                     <button type="button" class="btn btn-primary" (click)="printReceipt()">
-                        <i class="fas fa-print me-2"></i>Print
+                        <i class="fas fa-print me-2"></i>{{'exchange.print' | translate}}
                     </button>
                 </div>
             </div>

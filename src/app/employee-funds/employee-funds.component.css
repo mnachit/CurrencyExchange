@@ -1,0 +1,694 @@
+/* Employee Funds Component Styles */
+
+/* // Variables */
+:root {
+  --primary-color: #1e3a8a;
+  --primary-light: #dbeafe;
+  --secondary-color: #0f766e;
+  --secondary-light: #d1fae5;
+  --success-color: #10b981;
+  --success-light: #d1fae5;
+  --warning-color: #f59e0b;
+  --warning-light: #fef3c7;
+  --danger-color: #ef4444;
+  --danger-light: #fee2e2;
+  --info-color: #0ea5e9;
+  --info-light: #e0f2fe;
+  --purple-color: #8b5cf6;
+  --purple-light: #ede9fe;
+  --dark-color: #1e293b;
+  --gray-color: #64748b;
+  --light-color: #f8fafc;
+  --border-color: #e2e8f0;
+  --transition: all 0.3s ease;
+  --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* // Main Container */
+.employee-funds-container {
+  padding-bottom: 30px;
+}
+
+/* // Employee Funds Header */
+.employee-funds-header {
+  background-color: white;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--card-shadow);
+  padding: 1.25rem 0;
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--dark-color);
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+
+  i {
+    color: var(--primary-color);
+    margin-right: 0.75rem;
+    font-size: 1.5rem;
+  }
+}
+
+/* // Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner-container {
+  text-align: center;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(30, 58, 138, 0.1);
+  border-left-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* // Cards */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  transition: var(--transition);
+  margin-bottom: 1.5rem;
+
+  &:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+  }
+
+  .card-title {
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+
+    i {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+/* // Filter Card */
+.filter-card {
+  margin-bottom: 1.5rem;
+}
+
+/* // Summary Cards */
+.funds-summary-section {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.summary-card {
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.summary-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+}
+
+.summary-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  margin-bottom: 0;
+}
+
+.stat-value {
+  line-height: 1.2;
+}
+
+.currency-amount {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.currency-badge {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: white;
+}
+
+/* // Department Stats */
+.department-stats {
+  margin-top: 0.5rem;
+}
+
+.department-item {
+  margin-bottom: 1rem;
+}
+
+.dept-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.dept-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.dept-progress {
+  height: 6px;
+  margin-top: 0.25rem;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+/* // Table Styles */
+.employee-funds-table {
+  margin-bottom: 0;
+
+  thead th {
+    background-color: var(--light-color);
+    font-weight: 600;
+    color: var(--gray-color);
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-top: 1px solid var(--border-color);
+  }
+
+  tbody tr {
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: rgba(241, 245, 249, 0.5);
+    }
+  }
+}
+
+/* // Avatar Styles */
+.avatar-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.large-avatar-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.75rem;
+}
+
+/* // Badge Colors */
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.bg-success {
+  background-color: var(--success-color) !important;
+}
+
+.bg-warning {
+  background-color: var(--warning-color) !important;
+}
+
+.bg-danger {
+  background-color: var(--danger-color) !important;
+}
+
+.bg-info {
+  background-color: var(--info-color) !important;
+}
+
+.bg-purple {
+  background-color: var(--purple-color) !important;
+}
+
+/* // Pagination */
+.pagination-info {
+  color: var(--gray-color);
+  font-size: 0.875rem;
+}
+
+.pagination {
+  margin-bottom: 0;
+}
+
+.page-item {
+  margin: 0 2px;
+}
+
+.page-link {
+  width: 36px;
+  height: 36px;
+  border-radius: 50% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  color: var(--dark-color);
+  font-size: 0.875rem;
+  padding: 0;
+}
+
+.page-item.active .page-link {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+/* // Empty State */
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: var(--gray-color);
+}
+
+/* // Employee Detail Modal Styles */
+.employee-profile {
+  background-color: var(--light-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.employee-details {
+  margin-top: 1.5rem;
+}
+
+.detail-item {
+  margin-bottom: 1rem;
+}
+
+.detail-label {
+  font-size: 0.875rem;
+  color: var(--gray-color);
+  margin-bottom: 0.25rem;
+}
+
+.detail-value {
+  font-size: 0.95rem;
+  color: var(--dark-color);
+}
+
+/* // Transaction History Timeline */
+.transaction-history {
+  height: 100%;
+}
+
+.history-title {
+  font-weight: 600;
+  color: var(--dark-color);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--border-color);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.timeline-bullet {
+  position: absolute;
+  left: -2rem;
+  top: 0.25rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  border: 2px solid white;
+  z-index: 1;
+}
+
+.timeline-content {
+  background-color: white;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.timeline-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.timeline-date {
+  font-size: 0.75rem;
+  color: var(--gray-color);
+}
+
+.transaction-amount {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.text-success {
+  color: var(--success-color) !important;
+}
+
+.text-warning {
+  color: var(--warning-color) !important;
+}
+
+.transaction-note {
+  font-size: 0.875rem;
+  color: var(--dark-color);
+  margin-bottom: 0.5rem;
+}
+
+.transaction-meta {
+  border-top: 1px dashed var(--border-color);
+  padding-top: 0.5rem;
+}
+
+/* // Modals */
+.modal-content {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  padding: 1.25rem 1.5rem;
+}
+
+.modal-header.bg-success, .modal-header.bg-primary {
+  color: white;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* // Form controls */
+.form-label {
+  font-weight: 500;
+  color: var(--dark-color);
+  margin-bottom: 0.5rem;
+}
+
+.form-control, 
+.form-select {
+  border-radius: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+.input-group-text {
+  background-color: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem 0 0 0.5rem;
+  padding: 0.6rem 1rem;
+}
+
+/* // Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* // Responsive Adaptations */
+@media (max-width: 992px) {
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .detail-label {
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .employee-funds-container {
+    padding: 15px;
+  }
+  
+  .table-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .card-body {
+    padding: 1.25rem;
+  }
+  
+  .timeline {
+    padding-left: 1.5rem;
+  }
+  
+  .timeline-bullet {
+    left: -1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .summary-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .currency-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+  }
+  
+  .avatar-circle {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+  
+  .large-avatar-circle {
+    width: 60px;
+    height: 60px;
+    font-size: 1.25rem;
+  }
+}
+
+/* // Multi-Currency Display Styles */
+.currency-display {
+  font-weight: 600;
+  color: var(--dark-color);
+}
+
+.currency-display-usd {
+  color: var(--primary-color);
+}
+
+.currency-display-eur {
+  color: var(--info-color);
+}
+
+.currency-display-gbp {
+  color: var(--purple-color);
+}
+
+.currency-display-mad {
+  color: var(--success-color);
+}
+
+.currency-display-sar {
+  color: var(--warning-color);
+}
+
+.currency-display-aed {
+  color: var(--danger-color);
+}
+
+/* // Department-specific colors */
+.dept-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1rem;
+}
+
+.dept-finance {
+  background-color: var(--primary-color);
+}
+
+.dept-marketing {
+  background-color: var(--purple-color);
+}
+
+.dept-sales {
+  background-color: var(--success-color);
+}
+
+.dept-it {
+  background-color: var(--info-color);
+}
+
+.dept-operations {
+  background-color: var(--warning-color);
+}
+
+.dept-hr {
+  background-color: var(--danger-color);
+}
+
+/* // Transitions and Interactions */
+.btn {
+  transition: all 0.2s ease;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.btn-outline-success:hover {
+  background-color: var(--success-color);
+  border-color: var(--success-color);
+  color: white;
+}
+
+.btn-outline-danger:hover {
+  background-color: var(--danger-color);
+  border-color: var(--danger-color);
+  color: white;
+}
+
+@media print {
+  .employee-funds-header button,
+  .filter-card,
+  .card-header button,
+  .action-buttons,
+  .pagination {
+    display: none !important;
+  }
+  
+  .card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+  
+  .timeline {
+    max-height: none;
+    overflow: visible;
+  }
+  
+  .timeline::before {
+    display: none;
+  }
+}

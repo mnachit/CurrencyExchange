@@ -70,8 +70,8 @@ export class LoginComponent implements OnInit {
           next: (response) => {
             if (response) {
               this.tokerService.saveToken(response.result);
-              
               this.router.navigate(['/dashboard']);
+              
             }
           },
           error: (error) => {

@@ -31,6 +31,9 @@ import { SettingsComponent } from './settings/settings.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { TranslatePipe } from './pipe/translate.pipe';
+import { TicketTranslatePipe } from './pipe/TicketTranslatePipe';
+import { EmployeeFundsModule } from './employee-funds/employee-funds.module';
+
 
 
 @NgModule({
@@ -67,6 +70,9 @@ import { TranslatePipe } from './pipe/translate.pipe';
     LoginComponent,
     TranslatePipe,
     DashboardComponent,
+    // TicketLanguageService,
+    TicketTranslatePipe,
+    EmployeeFundsModule
   ],
   providers: [
     AlertService,

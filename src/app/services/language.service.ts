@@ -16,6 +16,7 @@ export class LanguageService {
       'nav.rates': 'Currency Exchange Rates',
       'nav.customers': 'Customer Management',
       'nav.funds': 'Funds Management',
+      'nav.funds-m': 'Employee Funds',
       'nav.loans': 'Loan Management',
       'nav.reports': 'Reports',
       'nav.settings': 'Settings',
@@ -450,6 +451,8 @@ export class LanguageService {
       'settings.security.errors.pattern': 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
       'settings.security.errors.confirm-required': 'Confirm password is required',
       'settings.security.errors.mismatch': 'Passwords do not match',
+      'settings.language.receipt': 'Receipt Language',
+      'settings.language.receipt-description': 'Select the default language for transaction receipts. This can be different from your interface language.',
       'settings.language.title': 'Language & Region Settings',
       'settings.language.interface': 'Interface Language',
       'settings.language.reset-defaults': 'Reset to Defaults',
@@ -481,6 +484,37 @@ export class LanguageService {
       'common.download': 'Download',
       'common.date': 'Date',
       'common.size': 'Size',
+
+      // ... existing translations ...
+      'employee-funds-title': 'Employee Funds Management',
+      'employee-funds': 'Manage and track funds allocated to employees',
+      'total-allocated': 'Total Allocated Funds',
+      'employee-stats': 'Employee Statistics',
+      'employees-with-funds': 'Employees with Funds',
+      'department-distribution': 'Department Distribution',
+      'all-departments': 'All Departments',
+      'all-currencies': 'All Currencies',
+      'employee-funds-list': 'Employee Funds List',
+      'employee': 'Employee',
+      'employees': 'employees',
+      'search-employees': 'Search by name, department or position',
+      'allocate-funds': 'Allocate Funds',
+      'add-funds': 'Add Funds',
+      'remove-funds': 'Remove Funds',
+      'view-details': 'View Details',
+      'no-employee-funds-found': 'No employee funds found',
+      'try-changing-filters': 'Try changing your search filters',
+      'select-employee': 'Select Employee',
+      'allocation-notes-placeholder': 'Enter notes about this fund allocation',
+      'error-employee-required': 'Please select an employee',
+      'employee-fund-details': 'Employee Fund Details',
+      'employee-id': 'Employee ID',
+      'current-balance': 'Current Balance',
+      'transaction-history': 'Transaction History',
+      'fund-allocation': 'Fund Allocation',
+      'fund-expense': 'Fund Expense',
+      'approved-by': 'Approved by',
+      'no-transactions-found': 'No transactions found for this employee'
     },
     'fr': {
       // Navigation and modules
@@ -490,6 +524,7 @@ export class LanguageService {
       'nav.rates': 'Taux de Change',
       'nav.customers': 'Gestion des Clients',
       'nav.funds': 'Gestion des Fonds',
+      'nav.funds-m': 'Fonds des employés',
       'nav.loans': 'Gestion des Prêts',
       'nav.reports': 'Rapports',
       'nav.settings': 'Paramètres',
@@ -963,6 +998,8 @@ export class LanguageService {
       'settings.security.errors.pattern': 'Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial',
       'settings.security.errors.confirm-required': 'La confirmation du mot de passe est requise',
       'settings.security.errors.mismatch': 'Les mots de passe ne correspondent pas',
+      'settings.language.receipt': 'Langue du Reçu',
+      'settings.language.receipt-description': 'Sélectionnez la langue par défaut pour les reçus de transaction. Celle-ci peut être différente de la langue de l\'interface.',
       'settings.language.title': 'Paramètres de Langue et Région',
       'settings.language.interface': 'Langue de l\'Interface',
       'settings.language.reset-defaults': 'Réinitialiser aux Valeurs par Défaut',
@@ -1003,6 +1040,7 @@ export class LanguageService {
       'nav.rates': 'Tipos de Cambio',
       'nav.customers': 'Gestión de Clientes',
       'nav.funds': 'Gestión de Fondos',
+      'nav.funds-m': 'Fondos de empleados',
       'nav.loans': 'Gestión de Préstamos',
       'nav.reports': 'Informes',
       'nav.settings': 'Configuración',
@@ -1474,6 +1512,8 @@ export class LanguageService {
       'settings.security.errors.pattern': 'La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial',
       'settings.security.errors.confirm-required': 'La confirmación de contraseña es obligatoria',
       'settings.security.errors.mismatch': 'Las contraseñas no coinciden',
+      'settings.language.receipt': 'Idioma del Recibo',
+      'settings.language.receipt-description': 'Seleccione el idioma predeterminado para los recibos de transacciones. Este puede ser diferente del idioma de la interfaz.',
       'settings.language.title': 'Configuración de Idioma y Región',
       'settings.language.interface': 'Idioma de la Interfaz',
       'settings.language.reset-defaults': 'Restablecer a Valores Predeterminados',
@@ -1514,6 +1554,7 @@ export class LanguageService {
       'nav.rates': 'أسعار الصرف',
       'nav.customers': 'إدارة العملاء',
       'nav.funds': 'إدارة الأموال',
+      'nav.funds-m': 'Funds Management',
       'nav.loans': 'إدارة القروض',
       'nav.reports': 'التقارير',
       'nav.settings': 'الإعدادات',
@@ -1836,6 +1877,7 @@ export class LanguageService {
       'nav.rates': 'Tassi di Cambio',
       'nav.customers': 'Gestione Clienti',
       'nav.funds': 'Gestione Fondi',
+      'nav.funds-m': 'Fondi per i dipendenti',
       'nav.loans': 'Gestione Prestiti',
       'nav.reports': 'Rapporti',
       'nav.settings': 'Impostazioni',
@@ -2271,6 +2313,8 @@ export class LanguageService {
       'settings.security.errors.pattern': 'La password deve contenere almeno una lettera maiuscola, una lettera minuscola, un numero e un carattere speciale',
       'settings.security.errors.confirm-required': 'La conferma della password è obbligatoria',
       'settings.security.errors.mismatch': 'Le password non corrispondono',
+      'settings.language.receipt': 'Lingua della Ricevuta',
+      'settings.language.receipt-description': 'Seleziona la lingua predefinita per le ricevute delle transazioni. Questa può essere diversa dalla lingua dell\'interfaccia.',
       'settings.language.title': 'Impostazioni Lingua e Regione',
       'settings.language.interface': 'Lingua dell\'Interfaccia',
       'settings.language.reset-defaults': 'Ripristina Impostazioni Predefinite',
@@ -2305,6 +2349,14 @@ export class LanguageService {
     },
   };
 
+  // Add this method to LanguageService
+  getTranslations(language: string): { [key: string]: string } {
+    // Return translations for the specific language, or fallback to English
+    return this.translations[language] ||
+      this.translations[language.split('-')[0]] ||
+      this.translations['en'] || {};
+  }
+
   private currentLanguageSubject = new BehaviorSubject<string>(this.getCurrentLanguage());
   public currentLanguage$ = this.currentLanguageSubject.asObservable();
 
@@ -2314,7 +2366,7 @@ export class LanguageService {
   }
 
   getCurrentLanguage(): string {
-    return localStorage.getItem('userLanguage') || 'en-US';
+    return localStorage.getItem('userLanguage') || 'fr';
   }
 
   setLanguage(language: string): void {
@@ -2339,7 +2391,7 @@ export class LanguageService {
   translate(key: string): string {
     const language = this.getCurrentLanguage();
     // Try to get translation for current language
-    const languageData = this.translations[language] || this.translations['en-US'];
+    const languageData = this.translations[language] || this.translations['en'];
     // Return the translation or the key itself if not found
     return languageData[key] || key;
   }

@@ -70,7 +70,7 @@ export class SettingsComponent implements OnInit {
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone: [''],
-      role: [''], 
+      role: [''],
       branch: [''],
       position: [''],
     });
@@ -119,6 +119,11 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  receiptLanguage: string = 'en';
+
+  updateReceiptLanguage(): void {
+  }
+
   ngOnInit(): void {
     this.loadSettings();
     this.loadBackupHistory();
@@ -134,14 +139,23 @@ export class SettingsComponent implements OnInit {
     });
 
     this.languageForm = this.fb.group({
-      language: [this.getSavedLanguage(), Validators.required]
+      language: [this.getSavedLanguage(), Validators.required],
+      receiptLanguage: [localStorage.getItem('ticketLanguage') || 'en']
     });
+
+    const savedReceiptLang = localStorage.getItem('ticketLanguage');
+    if (savedReceiptLang) {
+      this.receiptLanguage = savedReceiptLang;
+    } else {
+      // Default to the same language as the interface if not set
+      this.receiptLanguage = this.getSavedLanguage().split('-')[0];
+    }
   }
 
   loadSettings(): void {
     this.loading = true;
     this.loadingMessage = 'Loading your settings';
-  
+
     // First load the user profile data
     this.settingsService.getUser().subscribe({
       next: (response) => {
@@ -159,7 +173,7 @@ export class SettingsComponent implements OnInit {
           this.avatarUrl = response.result.avatarUrl || null;
           this.loading = false;
         }
-        
+
         // Continue loading other settings
         this.loadOtherSettings();
       },
@@ -169,7 +183,7 @@ export class SettingsComponent implements OnInit {
       }
     });
   }
-  
+
   // Method to load remaining settings
   private loadOtherSettings(): void {
     this.settingsService.getUserSettings().subscribe({
@@ -184,7 +198,7 @@ export class SettingsComponent implements OnInit {
           enableAnimations: settings.appearance.enableAnimations,
           showWelcomeScreen: settings.appearance.showWelcomeScreen
         });
-  
+
         // Fill notifications form
         this.notificationsForm.patchValue({
           transactionAlerts: settings.notifications.transactionAlerts,
@@ -197,7 +211,7 @@ export class SettingsComponent implements OnInit {
           quietHoursStart: settings.notifications.quietHoursStart,
           quietHoursEnd: settings.notifications.quietHoursEnd
         });
-  
+
         // Fill language form
         this.languageForm.patchValue({
           language: settings.language.interfaceLanguage,
@@ -208,10 +222,10 @@ export class SettingsComponent implements OnInit {
           timezone: settings.language.timezone,
           numberFormat: settings.language.numberFormat
         });
-  
+
         // Apply theme settings immediately
         this.applyThemeSettings();
-  
+
         this.loading = false;
       },
       error: (error) => {
@@ -565,46 +579,59 @@ export class SettingsComponent implements OnInit {
     if (this.languageForm.valid) {
       this.loading = true;
       this.loadingMessage = 'Updating language & region settings';
-  
-      // Get the selected language value
-      const selectedLanguage = this.languageForm.get('language')?.value;
-      
-      // Save language preference to localStorage
-      localStorage.setItem('userLanguage', selectedLanguage);
-  
+
+      // Get form values
+      const interfaceLanguage = this.languageForm.get('language')?.value;
+      const receiptLanguage = this.languageForm.get('receiptLanguage')?.value;
+
+      // Save interface language preference to localStorage
+      localStorage.setItem('userLanguage', interfaceLanguage);
+
+      // Save receipt language preference to localStorage
+      localStorage.setItem('ticketLanguage', receiptLanguage);
+
+      this.loading = false;
+      this.alertService.success('Language & region settings updated successfully.');
+
+
       // Update language on the server
-      this.settingsService.updateLanguageAndRegion(this.languageForm.value).subscribe({
-        next: () => {
-          this.alertService.success('Language & region settings updated successfully.');
-          this.loading = false;
-          
-          // Optionally reload the page to apply language changes
-          // window.location.reload();
-        },
-        error: (error) => {
-          console.error('Failed to update language & region settings:', error);
-          // Even on API failure, keep the language preference in localStorage
-          // this.alertService.failure('Changes saved locally. Server update failed.');
-          this.loading = false;
-        }
-      });
+      // this.settingsService.updateLanguageAndRegion(this.languageForm.value).subscribe({
+      //   next: () => {
+      //     this.alertService.success('Language & region settings updated successfully.');
+      //     this.loading = false;
+      //   },
+      //   error: (error) => {
+      //     console.error('Failed to update language & region settings:', error);
+      //     // Even on API failure, keep the language preferences in localStorage
+      //     this.alertService.error('Changes saved locally. Server update failed.');
+      //     this.loading = false;
+      //   }
+      // });
     }
   }
-  
+
+
   // Helper method to get saved language
   getSavedLanguage(): string {
     const savedLanguage = localStorage.getItem('userLanguage');
     return savedLanguage || 'en-US'; // Default to English (US) if not found
   }
-  
+
   // Reset language form
   resetLanguageForm(): void {
     this.languageForm.patchValue({
-      language: 'en-US' // Default language
+      language: 'en', // Default language
+      receiptLanguage: 'en' // Default receipt language
     });
-    // Optionally clear from localStorage
+
+    // Clear from localStorage
     localStorage.removeItem('userLanguage');
+    localStorage.removeItem('ticketLanguage');
+
+    this.alertService.success('Language settings reset to defaults.');
   }
+
+
 
   getCurrentDateFormatSample(): string {
     const today = new Date();
