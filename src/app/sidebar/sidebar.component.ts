@@ -18,9 +18,13 @@ export class SidebarComponent implements OnInit {
   isSidebarCollapsed: boolean = false;
   screenWidth: number;
 
-  fullName?: string;
-  role?: string;
+    fullName?: string;
+    role?: string;
   nameCompany: string = '';
+
+  administrator: boolean = false;
+  manager: boolean = false;
+  nachit: boolean = false;
 
   constructor(private router: Router, private tokenService: TokenService, public languageService: LanguageService) {
     this.screenWidth = window.innerWidth;
@@ -47,6 +51,16 @@ export class SidebarComponent implements OnInit {
 
     const savedLanguage = this.languageService.getCurrentLanguage();
     this.languageService.setLanguage(savedLanguage);
+
+    if (this.role === 'ADMIN') {
+      this.administrator = true;
+    } else if (this.role === 'MANAGER') {
+      this.manager = true;
+      this.administrator = true;
+    }
+    else if (this.role === 'USER') {
+      this.nachit = true;
+    }
   }
 
   @HostListener('window:resize', ['$event'])

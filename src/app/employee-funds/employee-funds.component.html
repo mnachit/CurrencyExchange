@@ -13,31 +13,14 @@
             <div class="d-flex justify-content-between align-items-center flex-wrap">
                 <div>
                     <h2 class="section-title">
-                        <i class="fas fa-user-tag"></i> {{ 'employee-funds-title' | translate }}
+                        <i class="fas fa-wallet me-2"></i> {{ 'employee-funds-title' | translate }}
                     </h2>
                     <p class="text-muted">{{ 'employee-funds' | translate }}</p>
                 </div>
                 <div class="d-flex gap-2 mt-2 mt-md-0">
-                    <button class="btn btn-outline-primary me-2 d-flex align-items-center"
+                    <button class="btn btn-primary me-2 d-flex align-items-center"
                         (click)="loadEmployeeFunds()">
                         <i class="fas fa-sync-alt me-2"></i> {{ 'common.refresh' | translate }}
-                    </button>
-                    <div ngbDropdown>
-                        <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button"
-                            id="exportDropdown" ngbDropdownToggle>
-                            <i class="fas fa-download me-2"></i> {{ 'common.export' | translate }}
-                        </button>
-                        <ul ngbDropdownMenu aria-labelledby="exportDropdown">
-                            <li><a ngbDropdownItem href="javascript:void(0)" (click)="exportData('csv')"><i
-                                        class="fas fa-file-csv me-2"></i> CSV</a></li>
-                            <li><a ngbDropdownItem href="javascript:void(0)" (click)="exportData('excel')"><i
-                                        class="fas fa-file-excel me-2"></i> Excel</a></li>
-                            <li><a ngbDropdownItem href="javascript:void(0)" (click)="exportData('pdf')"><i
-                                        class="fas fa-file-pdf me-2"></i> PDF</a></li>
-                        </ul>
-                    </div>
-                    <button class="btn btn-success d-flex align-items-center" (click)="openAllocationModal()">
-                        <i class="fas fa-plus-circle me-2"></i> {{ 'allocate-funds' | translate }}
                     </button>
                 </div>
             </div>
@@ -45,98 +28,15 @@
     </div>
 
     <div class="container mt-4">
-        <!-- Funds Summary Cards -->
-        <div class="row mb-4 funds-summary-section">
-            <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
-                <div class="card summary-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="summary-icon bg-primary">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <h5 class="summary-title ms-3">{{ 'total-allocated' | translate }}</h5>
-                        </div>
-                        <div class="row">
-                            <div class="col-6 mb-2" *ngFor="let currency of availableCurrencies">
-                                <div class="currency-amount"
-                                    *ngIf="fundsSummary && fundsSummary.totalFunds && fundsSummary.totalFunds[currency]">
-                                    <span class="currency-badge" [ngClass]="getCurrencyClass(currency)">
-                                        {{ getCurrencySymbol(currency) }}
-                                    </span>
-                                    <span class="fw-bold">
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-lg-6 col-md-6 mb-3">
-                <div class="card summary-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="summary-icon bg-success">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <h5 class="summary-title ms-3">{{ 'employee-stats' | translate }}</h5>
-                        </div>
-                        <div class="stat-value mb-2">
-                            <span class="display-6">{{ fundsSummary?.employeeCount || 0 }}</span>
-                            <span class="text-muted ms-2">{{ 'employees-with-funds' | translate }}</span>
-                        </div>
-                        <div class="stat-info">
-                            <div class="progress stat-progress mb-2">
-                                <div class="progress-bar bg-success" role="progressbar" [style.width]="'100%'"
-                                    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                    100%
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-6 col-lg-12 mb-3">
-                <div class="card summary-card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="summary-icon bg-info">
-                                <i class="fas fa-chart-pie"></i>
-                            </div>
-                            <h5 class="summary-title ms-3">{{ 'department-distribution' | translate }}</h5>
-                        </div>
-                        <div class="row department-stats">
-                            <div class="col-md-6 mb-2" *ngFor="let dept of departments">
-                                <div class="department-item">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span class="dept-name">{{ dept }}</span>
-                                        <span class="dept-value">{{
-                                            formatCurrency(fundsSummary?.departmentBreakdown?.[dept] || 0, 'MAD')
-                                            }}</span>
-                                    </div>
-                                    <div class="progress dept-progress" style="height: 6px;">
-                                        <div class="progress-bar bg-info" role="progressbar"
-                                            [style.width]="((fundsSummary?.departmentBreakdown?.[dept] || 0) / 10000 * 100) + '%'"
-                                            aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Search and Filter Card -->
         <div class="card filter-card mb-4">
             <div class="card-body">
-                <h5 class="card-title mb-3"><i class="fas fa-filter me-2"></i>{{ 'customers.search-filter' | translate }}
-                </h5>
+                <h5 class="card-title mb-3"><i class="fas fa-filter me-2"></i>{{ 'customers.search-filter' | translate }}</h5>
                 <form [formGroup]="filterForm">
                     <div class="row g-3">
                         <div class="col-lg-5">
                             <div class="input-group">
-                                <span class="input-group-text bg-light">
+                                <span class="input-group-text">
                                     <i class="fas fa-search"></i>
                                 </span>
                                 <input type="text" class="form-control" formControlName="search"
@@ -169,9 +69,9 @@
 
         <!-- Employees Funds Table -->
         <div class="card mb-4">
-            <div class="card-header bg-light">
-                <h5 class="card-title mb-0"><i class="fas fa-list me-2"></i>{{ 'employee-funds-list' | translate
-                    }}</h5>
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0"><i class="fas fa-users me-2"></i>{{ 'employee-funds-list' | translate }}</h5>
+                <span class="badge bg-primary rounded-pill">{{ filteredEmployeeFunds.length }} {{ 'employees' | translate }}</span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -180,10 +80,7 @@
                             <tr>
                                 <th>{{ 'employee' | translate }}</th>
                                 <th>{{ 'department' | translate }}</th>
-                                <th>{{ 'position' | translate }}</th>
-                                <th>{{ 'currency' | translate }}</th>
-                                <th>{{ 'amount' | translate }}</th>
-                                <th>{{ 'last-updated' | translate }}</th>
+                                <!-- <th>{{ 'position' | translate }}</th> -->
                                 <th class="text-center">{{ 'actions' | translate }}</th>
                             </tr>
                         </thead>
@@ -191,38 +88,33 @@
                             <tr *ngFor="let fund of filteredEmployeeFunds">
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar-circle">{{ getInitials(fund.employeeName) }}</div>
+                                        <div class="avatar-circle">{{ getInitials(fund.fullName) }}</div>
                                         <div class="ms-2">
-                                            <div class="fw-medium">{{ fund.employeeName }}</div>
-                                            <small class="text-muted">#{{ fund.employeeId }}</small>
+                                            <div class="fw-medium">{{ fund.fullName }}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ fund.department }}</td>
+                                <!-- <td>
+                                    <span class="badge rounded-pill" [ngClass]="'dept-' + fund.department.toLowerCase()">
+                                        {{ fund.department }}
+                                    </span>
+                                </td> -->
                                 <td>{{ fund.position }}</td>
                                 <td>
-                                    <span class="badge" [ngClass]="getCurrencyClass(fund.currency)">
-                                        {{ fund.currency }}
-                                    </span>
-                                </td>
-                                <td class="fw-semibold">
-                                    {{ formatCurrency(fund.amount, fund.currency) }}
-                                </td>
-                                <td>{{ fund.lastUpdated | date:'medium' }}</td>
-                                <td>
                                     <div class="d-flex justify-content-center gap-2">
-                                        <button class="btn btn-sm btn-outline-primary"
+                                        <button class="btn btn-sm btn-outline-primary" 
                                             (click)="viewEmployeeDetails(fund)"
                                             title="{{ 'view-details' | translate }}">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-success"
-                                            (click)="openAllocationModal(fund)"
+                                            (click)="openAllocationModal(fund)" 
                                             title="{{ 'add-funds' | translate }}">
                                             <i class="fas fa-plus"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-outline-danger" (click)="removeFunds(fund)"
-                                            title="{{ 'remove-funds' | translate }}">
+                                        <button class="btn btn-sm btn-outline-danger"
+                                            (click)="openWithdrawalModal(fund)"
+                                            title="{{ 'withdraw-funds' | translate }}">
                                             <i class="fas fa-minus"></i>
                                         </button>
                                     </div>
@@ -230,7 +122,7 @@
                             </tr>
                             <!-- Empty state -->
                             <tr *ngIf="filteredEmployeeFunds.length === 0">
-                                <td colspan="7" class="text-center py-4">
+                                <td colspan="4" class="text-center py-4">
                                     <div class="empty-state">
                                         <i class="fas fa-users fa-3x text-muted mb-3"></i>
                                         <h6>{{ 'no-employee-funds-found' | translate }}</h6>
@@ -245,17 +137,14 @@
                 <!-- Pagination -->
                 <div class="d-flex justify-content-between align-items-center p-3 border-top">
                     <div class="pagination-info">
-                        {{ 'common.showing' | translate }} <span class="fw-medium">{{ (currentPage - 1) * itemsPerPage +
-                            1 }}</span>
-                        {{ 'common.to' | translate }} <span class="fw-medium">{{
-                            getMinValue(currentPage * itemsPerPage, filteredEmployeeFunds.length)
-                            }}</span>
+                        {{ 'common.showing' | translate }} <span class="fw-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span>
+                        {{ 'common.to' | translate }} <span class="fw-medium">{{ getMinValue(currentPage * itemsPerPage, filteredEmployeeFunds.length) }}</span>
                         {{ 'common.of' | translate }} <span class="fw-medium">{{ filteredEmployeeFunds.length }}</span>
                         {{ 'employees' | translate }}
                     </div>
 
                     <nav aria-label="Employees pagination" *ngIf="totalPages > 1">
-                        <ul class="pagination justify-content-center m-0">
+                        <ul class="pagination pagination-sm justify-content-center m-0">
                             <li class="page-item" [ngClass]="{'disabled': currentPage === 1}">
                                 <a class="page-link" href="javascript:void(0)" (click)="goToPage(1)" aria-label="First">
                                     <i class="fas fa-angle-double-left"></i>
@@ -293,205 +182,216 @@
     </div>
 
     <!-- Fund Allocation Modal -->
-    <div class="modal fade" id="fundAllocationModal" tabindex="-1" aria-labelledby="fundAllocationModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="fundAllocationModalLabel">
-                        <i class="fas fa-money-bill-wave me-2"></i>
-                        {{ 'allocate-funds' | translate }}
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form [formGroup]="allocationForm">
-                        <div class="mb-3">
-                            <label class="form-label">{{ 'employee' | translate }}</label>
-                            <select class="form-select" formControlName="employeeId">
-                                <option value="">{{ 'select-employee' | translate }}</option>
-                                <option *ngFor="let fund of employeeFunds" [value]="fund.employeeId">
-                                    {{ fund.employeeName }} ({{ fund.department }})
-                                </option>
-                            </select>
-                            <div *ngIf="allocationForm.get('employeeId')?.touched && allocationForm.get('employeeId')?.errors?.['required']"
-                                class="text-danger">
-                                {{ 'error-employee-required' | translate }}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">{{ 'amount' | translate }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        {{ getCurrencySymbol(allocationForm.get('currency')?.value) }}
-                                    </span>
-                                    <input type="number" class="form-control" formControlName="amount"
-                                        [placeholder]="'funds.enter-amount' | translate" min="0.01">
-                                </div>
-                                <div *ngIf="allocationForm.get('amount')?.touched && allocationForm.get('amount')?.errors?.['required']"
-                                    class="text-danger">
-                                    {{ 'error-amount-required' | translate }}
-                                </div>
-                                <div *ngIf="allocationForm.get('amount')?.touched && allocationForm.get('amount')?.errors?.['min']"
-                                    class="text-danger">
-                                    {{ 'error-amount-greater-zero' | translate }}
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">{{ 'currency' | translate }}</label>
-                                <select class="form-select" formControlName="currency">
-                                    <option *ngFor="let currency of availableCurrencies" [value]="currency">
-                                        {{ currency }} - {{ getCurrencySymbol(currency) }}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ 'notes' | translate }}</label>
-                            <textarea class="form-control" formControlName="notes" rows="3"
-                                [placeholder]="'funds.allocation-notes-placeholder' | translate"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-2"></i>{{ 'common.cancel' | translate }}
-                    </button>
-                    <button type="button" class="btn btn-success" (click)="saveAllocation()"
-                        [disabled]="allocationForm.invalid || loading">
-                        <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-                        {{ loading ? ('common.saving' | translate) : ('common.save' | translate) }}
-                    </button>
-                </div>
-            </div>
+    <ng-template #allocationModalTemplate>
+        <div class="modal-header bg-success text-white">
+            <h5 class="modal-title">
+                <i class="fas fa-money-bill-wave me-2"></i>
+                {{ 'allocate-funds' | translate }}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" (click)="closeAllocationModal()"></button>
         </div>
-    </div>
+        <div class="modal-body">
+            <form [formGroup]="allocationForm">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'employee' | translate }}</label>
+                    <select class="form-select" formControlName="id">
+                        <option value="">{{ 'select-employee' | translate }}</option>
+                        <option *ngFor="let fund of employeeFunds" [value]="fund.id">
+                            {{ fund.fullName }}
+                        </option>
+                    </select>
+                    <div *ngIf="allocationForm.get('id')?.touched && allocationForm.get('id')?.errors?.['required']"
+                        class="text-danger">
+                        {{ 'error-employee-required' | translate }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ 'amount' | translate }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                {{ getCurrencySymbol(allocationForm.get('currency')?.value) }}
+                            </span>
+                            <input type="number" class="form-control" formControlName="amount"
+                                [placeholder]="'funds.enter-amount' | translate" min="0.01">
+                        </div>
+                        <div *ngIf="allocationForm.get('amount')?.touched && allocationForm.get('amount')?.errors?.['required']"
+                            class="text-danger">
+                            {{ 'error-amount-required' | translate }}
+                        </div>
+                        <div *ngIf="allocationForm.get('amount')?.touched && allocationForm.get('amount')?.errors?.['min']"
+                            class="text-danger">
+                            {{ 'error-amount-greater-zero' | translate }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ 'currency' | translate }}</label>
+                        <select class="form-select" formControlName="currency">
+                            <option *ngFor="let currency of availableCurrencies" [value]="currency">
+                                {{ currency }} - {{ getCurrencySymbol(currency) }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ 'notes' | translate }}</label>
+                    <textarea class="form-control" formControlName="notes" rows="3"
+                        [placeholder]="'funds.allocation-notes-placeholder' | translate"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" (click)="closeAllocationModal()">
+                <i class="fas fa-times me-2"></i>{{ 'common.cancel' | translate }}
+            </button>
+            <button type="button" class="btn btn-success" (click)="saveAllocation('add')"
+                [disabled]="allocationForm.invalid || loading">
+                <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                {{ loading ? ('common.saving' | translate) : ('common.save' | translate) }}
+            </button>
+        </div>
+    </ng-template>
+
+    <!-- Withdraw Funds Modal -->
+    <ng-template #withdrawalModalTemplate>
+        <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">
+                <i class="fas fa-money-bill-wave me-2"></i>
+                {{ 'withdraw-funds' | translate }}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" (click)="closeWithdrawalModal()"></button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="allocationForm">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'employee' | translate }}</label>
+                    <select class="form-select" formControlName="id">
+                        <option value="">{{ 'select-employee' | translate }}</option>
+                        <option *ngFor="let fund of employeeFunds" [value]="fund.id">
+                            {{ fund.fullName }}
+                        </option>
+                    </select>
+                    <div *ngIf="allocationForm.get('id')?.touched && allocationForm.get('id')?.errors?.['required']"
+                        class="text-danger">
+                        {{ 'error-employee-required' | translate }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ 'amount' | translate }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                {{ getCurrencySymbol(allocationForm.get('currency')?.value) }}
+                            </span>
+                            <input type="number" class="form-control" formControlName="amount"
+                                [placeholder]="'funds.enter-amount' | translate" min="0.01">
+                        </div>
+                        <div *ngIf="allocationForm.get('amount')?.touched && allocationForm.get('amount')?.errors?.['required']"
+                            class="text-danger">
+                            {{ 'error-amount-required' | translate }}
+                        </div>
+                        <div *ngIf="allocationForm.get('amount')?.touched && allocationForm.get('amount')?.errors?.['min']"
+                            class="text-danger">
+                            {{ 'error-amount-greater-zero' | translate }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ 'currency' | translate }}</label>
+                        <select class="form-select" formControlName="currency">
+                            <option *ngFor="let currency of availableCurrencies" [value]="currency">
+                                {{ currency }} - {{ getCurrencySymbol(currency) }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">{{ 'notes' | translate }}</label>
+                    <textarea class="form-control" formControlName="notes" rows="3"
+                        [placeholder]="'funds.withdrawal-notes-placeholder' | translate"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" (click)="closeWithdrawalModal()">
+                <i class="fas fa-times me-2"></i>{{ 'common.cancel' | translate }}
+            </button>
+            <button type="button" class="btn btn-danger" (click)="saveAllocation('withdraw')"
+                [disabled]="allocationForm.invalid || loading">
+                <i class="fas" [ngClass]="loading ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                {{ loading ? ('common.saving' | translate) : ('common.save' | translate) }}
+            </button>
+        </div>
+    </ng-template>
 
     <!-- Employee Detail Modal -->
-    <div class="modal fade" id="employeeDetailModal" tabindex="-1" aria-labelledby="employeeDetailModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content" *ngIf="selectedEmployee">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="employeeDetailModalLabel">
-                        <i class="fas fa-user-circle me-2"></i>
-                        {{ 'employee-fund-details' | translate }}
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+    <ng-template #employeeDetailModalTemplate>
+        <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">
+                <i class="fas fa-user-circle me-2"></i>
+                {{ 'employee-fund-details' | translate }}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" (click)="closeEmployeeDetailModal()"></button>
+        </div>
+        <div class="modal-body" *ngIf="selectedEmployee">
+            <div class="row g-4">
+                <!-- Employee Profile -->
+                <div class="col-md-4">
+                    <div class="employee-profile">
+                        <div class="text-center mb-3">
+                            <div class="large-avatar-circle mx-auto">
+                                {{ getInitials(selectedEmployee.fullName) }}
+                            </div>
+                            <h5 class="mt-3 mb-1">{{ selectedEmployee.fullName }}</h5>
+                            <p class="text-muted mb-0">{{ selectedEmployee.position }}</p>
+                            <span class="badge mt-2" [ngClass]="'dept-' + selectedEmployee.department.toLowerCase()">
+                                {{ selectedEmployee.department }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <div class="row g-4">
-                        <!-- Employee Profile -->
-                        <div class="col-md-4">
-                            <div class="employee-profile">
-                                <div class="text-center mb-3">
-                                    <div class="large-avatar-circle mx-auto">
-                                        {{ getInitials(selectedEmployee.employeeName) }}
-                                    </div>
-                                    <h5 class="mt-3 mb-1">{{ selectedEmployee.employeeName }}</h5>
-                                    <p class="text-muted mb-0">{{ selectedEmployee.position }}</p>
-                                </div>
 
-                                <div class="employee-details">
-                                    <div class="detail-item">
-                                        <div class="detail-label">
-                                            <i class="fas fa-id-card me-2"></i>{{ 'employee-id' | translate }}
-                                        </div>
-                                        <div class="detail-value">#{{ selectedEmployee.employeeId }}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">
-                                            <i class="fas fa-building me-2"></i>{{ 'department' | translate }}
-                                        </div>
-                                        <div class="detail-value">{{ selectedEmployee.department }}</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">
-                                            <i class="fas fa-wallet me-2"></i>{{ 'current-balance' | translate }}
-                                        </div>
-                                        <div class="detail-value fw-bold">
-                                            {{ formatCurrency(selectedEmployee.amount, selectedEmployee.currency) }}
-                                        </div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">
-                                            <i class="fas fa-clock me-2"></i>{{ 'last-updated' | translate }}
-                                        </div>
-                                        <div class="detail-value">{{ selectedEmployee.lastUpdated | date:'medium' }}
-                                        </div>
-                                    </div>
-                                </div>
+                <!-- Balance Summary -->
+                <div class="col-md-8">
+                    <div class="employee-balance-card">
+                        <h6 class="card-title">
+                            <i class="fas fa-wallet me-2"></i>{{ 'employee.balance' | translate }}
+                        </h6>
 
-                                <div class="action-buttons mt-3">
-                                    <button class="btn btn-success btn-sm w-100 mb-2"
-                                        (click)="openAllocationModal(selectedEmployee)">
-                                        <i class="fas fa-plus-circle me-2"></i>{{ 'add-funds' | translate }}
-                                    </button>
-                                    <button class="btn btn-warning btn-sm w-100" (click)="removeFunds(selectedEmployee)"
-                                        [disabled]="selectedEmployee.amount <= 0">
-                                        <i class="fas fa-minus-circle me-2"></i>{{ 'remove-funds' | translate }}
-                                    </button>
+                        <div class="balance-summary">
+                            <div class="balance-item" *ngFor="let balance of selectedEmployeeHistory">
+                                <div class="d-flex justify-content-between align-items-center p-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="currency-badge me-2" [ngClass]="'bg-' + getCurrencyClass(balance.currency)">
+                                            {{ getCurrencySymbol(balance.currency) }}
+                                        </div>
+                                        <span class="currency-label">{{ balance.currency }}</span>
+                                    </div>
+                                    <span class="amount-value fw-bold">
+                                        {{ balance.amount.toFixed(2) }} {{ getCurrencySymbol(balance.currency) }}
+                                    </span>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Transaction History -->
-                        <div class="col-md-8">
-                            <div class="transaction-history">
-                                <h6 class="history-title">
-                                    <i class="fas fa-history me-2"></i>{{ 'transaction-history' | translate }}
-                                </h6>
-
-                                <div class="timeline">
-                                    <div class="timeline-item" *ngFor="let transaction of selectedEmployeeHistory">
-                                        <div class="timeline-bullet"
-                                            [ngClass]="transaction.type === 'allocation' ? 'bg-success' : 'bg-warning'">
-                                        </div>
-                                        <div class="timeline-content">
-                                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                                <h6 class="timeline-title mb-0">
-                                                    {{ transaction.type === 'allocation' ? ('funds.fund-allocation' |
-                                                    translate) : ('funds.fund-expense' | translate) }}
-                                                </h6>
-                                                <span class="timeline-date">{{ transaction.date | date:'mediumDate'
-                                                    }}</span>
-                                            </div>
-                                            <div class="transaction-amount mb-2"
-                                                [ngClass]="transaction.type === 'allocation' ? 'text-success' : 'text-warning'">
-                                                {{ transaction.type === 'allocation' ? '+' : '-' }}
-                                                {{ formatCurrency(transaction.amount, transaction.currency) }}
-                                            </div>
-                                            <p class="transaction-note">{{ transaction.notes }}</p>
-                                            <div class="transaction-meta">
-                                                <small class="text-muted">
-                                                    <i class="fas fa-user-check me-1"></i>
-                                                    {{ 'approved-by' | translate }}: {{ transaction.approvedBy }}
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Empty state -->
-                                    <div class="text-center py-4" *ngIf="selectedEmployeeHistory.length === 0">
-                                        <p class="text-muted mb-0">{{ 'no-transactions-found' | translate }}</p>
-                                    </div>
-                                </div>
+                            <!-- Empty state -->
+                            <div class="text-center py-4" *ngIf="selectedEmployeeHistory.length === 0">
+                                <i class="fas fa-coins fa-2x text-muted mb-2"></i>
+                                <p class="text-muted mb-0">{{ 'no.balances.found' | translate }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-2"></i>{{ 'common.close' | translate }}
-                    </button>
-                </div>
             </div>
         </div>
-    </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" (click)="closeEmployeeDetailModal()">
+                <i class="fas fa-times me-2"></i>{{ 'common.close' | translate }}
+            </button>
+        </div>
+    </ng-template>
 </div>

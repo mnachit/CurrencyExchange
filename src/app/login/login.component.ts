@@ -21,6 +21,7 @@ import { TokenService } from '../services/token.service';
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   submitted = false;
+  role?: string;
   showPassword = false;
   showError = false;
   imageUrl?: string;
@@ -70,8 +71,12 @@ export class LoginComponent implements OnInit {
           next: (response) => {
             if (response) {
               this.tokerService.saveToken(response.result);
-              this.router.navigate(['/dashboard']);
-              
+              this.role = this.tokerService.getRoleUserWithToken() ?? undefined;
+              if (this.role === 'NACHIT') {
+                this.router.navigate(['/welcome-admin']);
+              } else {
+                this.router.navigate(['/dashboard']);
+              }
             }
           },
           error: (error) => {

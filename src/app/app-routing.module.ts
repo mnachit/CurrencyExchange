@@ -14,6 +14,8 @@ import { SettingsComponent } from './settings/settings.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { checkNotTokenGuard } from './Guard/check-Nottoken.guard';
 import { EmployeeFundsComponent } from './employee-funds/employee-funds.component';
+import { checkTokenMangerGuard } from './Guard/check-token-Manager.guard';
+import { WelcomeAdmineComponent } from './welcome-admine/welcome-admine.component';
 
 const routes: Routes = [
   // Page d'accueil - accessible à tous
@@ -30,9 +32,10 @@ const routes: Routes = [
   { path: 'loans', component: LoanManagementComponent, canActivate: [checkTokenGuard] },
   { path: 'funds-management', component: FundsManagementComponent, canActivate: [checkTokenGuard] },
   { path: 'reports', component: ReportsComponent, canActivate: [checkTokenGuard] },
-  { path: 'customers', component: CustomersComponent, canActivate: [checkTokenGuard] },
+  { path: 'customers', component: CustomersComponent, canActivate: [checkTokenMangerGuard] },
   { path: 'settings', component: SettingsComponent, canActivate: [checkTokenGuard] },
-  { path: 'employee-funds', component: EmployeeFundsComponent, canActivate: [checkTokenGuard] },
+  { path: 'employee-funds', component: EmployeeFundsComponent, canActivate: [checkTokenMangerGuard] },
+  { path: 'welcome-admin', component: WelcomeAdmineComponent, canActivate: [checkTokenGuard] },
   
   // Redirection par défaut
   { path: '**', redirectTo: '' }

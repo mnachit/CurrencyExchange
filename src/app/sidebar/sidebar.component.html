@@ -15,67 +15,72 @@
     </div>
     <div class="sidebar-menu">
         <div class="menu-category">
-            <div class="menu-category-title">Main</div>
-            <a routerLink="/dashboard" class="menu-item" [ngClass]="{'active': isActive('/dashboard')}"
+            <div class="menu-category-title" *ngIf="administrator">Main</div>
+            <a routerLink="/dashboard" class="menu-item" [ngClass]="{'active': isActive('/dashboard')}" *ngIf="administrator"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-chart-line"></i>
                 <span>{{ 'nav.dashboard' | translate }}</span>
             </a>
-            <a routerLink="/exchange" class="menu-item" [ngClass]="{'active': isActive('/exchange')}"
+            <a routerLink="/exchange" class="menu-item" [ngClass]="{'active': isActive('/exchange')}" *ngIf="administrator"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-exchange-alt"></i>
                 <span>{{ 'nav.exchange' | translate }}</span>
             </a>
-            <a routerLink="/transactions" class="menu-item" [ngClass]="{'active': isActive('/transactions')}"
+            <a routerLink="/transactions" class="menu-item" [ngClass]="{'active': isActive('/transactions')}" *ngIf="administrator"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-history"></i>
                 <span>{{ 'nav.transactions' | translate }}</span>
             </a>
-            <a routerLink="/currencies" class="menu-item" [ngClass]="{'active': isActive('/currencies')}"
+            <a routerLink="/currencies" class="menu-item" [ngClass]="{'active': isActive('/currencies')}"  *ngIf="administrator"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-coins"></i>
                 <span>{{ 'nav.rates' | translate }}</span>
             </a>
+            <a routerLink="/welcome-admin" class="menu-item" [ngClass]="{'active': isActive('/welcome-admin')}"  *ngIf="nachit"
+                (click)="onMenuItemClick()">
+                <i class="fas fa-coins"></i>
+                <span>{{ 'nav.welcome-admin' | translate }}</span>
+            </a>
         </div>
         <div class="menu-category">
-            <div class="menu-category-title">Management</div>
-            <a routerLink="/customers" class="menu-item" [ngClass]="{'active': isActive('/customers')}"
+            <div class="menu-category-title" *ngIf="administrator">Management</div>
+            <a routerLink="/customers" class="menu-item" [ngClass]="{'active': isActive('/customers')}"  *ngIf="manager"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-users"></i>
                 <span>{{ 'nav.customers' | translate }}</span>
             </a>
-            <a routerLink="/funds-management" class="menu-item" [ngClass]="{'active': isActive('/funds-management')}"
+            <a routerLink="/funds-management" class="menu-item" [ngClass]="{'active': isActive('/funds-management')}"  *ngIf="administrator"
                 (click)="onMenuItemClick()">
                 <i class="fa-regular fa-money-bill-transfer"></i>
                 <span>{{ 'nav.funds' | translate }}</span>
             </a>
-            <a routerLink="/employee-funds" class="menu-item" [ngClass]="{'active': isActive('/employee-funds')}"
+            <a routerLink="/employee-funds" class="menu-item" [ngClass]="{'active': isActive('/employee-funds')}"  *ngIf="manager"
                 (click)="onMenuItemClick()">
                 <i class="fa-regular fa-money-bill-transfer"></i>
                 <span>{{ 'nav.funds-m' | translate }}</span>
             </a>
-            <a routerLink="/loans" class="menu-item" [ngClass]="{'active': isActive('/loans')}"
+            <a routerLink="/loans" class="menu-item" [ngClass]="{'active': isActive('/loans')}"  *ngIf="administrator"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-hand-holding-usd"></i>
                 <span>{{ 'nav.loans' | translate }}</span>
             </a>
-            <a routerLink="/reports" class="menu-item" [ngClass]="{'active': isActive('/reports')}"
+            <a routerLink="/reports" class="menu-item" [ngClass]="{'active': isActive('/reports')}"  *ngIf="administrator"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-file-invoice-dollar"></i>
                 <span>{{ 'nav.reports' | translate }}</span>
             </a>
-            <a routerLink="/settings" class="menu-item" [ngClass]="{'active': isActive('/settings')}"
+            <a routerLink="/settings" class="menu-item" [ngClass]="{'active': isActive('/settings')}"  *ngIf="administrator"
                 (click)="onMenuItemClick()">
                 <i class="fas fa-cog"></i>
                 <span>{{ 'nav.settings' | translate }}</span>
             </a>
         </div>
     </div>
-    <div class="user-profile">
+    <!-- <div class="user-profile">
         <div class="profile-image">AM</div>
         <div class="profile-details">
             <div class="profile-name">{{fullName}}</div>
             <div class="profile-role">{{role}}</div>
         </div>
-    </div>
+    </div> -->
 </div>

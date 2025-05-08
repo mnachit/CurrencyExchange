@@ -33,6 +33,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { TranslatePipe } from './pipe/translate.pipe';
 import { TicketTranslatePipe } from './pipe/TicketTranslatePipe';
 import { EmployeeFundsModule } from './employee-funds/employee-funds.module';
+import { WelcomeAdmineComponent } from './welcome-admine/welcome-admine.component';
 
 
 
@@ -53,6 +54,7 @@ import { EmployeeFundsModule } from './employee-funds/employee-funds.module';
     SettingsComponent,
     ConfirmationDialogComponent,
     WelcomeComponent,
+    WelcomeAdmineComponent,
   ],
   imports: [
     CountUpModule,

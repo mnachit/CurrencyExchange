@@ -5,7 +5,7 @@ import { TokenService } from '../services/token.service';
 @Injectable({
   providedIn: 'root'
 })
-export class checkTokenGuard implements CanActivate {
+export class checkTokenMangerGuard implements CanActivate {
 
   constructor(private router: Router, private tokenSerive: TokenService ) { }
 
@@ -27,8 +27,13 @@ export class checkTokenGuard implements CanActivate {
     }
 
     // Si l'utilisateur est connecté, permettez l'accès
-    if (token && token.length > 0 && this.administrator) {
+    if (token && token.length > 0 && this.manager) {
       return true;
+    }
+
+    else if (this.role === 'MANAGER') {
+        this.router.navigate(['dashboard']);
+        return false;
     }
 
     if (this.role === 'NACHIT') {

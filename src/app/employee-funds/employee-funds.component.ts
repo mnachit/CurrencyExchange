@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '../pipe/translate.pipe';
 import { EmployeeFundsService, EmployeeFunds, FundsSummary } from '../services/employee-funds.service';
 import { finalize } from 'rxjs/operators';
@@ -10,7 +10,18 @@ import { FundsManagementService } from '../services/funds-management.service';
 import { LanguageService } from '../services/language.service';
 import { AlertService } from '../services/alert.service';
 
-declare var bootstrap: any;
+interface FundHistory {
+  currency: string;
+  amount: number;
+  notes?: string;
+  createdAt?: string;
+  createdBy?: any;
+}
+
+interface CurrencyFund {
+  currency: string;
+  amount: number;
+}
 
 @Component({
   selector: 'app-employee-funds',
@@ -45,9 +56,6 @@ export class EmployeeFundsComponent implements OnInit {
     Currency.GBP, Currency.SAR, Currency.AED
   ];
 
-  // Exchange rates - for converting between currencies
-  exchangeRates: { [key in Currency]?: { [key in Currency]?: number } } = {};
-
   // Selected employee for detail modal
   selectedEmployee: EmployeeFunds | null = null;
   selectedEmployeeHistory: any[] = [];
@@ -56,21 +64,28 @@ export class EmployeeFundsComponent implements OnInit {
   allocationForm: FormGroup;
   filterForm: FormGroup;
 
-  // For modal management
-  fundAllocationModal: any;
-  employeeDetailModal: any;
+  // Modal Templates
+  @ViewChild('allocationModalTemplate') allocationModalTemplate!: TemplateRef<any>;
+  @ViewChild('withdrawalModalTemplate') withdrawalModalTemplate!: TemplateRef<any>;
+  @ViewChild('employeeDetailModalTemplate') employeeDetailModalTemplate!: TemplateRef<any>;
+  
+  // Modal references
+  private allocationModalRef: any;
+  private withdrawalModalRef: any;
+  private employeeDetailModalRef: any;
 
   constructor(
     private fb: FormBuilder,
     private employeeFundsService: EmployeeFundsService,
-    private fundsService: FundsManagementService,
+    private fundsManagementService: FundsManagementService,
     public languageService: LanguageService,
     private alertService: AlertService,
+    private modalService: NgbModal
   ) {
     // Initialize allocation form
     this.allocationForm = this.fb.group({
-      employeeId: ['', Validators.required],
-      employeeName: [{ value: '', disabled: true }],
+      id: ['', Validators.required],
+      fullName: [{ value: '', disabled: true }],
       amount: [0, [Validators.required, Validators.min(0.01)]],
       currency: [Currency.MAD, Validators.required],
       notes: ['']
@@ -90,19 +105,6 @@ export class EmployeeFundsComponent implements OnInit {
     this.loadEmployeeFunds();
     this.loadFundsSummary();
 
-    // Initialize modals
-    document.addEventListener('DOMContentLoaded', () => {
-      const allocationModalElement = document.getElementById('fundAllocationModal');
-      if (allocationModalElement) {
-        this.fundAllocationModal = new bootstrap.Modal(allocationModalElement);
-      }
-
-      const detailModalElement = document.getElementById('employeeDetailModal');
-      if (detailModalElement) {
-        this.employeeDetailModal = new bootstrap.Modal(detailModalElement);
-      }
-    });
-
     // Load saved language preference
     const savedLanguage = this.languageService.getCurrentLanguage();
     this.languageService.setLanguage(savedLanguage);
@@ -117,7 +119,7 @@ export class EmployeeFundsComponent implements OnInit {
    * Load all employee funds data
    */
   loadEmployeeFunds(): void {
-    this.employeeFundsService.getMockEmployeeFunds()
+    this.employeeFundsService.getEmployeeFunds()
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -126,19 +128,39 @@ export class EmployeeFundsComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response && response.result) {
-            this.employeeFunds = response.result;
+            // Process and ensure all required fields are present
+            this.employeeFunds = (response.result as EmployeeFunds[]).map((fund: EmployeeFunds) => {
+              // Ensure department is always defined
+              return {
+                ...fund,
+                department: fund.department || 'General',
+                position: fund.position || 'Employee',
+                currency: fund.currency || Currency.MAD
+              };
+            });
 
             // Extract unique departments
             this.departments = Array.from(
-              new Set(this.employeeFunds.map(fund => fund.department))
-            );
+              new Set(this.employeeFunds
+                .filter(fund => fund.department) // Filter out any undefined/null departments
+                .map(fund => fund.department))
+            ).sort(); // Sort the departments alphabetically
 
+            this.applyFilters();
+          } else {
+            // Handle empty results
+            this.employeeFunds = [];
+            this.departments = [];
             this.applyFilters();
           }
         },
         error: (error) => {
           console.error('Error loading employee funds:', error);
           this.alertService.error('Failed to load employee funds data');
+          // Initialize with empty arrays in case of error
+          this.employeeFunds = [];
+          this.departments = [];
+          this.loading = false;
         }
       });
   }
@@ -147,7 +169,7 @@ export class EmployeeFundsComponent implements OnInit {
    * Load funds summary data
    */
   loadFundsSummary(): void {
-    this.employeeFundsService.getMockFundsSummary()
+    this.employeeFundsService.getFundsSummary()
       .subscribe({
         next: (response) => {
           if (response && response.result) {
@@ -156,6 +178,7 @@ export class EmployeeFundsComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error loading funds summary:', error);
+          this.fundsSummary = null;
         }
       });
   }
@@ -169,41 +192,45 @@ export class EmployeeFundsComponent implements OnInit {
     this.selectedCurrency = currency;
     this.searchTerm = search;
 
+    // Make a copy of the original array to avoid mutating it
     let filtered = [...this.employeeFunds];
 
-    // Apply department filter
+    // Apply department filter if not 'all' and the department exists
     if (department !== 'all') {
       filtered = filtered.filter(fund => fund.department === department);
     }
 
-    // Apply currency filter
+    // Apply currency filter if not 'all' and the currency exists
     if (currency !== 'all') {
       filtered = filtered.filter(fund => fund.currency === currency);
     }
 
-    // Apply search filter
-    if (search) {
+    // Apply search filter if there's a search term
+    if (search && search.trim() !== '') {
       const searchLower = search.toLowerCase();
       filtered = filtered.filter(fund =>
-        fund.employeeName.toLowerCase().includes(searchLower) ||
-        fund.position.toLowerCase().includes(searchLower)
+        (fund.fullName && fund.fullName.toLowerCase().includes(searchLower)) ||
+        (fund.position && fund.position.toLowerCase().includes(searchLower)) ||
+        (fund.department && fund.department.toLowerCase().includes(searchLower))
       );
     }
 
+    // Store total count before pagination
+    const totalCount = filtered.length;
+    
     // Update pagination
-    this.filteredEmployeeFunds = filtered;
-    this.totalPages = Math.ceil(filtered.length / this.itemsPerPage);
-    this.paginateResults();
-  }
-
-  /**
-   * Handle pagination of results
-   */
-  paginateResults(): void {
+    this.totalPages = Math.ceil(totalCount / this.itemsPerPage) || 1; // Ensure at least 1 page
+    
+    // Ensure current page is within valid range
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = 1;
+    }
+    
+    // Apply pagination
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-
-    this.filteredEmployeeFunds = this.filteredEmployeeFunds.slice(startIndex, endIndex);
+    const endIndex = Math.min(startIndex + this.itemsPerPage, totalCount);
+    
+    this.filteredEmployeeFunds = filtered.slice(startIndex, endIndex);
   }
 
   /**
@@ -220,90 +247,221 @@ export class EmployeeFundsComponent implements OnInit {
    * Open fund allocation modal for a specific employee
    */
   openAllocationModal(employee?: EmployeeFunds): void {
-    if (employee) {
+    if (employee && employee.id) {
       this.allocationForm.patchValue({
-        employeeId: employee.employeeId,
-        employeeName: employee.employeeName,
-        currency: employee.currency,
+        id: employee.id,
+        fullName: employee.fullName,
+        currency: employee.currency || Currency.MAD,
         amount: 0,
         notes: ''
       });
     } else {
       this.allocationForm.reset({
-        currency: Currency.MAD
+        currency: Currency.MAD,
+        amount: 0
       });
     }
 
-    this.fundAllocationModal.show();
+    // Close any open modals first
+    this.closeAllModals();
+
+    // Open allocation modal
+    this.allocationModalRef = this.modalService.open(this.allocationModalTemplate, {
+      centered: true,
+      backdrop: 'static'
+    });
   }
 
   /**
-   * Get minimum of two values (replacement for Math.min in template)
+   * Close the allocation modal
    */
-  getMinValue(a: number, b: number): number {
-    return Math.min(a, b);
+  closeAllocationModal(): void {
+    if (this.allocationModalRef) {
+      this.allocationModalRef.close();
+      this.allocationModalRef = null;
+    }
+  }
+
+  /**
+   * Open withdrawal modal for a specific employee
+   */
+  openWithdrawalModal(employee?: EmployeeFunds): void {
+    if (employee && employee.id) {
+      this.allocationForm.patchValue({
+        id: employee.id,
+        fullName: employee.fullName,
+        currency: employee.currency || Currency.MAD,
+        amount: 0,
+        notes: ''
+      });
+    } else {
+      this.allocationForm.reset({
+        currency: Currency.MAD,
+        amount: 0
+      });
+    }
+
+    // Close any open modals first
+    this.closeAllModals();
+    
+    // Open withdrawal modal
+    this.withdrawalModalRef = this.modalService.open(this.withdrawalModalTemplate, {
+      centered: true,
+      backdrop: 'static'
+    });
+  }
+
+  /**
+   * Close the withdrawal modal
+   */
+  closeWithdrawalModal(): void {
+    if (this.withdrawalModalRef) {
+      this.withdrawalModalRef.close();
+      this.withdrawalModalRef = null;
+    }
+  }
+
+  /**
+   * Close all open modals
+   */
+  closeAllModals(): void {
+    this.closeAllocationModal();
+    this.closeWithdrawalModal();
+    this.closeEmployeeDetailModal();
   }
 
   /**
    * Open employee detail modal
    */
   viewEmployeeDetails(employee: EmployeeFunds): void {
-    this.selectedEmployee = employee;
+    if (!employee) {
+      this.alertService.error('Employee data is not available');
+      return;
+    }
+
+    this.selectedEmployee = {
+      ...employee,
+      department: employee.department || 'General',
+      position: employee.position || 'Employee'
+    };
+    
     this.loading = true;
 
-    // In a real app, fetch employee fund history
-    setTimeout(() => {
-      this.selectedEmployeeHistory = this.generateMockHistory(employee);
-      this.loading = false;
+    // Close any open modals first
+    this.closeAllModals();
 
-      this.employeeDetailModal.show();
-    }, 500);
+    // Fetch employee fund history
+    this.fundsManagementService.generateHistory(employee)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          if (response && response.result) {
+            this.selectedEmployeeHistory = response.result;
+            
+            // Open the modal after data is loaded
+            this.employeeDetailModalRef = this.modalService.open(this.employeeDetailModalTemplate, {
+              centered: true,
+              size: 'lg'
+            });
+          } else {
+            // Handle empty history
+            this.selectedEmployeeHistory = [];
+            
+            // Still open the modal even with empty history
+            this.employeeDetailModalRef = this.modalService.open(this.employeeDetailModalTemplate, {
+              centered: true,
+              size: 'lg'
+            });
+          }
+        },
+        error: (error) => {
+          console.error('Error loading employee history:', error);
+          this.alertService.error('Failed to load employee fund history');
+          this.selectedEmployeeHistory = [];
+          
+          // Still open the modal even with error
+          this.employeeDetailModalRef = this.modalService.open(this.employeeDetailModalTemplate, {
+            centered: true,
+            size: 'lg'
+          });
+        }
+      });
   }
 
   /**
-   * Save fund allocation
+   * Close the employee detail modal
    */
-  saveAllocation(): void {
+  closeEmployeeDetailModal(): void {
+    if (this.employeeDetailModalRef) {
+      this.employeeDetailModalRef.close();
+      this.employeeDetailModalRef = null;
+    }
+  }
+
+  /**
+   * Save fund allocation or withdrawal
+   */
+  saveAllocation(operationType: string): void {
     if (this.allocationForm.valid) {
       this.loading = true;
-
+  
       const allocation = {
-        employeeId: this.allocationForm.value.employeeId,
+        idUser: this.allocationForm.value.id,
         amount: this.allocationForm.value.amount,
         currency: this.allocationForm.value.currency,
-        notes: this.allocationForm.value.notes
+        notes: this.allocationForm.value.notes || '',
+        operationFunds: operationType
       };
-
-      // In a real app, call service to save allocation
-      setTimeout(() => {
-        this.alertService.success(`Funds successfully allocated to employee`);
-        this.loading = false;
-        this.fundAllocationModal.hide();
-
-        // Reload data
-        this.loadEmployeeFunds();
-        this.loadFundsSummary();
-      }, 1000);
+  
+      this.fundsManagementService.saveEmployeeFunds(allocation)
+        .pipe(
+          finalize(() => {
+            this.loading = false;
+          })
+        )
+        .subscribe({
+          next: (response) => {
+            const operationText = operationType === 'add' ? 'allocated' : 'withdrawn';
+            this.alertService.success(`Funds successfully ${operationText}`);
+            
+            // Close the appropriate modal
+            if (operationType === 'add') {
+              this.closeAllocationModal();
+            } else {
+              this.closeWithdrawalModal();
+            }
+            
+            // Reload data
+            this.loadEmployeeFunds();
+            this.loadFundsSummary();
+          },
+          error: (error) => {
+            console.error(`Error ${operationType === 'add' ? 'allocating' : 'withdrawing'} funds:`, error);
+            this.alertService.error(`Failed to ${operationType === 'add' ? 'allocate' : 'withdraw'} funds`);
+          }
+        });
+    } else {
+      // Mark form controls as touched to show validation errors
+      Object.keys(this.allocationForm.controls).forEach(key => {
+        const control = this.allocationForm.get(key);
+        if (control) {
+          control.markAsTouched();
+        }
+      });
+      
+      this.alertService.error('Please fill all required fields correctly');
     }
   }
 
   /**
-   * Remove funds from an employee
+   * Get minimum of two values (for pagination display)
    */
-  removeFunds(employee: EmployeeFunds): void {
-    if (confirm(`Are you sure you want to remove funds from ${employee.employeeName}?`)) {
-      this.loading = true;
-
-      // In a real app, call service to remove funds
-      setTimeout(() => {
-        this.alertService.success(`Funds successfully removed from ${employee.employeeName}`);
-        this.loading = false;
-
-        // Reload data
-        this.loadEmployeeFunds();
-        this.loadFundsSummary();
-      }, 1000);
-    }
+  getMinValue(a: number, b: number): number {
+    return Math.min(a, b);
   }
 
   /**
@@ -325,8 +483,10 @@ export class EmployeeFundsComponent implements OnInit {
    * Get currency symbol
    */
   getCurrencySymbol(currency: string): string {
+    if (!currency) return 'MAD'; // Default if currency is undefined
+    
     switch (currency) {
-      case Currency.USD: return 'USD';
+      case Currency.USD: return '$';
       case Currency.EUR: return '€';
       case Currency.GBP: return '£';
       case Currency.MAD: return 'MAD';
@@ -340,29 +500,25 @@ export class EmployeeFundsComponent implements OnInit {
    * Get appropriate class for currency badge
    */
   getCurrencyClass(currency: string): string {
+    if (!currency) return 'secondary'; // Default if currency is undefined
+    
     switch (currency) {
-      case Currency.USD: return 'bg-primary';
-      case Currency.EUR: return 'bg-info';
-      case Currency.GBP: return 'bg-purple';
-      case Currency.MAD: return 'bg-success';
-      case Currency.SAR: return 'bg-warning';
-      case Currency.AED: return 'bg-danger';
-      default: return 'bg-secondary';
+      case Currency.USD: return 'primary';
+      case Currency.EUR: return 'info';
+      case Currency.GBP: return 'purple';
+      case Currency.MAD: return 'success';
+      case Currency.SAR: return 'warning';
+      case Currency.AED: return 'danger';
+      default: return 'secondary';
     }
-  }
-
-  /**
-   * Export employee funds data
-   */
-  exportData(format: 'pdf' | 'csv' | 'excel'): void {
-    this.alertService.info(`Exporting employee funds data as ${format.toUpperCase()}...`);
-    // Implementation would depend on your export library
   }
 
   /**
    * Get initials for avatar
    */
   getInitials(name: string): string {
+    if (!name) return 'N/A';
+    
     return name
       .split(' ')
       .map(part => part.charAt(0))
@@ -410,41 +566,10 @@ export class EmployeeFundsComponent implements OnInit {
       pages.push('...');
     }
 
-    pages.push(this.totalPages);
-    return pages;
-  }
-
-  /**
-   * Generate mock history for demo purposes
-   */
-  private generateMockHistory(employee: EmployeeFunds): any[] {
-    const transactions = [];
-    const now = new Date();
-
-    // Generate 5 random past transactions
-    for (let i = 0; i < 5; i++) {
-      const daysAgo = Math.floor(Math.random() * 60) + 1;
-      const date = new Date(now.getTime() - (daysAgo * 24 * 60 * 60 * 1000));
-
-      const isAllocation = Math.random() > 0.3;
-      const amount = isAllocation ?
-        Math.floor(Math.random() * 1000) + 100 :
-        Math.floor(Math.random() * 300) + 50;
-
-      transactions.push({
-        id: 1000 + i,
-        date,
-        type: isAllocation ? 'allocation' : 'expense',
-        amount,
-        currency: employee.currency,
-        notes: isAllocation ?
-          'Fund allocation for project work' :
-          'Expense for project supplies',
-        approvedBy: 'Finance Department'
-      });
+    if (this.totalPages > 1) {
+      pages.push(this.totalPages);
     }
-
-    // Sort by date, newest first
-    return transactions.sort((a, b) => b.date.getTime() - a.date.getTime());
+    
+    return pages;
   }
 }

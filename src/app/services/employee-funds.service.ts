@@ -8,7 +8,7 @@ import { Currency } from '../models/funds.mode';
 export interface EmployeeFunds {
   id: number;
   employeeId: number;
-  employeeName: string;
+  fullName: string;
   department: string;
   position: string;
   currency: Currency;
@@ -28,6 +28,7 @@ export interface FundsSummary {
 })
 export class EmployeeFundsService {
   private apiUrl = environment.apiUrl;
+  private apiUrl1 = environment.apiUrl + '/fundBalance';
 
   constructor(private http: HttpClient) { }
 
@@ -41,8 +42,8 @@ export class EmployeeFundsService {
   /**
    * Get funds for a specific employee
    */
-  getEmployeeFunds(employeeId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/funds/employees/${employeeId}`);
+  getEmployeeFunds(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user/EmployeeFunds`);
   }
 
   /**
@@ -50,6 +51,13 @@ export class EmployeeFundsService {
    */
   getFundsSummary(): Observable<any> {
     return this.http.get(`${this.apiUrl}/funds/employees/summary`);
+  }
+
+  saveEmployeeFunds(employeeFunds: any): Observable<{ message: string, result: string, errors: string, errorMap: string[] }> {
+    console.log('Saving employee funds:', employeeFunds);
+    
+    return this.http.post<{ message: string, result: string, errors: string, errorMap: string[] }>(
+      `${this.apiUrl1}/funds/employees/save`, employeeFunds);
   }
 
   /**
@@ -109,7 +117,7 @@ export class EmployeeFundsService {
       {
         id: 1,
         employeeId: 101,
-        employeeName: 'Ahmed Mohammed',
+        fullName: 'Ahmed Mohammed',
         department: 'Finance',
         position: 'Financial Analyst',
         currency: Currency.MAD,
@@ -119,7 +127,7 @@ export class EmployeeFundsService {
       {
         id: 2,
         employeeId: 102,
-        employeeName: 'Sara Abdullah',
+        fullName: 'Sara Abdullah',
         department: 'Marketing',
         position: 'Marketing Manager',
         currency: Currency.USD,
@@ -129,7 +137,7 @@ export class EmployeeFundsService {
       {
         id: 3,
         employeeId: 103,
-        employeeName: 'Khalid Omar',
+        fullName: 'Khalid Omar',
         department: 'Sales',
         position: 'Sales Representative',
         currency: Currency.EUR,
@@ -139,7 +147,7 @@ export class EmployeeFundsService {
       {
         id: 4,
         employeeId: 104,
-        employeeName: 'Leila Benmoussa',
+        fullName: 'Leila Benmoussa',
         department: 'IT',
         position: 'Software Developer',
         currency: Currency.MAD,
@@ -149,7 +157,7 @@ export class EmployeeFundsService {
       {
         id: 5,
         employeeId: 105,
-        employeeName: 'Mohammed Alaoui',
+        fullName: 'Mohammed Alaoui',
         department: 'Operations',
         position: 'Operations Manager',
         currency: Currency.SAR,
@@ -159,7 +167,7 @@ export class EmployeeFundsService {
       {
         id: 6,
         employeeId: 106,
-        employeeName: 'Fatima Zahra',
+        fullName: 'Fatima Zahra',
         department: 'Human Resources',
         position: 'HR Specialist',
         currency: Currency.AED,
@@ -169,7 +177,7 @@ export class EmployeeFundsService {
       {
         id: 7,
         employeeId: 107,
-        employeeName: 'Youssef El Mansouri',
+        fullName: 'Youssef El Mansouri',
         department: 'Finance',
         position: 'Accountant',
         currency: Currency.MAD,
@@ -179,7 +187,7 @@ export class EmployeeFundsService {
       {
         id: 8,
         employeeId: 108,
-        employeeName: 'Nadia Karim',
+        fullName: 'Nadia Karim',
         department: 'Marketing',
         position: 'Digital Marketing Specialist',
         currency: Currency.GBP,
@@ -195,6 +203,8 @@ export class EmployeeFundsService {
       }, 500);
     });
   }
+
+
 
   // Mock summary data for demo purposes
   getMockFundsSummary(): Observable<{ result: FundsSummary }> {
